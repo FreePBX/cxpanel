@@ -31,7 +31,10 @@ require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
 require_once(dirname(__FILE__)."/lib/logger.class.php");
 require_once(dirname(__FILE__)."/lib/util.php");
 require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
-require_once(dirname(__FILE__)."/lib/PHPMailer/class.phpmailer.php");
+
+if(!class_exists("PHPMailer")) {
+	require_once(dirname(__FILE__)."/lib/PHPMailer/class.phpmailer.php");
+}
 
 //Create the logger
 $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
