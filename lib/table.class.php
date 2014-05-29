@@ -214,4 +214,4 @@ class cxpanel_table_builder {
 		return $columnEntry;
 	}
 }
-?>
+
