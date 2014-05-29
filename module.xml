@@ -5,7 +5,7 @@
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
-		This module automatically configures the operator panel to reflect the PBX configuration. 
+		This module automatically configures the operator panel to reflect the PBX configuration.
 	</description>
 	<menuitems>
 		<cxpanel>iSymphonyV3</cxpanel>
@@ -22,4 +22,7 @@
 	<publisher>i9 Technologies</publisher>
 	<license>GPL</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
+	<supported>
+		<version>2.11</version>
+	</supported>
 </module>
