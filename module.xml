@@ -25,4 +25,5 @@
 	<supported>
 		<version>2.11</version>
 	</supported>
+	<repo>standard</repo>
 </module>
