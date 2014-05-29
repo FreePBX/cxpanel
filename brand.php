@@ -5,4 +5,3 @@ if($cxpanelBrandName === FALSE) {
 	$cxpanelBrandName = 'iSymphony';
 }
 
-?>

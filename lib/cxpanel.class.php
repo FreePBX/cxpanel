@@ -338,5 +338,4 @@ class cxpanel_bind_request {
 	}
 }
 
-?>
 

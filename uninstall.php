@@ -81,4 +81,4 @@ $results = $db->query($query);
 if(DB::IsError($results)) {
 	echo "ERROR: could not remove manager entry.<br>";
 }
-?>
+

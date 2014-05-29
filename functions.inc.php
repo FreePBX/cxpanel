@@ -1766,4 +1766,3 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 	$phpMailer->send();
 }
 
-?>

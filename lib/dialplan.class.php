@@ -82,4 +82,4 @@ class ext_cxpanel_chanspy {
 	}
 }
 
-?>
+

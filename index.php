@@ -17,4 +17,4 @@ if(function_exists('cxpanel_server_get')) {
 //Reidrect to the client
 $redirectUrl = 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client';
 header('Location: ' . $redirectUrl);
-?>
+
