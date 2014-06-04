@@ -14,7 +14,17 @@ if(function_exists('cxpanel_server_get')) {
 	die;
 }
 
+/*
+ * If set utilize the client_host stored in the database else utilize the host
+ * from the current URL.
+ */
+$clientHost = $serverInformation['client_host'];
+if($clientHost == "") {
+	$httpHost = explode(':', $_SERVER['HTTP_HOST']);
+	$clientHost = $httpHost[0];
+}
+
 //Reidrect to the client
-$redirectUrl = 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client';
+$redirectUrl = 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client';
 header('Location: ' . $redirectUrl);
 

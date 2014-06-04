@@ -379,11 +379,6 @@ if($serverInformation['sync_with_userman'] == "1") {
 			return false;
 		}
 
-		if(settingsForm.elements['cxpanel_client_host'].value.length == 0) {
-			alert('Client host cannot be blank.');
-			return false;
-		}
-
 		if(settingsForm.elements['cxpanel_client_port'].value.length == 0) {
 			alert('Client port cannot be blank.');
 			return false;
@@ -568,7 +563,7 @@ if($serverInformation['sync_with_userman'] == "1") {
         </tr>
         <tr><td colspan="2"><h5>Module Client Link Settings<hr></h5></td></tr>
         <tr>
-            <td><a href="#" class="info">Client Host:<span>IP Address or host name of the <?php echo $cxpanelBrandName; ?> client. Set to "localhost" if the client is installed on the same machine.</span></a></td>
+            <td><a href="#" class="info">Client Host:<span>IP Address or host name of the <?php echo $cxpanelBrandName; ?> client. This setting is used when accessing the <?php echo $cxpanelBrandName; ?> client via the links in this GUI and for client links in password emails. If not set the ip or host name from the current URL will be utilized. Normally this should remain blank unless you have a remote <?php echo $cxpanelBrandName; ?> Server install.</span></a></td>
             <td><input size="20" type="text" name="cxpanel_client_host" value="<?php echo htmlspecialchars($serverInformation['client_host']); ?>" /></td>
        	</tr>
         <tr>

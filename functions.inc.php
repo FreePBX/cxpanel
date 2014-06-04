@@ -1742,17 +1742,27 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 	//Determine the email
 	$email = $email != "" ? $email : $voiceMailBox['email'];
 
+	/*
+	 * If set utilize the client_host stored in the database else utilize the host
+	 * from the current URL.
+	 */
+	$clientHost = $serverInformation['client_host'];
+	if($clientHost == "") {
+		$httpHost = explode(':', $_SERVER['HTTP_HOST']);
+		$clientHost = $httpHost[0];
+	}
+	
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
 	$subject = str_replace("%%userId%%", $cxpanelUser['user_id'], $subject);
 	$subject = str_replace("%%password%%", $password, $subject);
-	$subject = str_replace('%%clientURL%%', 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client', $subject);
+	$subject = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
 
 	//Prepare the body contents
 	$bodyContents = $emailSettings['body'];
 	$bodyContents = str_replace("%%userId%%", $cxpanelUser['user_id'], $bodyContents);
 	$bodyContents = str_replace("%%password%%", $password, $bodyContents);
-	$bodyContents = str_replace('%%clientURL%%', 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
+	$bodyContents = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
 	$bodyContents = str_replace('%%logo%%', 'cid:logo', $bodyContents);
 
 	//Create new mailer
