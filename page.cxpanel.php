@@ -219,6 +219,9 @@ try {
 		 */
 		if(isset($_REQUEST["cxpanel_activate_license"]) && !isset($serverErrorMessage)) {
 			$pest->post('server/coreServers/' . $coreServer->id . '/license/activate', $_REQUEST["cxpanel_activate_serial_key"], array(CURLOPT_HEADER => TRUE));
+			
+			//Flag FreePBX for reload
+			needreload();
 		}
 		
 		/*
@@ -234,9 +237,13 @@ try {
 		if(isset($_REQUEST["cxpanel_bind_license"])) {
 			$pest->post($_REQUEST["cxpanel_bind_license_redirect_url"],
 			new cxpanel_bind_request(false, $_REQUEST["cxpanel_bind_license_to"], $_REQUEST["cxpanel_bind_license_email"]));
+			
+			//Flag FreePBX for reload
+			needreload();
 		}
+		
 	} catch (CXPest_TemporaryRedirect $e) {
-			$licenseBindRedirectURI = $e->redirectUri;
+		$licenseBindRedirectURI = $e->redirectUri;
 	} catch (Exception $e) {
 		$licenseActivationErrorMessage = $e->getMessage();
 	}
