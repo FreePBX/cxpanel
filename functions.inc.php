@@ -315,50 +315,55 @@ function cxpanel_hook_userman() {
 
 	$html = '';
 	
-	//Setup userman
-	$userman = setup_userman();
+	//Do not show the UI addition if sync_with_userman is disabled
+	$serverSettings = cxpanel_server_get();
+	if($serverSettings['sync_with_userman'] == '1') {
 	
-	//Query page state
-	$action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : null;
-	$user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : null;
-	
-	//Only show the gui elements if we are on the add or edit page for the user
-	if($action == 'showuser' || $action == 'adduser') {
-				
-		//If the user is specified lookup the information for the UI
-		if($user != null) {
-			$addUser = $userman->getModuleSettingByID($user, 'cxpanel', 'add');
-			$addUser = $addUser === false ? '1' : $addUser;
-		} else {
-			$addUser = '1';
+		//Setup userman
+		$userman = setup_userman();
+		
+		//Query page state
+		$action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : null;
+		$user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : null;
+		
+		//Only show the gui elements if we are on the add or edit page for the user
+		if($action == 'showuser' || $action == 'adduser') {
+					
+			//If the user is specified lookup the information for the UI
+			if($user != null) {
+				$addUser = $userman->getModuleSettingByID($user, 'cxpanel', 'add');
+				$addUser = $addUser === false ? '1' : $addUser;
+			} else {
+				$addUser = '1';
+			}
+			
+			//Define the section
+			$section = $cxpanelBrandName . ' Settings';
+			
+			//Create the add GUI element
+			$yesNoValueArray = array(array("text" => "yes", "value" => "1"), array("text" => "no", "value" => "0"));
+			$addToPanel = new cxpanel_radio("cxpanel_add_user", $yesNoValueArray, $addUser, "Add to $cxpanelBrandName", "Makes this user available in $cxpanelBrandName.");
+			
+			//Create contents
+			$html = 	'<table>' .
+		   					'<tr class="guielToggle" data-toggle_class="cxpanel">' .
+		        				'<td colspan="2" ><h4><span class="guielToggleBut">-  </span>' . _($section) . '</h4><hr></td>' .
+		    				'</tr>'.
+							'<tr>' .
+								'<td colspan="2">' .
+									'<div class="indent-div">' .
+										'<table>' .
+											'<tbody>' .
+												'<tr class="cxpanel">' .
+													'<td><table>' . $addToPanel->generatehtml() . '</table></td>' .
+												'</tr>' .
+											'</tbody>' .
+										'</table>' .
+									'</div>' .
+								'</td>' .
+							'</tr>' .
+						'</table>';
 		}
-		
-		//Define the section
-		$section = $cxpanelBrandName . ' Settings';
-		
-		//Create the add GUI element
-		$yesNoValueArray = array(array("text" => "yes", "value" => "1"), array("text" => "no", "value" => "0"));
-		$addToPanel = new cxpanel_radio("cxpanel_add_user", $yesNoValueArray, $addUser, "Add to $cxpanelBrandName", "Makes this user available in $cxpanelBrandName.");
-		
-		//Create contents
-		$html = 	'<table>' .
-	   					'<tr class="guielToggle" data-toggle_class="cxpanel">' .
-	        				'<td colspan="2" ><h4><span class="guielToggleBut">-  </span>' . _($section) . '</h4><hr></td>' .
-	    				'</tr>'.
-						'<tr>' .
-							'<td colspan="2">' .
-								'<div class="indent-div">' .
-									'<table>' .
-										'<tbody>' .
-											'<tr class="cxpanel">' .
-												'<td><table>' . $addToPanel->generatehtml() . '</table></td>' .
-											'</tr>' .
-										'</tbody>' .
-									'</table>' .
-								'</div>' .
-							'</td>' .
-						'</tr>' .
-					'</table>';
 	}
 	
 	return $html;
@@ -1737,17 +1742,27 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 	//Determine the email
 	$email = $email != "" ? $email : $voiceMailBox['email'];
 
+	/*
+	 * If set utilize the client_host stored in the database else utilize the host
+	 * from the current URL.
+	 */
+	$clientHost = $serverInformation['client_host'];
+	if($clientHost == "") {
+		$httpHost = explode(':', $_SERVER['HTTP_HOST']);
+		$clientHost = $httpHost[0];
+	}
+	
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
 	$subject = str_replace("%%userId%%", $cxpanelUser['user_id'], $subject);
 	$subject = str_replace("%%password%%", $password, $subject);
-	$subject = str_replace('%%clientURL%%', 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client', $subject);
+	$subject = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
 
 	//Prepare the body contents
 	$bodyContents = $emailSettings['body'];
 	$bodyContents = str_replace("%%userId%%", $cxpanelUser['user_id'], $bodyContents);
 	$bodyContents = str_replace("%%password%%", $password, $bodyContents);
-	$bodyContents = str_replace('%%clientURL%%', 'http://' . $serverInformation['client_host'] . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
+	$bodyContents = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
 	$bodyContents = str_replace('%%logo%%', 'cid:logo', $bodyContents);
 
 	//Create new mailer

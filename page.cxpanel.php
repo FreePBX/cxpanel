@@ -219,6 +219,9 @@ try {
 		 */
 		if(isset($_REQUEST["cxpanel_activate_license"]) && !isset($serverErrorMessage)) {
 			$pest->post('server/coreServers/' . $coreServer->id . '/license/activate', $_REQUEST["cxpanel_activate_serial_key"], array(CURLOPT_HEADER => TRUE));
+			
+			//Flag FreePBX for reload
+			needreload();
 		}
 		
 		/*
@@ -234,9 +237,13 @@ try {
 		if(isset($_REQUEST["cxpanel_bind_license"])) {
 			$pest->post($_REQUEST["cxpanel_bind_license_redirect_url"],
 			new cxpanel_bind_request(false, $_REQUEST["cxpanel_bind_license_to"], $_REQUEST["cxpanel_bind_license_email"]));
+			
+			//Flag FreePBX for reload
+			needreload();
 		}
+		
 	} catch (CXPest_TemporaryRedirect $e) {
-			$licenseBindRedirectURI = $e->redirectUri;
+		$licenseBindRedirectURI = $e->redirectUri;
 	} catch (Exception $e) {
 		$licenseActivationErrorMessage = $e->getMessage();
 	}
@@ -376,11 +383,6 @@ if($serverInformation['sync_with_userman'] == "1") {
 
 		if(settingsForm.elements['cxpanel_name'].value.length == 0) {
 			alert('Name cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_client_host'].value.length == 0) {
-			alert('Client host cannot be blank.');
 			return false;
 		}
 
@@ -568,7 +570,7 @@ if($serverInformation['sync_with_userman'] == "1") {
         </tr>
         <tr><td colspan="2"><h5>Module Client Link Settings<hr></h5></td></tr>
         <tr>
-            <td><a href="#" class="info">Client Host:<span>IP Address or host name of the <?php echo $cxpanelBrandName; ?> client. Set to "localhost" if the client is installed on the same machine.</span></a></td>
+            <td><a href="#" class="info">Client Host:<span>IP Address or host name of the <?php echo $cxpanelBrandName; ?> client. This setting is used when accessing the <?php echo $cxpanelBrandName; ?> client via the links in this GUI and for client links in password emails. If not set the ip or host name from the current URL will be utilized. Normally this should remain blank unless you have a remote <?php echo $cxpanelBrandName; ?> Server install.</span></a></td>
             <td><input size="20" type="text" name="cxpanel_client_host" value="<?php echo htmlspecialchars($serverInformation['client_host']); ?>" /></td>
        	</tr>
         <tr>

@@ -49,10 +49,6 @@ if(function_exists("voicemail_get_settings")) {
 	}
 }
 
-//Grab public client host value
-$values = explode(':', $_SERVER['HTTP_HOST']);
-$clientHost = $values[0];
-
 //If userman is installed and this is not an upgrade default sycn_with_userman to true
 $results = $db->query("select * from cxpanel_server");
 if(function_exists('setup_userman') && (DB::IsError($results) || empty($results))) {
@@ -64,7 +60,7 @@ if(function_exists('setup_userman') && (DB::IsError($results) || empty($results)
 //Build server table
 $columns = array(	new cxpanel_column("name", "string", "default", "", false, true),
 					new cxpanel_column("asterisk_host", "string", "localhost", "", false, true),
-					new cxpanel_column("client_host", "string", $clientHost, "", false, true),
+					new cxpanel_column("client_host", "string", "", "", false, true),
 					new cxpanel_column("client_port", "integer", 58080, "", false, true),
 					new cxpanel_column("api_host", "string", "localhost", "", false, true),
 					new cxpanel_column("api_port", "integer", 58080, "", false, true),
