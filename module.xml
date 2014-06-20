@@ -20,7 +20,7 @@
 	</changelog>
 	<info>http://www.getisymphony.com</info>
 	<publisher>i9 Technologies</publisher>
-	<license>GPL</license>
+	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
 		<version>2.11</version>
