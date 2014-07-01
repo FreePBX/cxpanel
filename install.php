@@ -31,6 +31,13 @@ if(class_exists("freepbx_conf")) {
 	echo "Done<br>";
 }
 
+//Set callevents = yes for hold events
+if(function_exists("sipsettings_edit")) {
+	echo "Setting callevents = yes....<br>";
+	$sip_settings['callevents'] = 'yes';
+	sipsettings_edit($sip_settings);
+}
+
 //Create symlink that points to the module directory in order to run the client redirect script
 echo "Creating client symlink....<br>";
 if(file_exists($amp_conf['AMPWEBROOT'] . '/cxpanel')) {
