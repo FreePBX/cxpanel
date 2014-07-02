@@ -22,10 +22,11 @@ require_once(dirname(__FILE__)."/lib/table.class.php");
 require_once(dirname(__FILE__)."/lib/util.php");
 require_once(dirname(__FILE__)."/brand.php");
 
-//Set operator panel web root
+//Set operator panel web root and enable dev state
 if(class_exists("freepbx_conf")) {
-	echo "Setting operator panel web root....<br>";
+	echo "Setting operator panel web root and enabling dev state....<br>";
 	$set["FOPWEBROOT"] = "cxpanel";
+	$set["USEDEVSTATE"] = true;
 	$freepbx_conf =& freepbx_conf::create();
 	$freepbx_conf->set_conf_values($set, true, true);
 	echo "Done<br>";
