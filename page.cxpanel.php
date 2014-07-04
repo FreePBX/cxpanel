@@ -278,6 +278,37 @@ try {
 	$licensedTypeDisplay = $license->type;
 	$licenseSerialKeyDisplay = $license->serial;
 	$licenseExpirationDate = isset($license->expirationDate) ? date('m/d/Y', $license->expirationDate / 1000) : null;
+	$maintenanceExpirationDate = isset($license->maintenanceExpirationDate) ? ($license->maintenanceExpirationDate / 1000) : null;
+	
+	//Highlight and format maintenance expiration date
+	if(isset($maintenanceExpirationDate)) {
+		
+		//Check if maintenance has expired or is about to
+		$warningPeriod = 30 * 86400;
+		if(time() > $maintenanceExpirationDate) {
+			$maintenanceExpirationDateStyle = 'padding: 0px 3px 0px 3px; background-color: rgb(235,15,12); border: 1px solid rgb(200,0,0); border-radius: 3px; color: white;';
+			$maintenanceExpirationDateNote = 'Maintenance has expired.';
+		} else if(time() > ($maintenanceExpirationDate - $warningPeriod)) {
+			
+			//Calculate days remaining
+			$daysRemaining = ($maintenanceExpirationDate - time()) / 86400;
+			$daysRemaining = round($daysRemaining, 0, PHP_ROUND_HALF_DOWN);
+			
+			$maintenanceExpirationDateStyle = 'padding: 0px 3px 0px 3px; background-color: rgb(251,255,138); border: 1px solid rgb(200,200,0); border-radius: 3px; color: black;';
+			$maintenanceExpirationDateNote = 'Maintenance will expire in <span style="font-weight: bold">' . $daysRemaining . ' day(s)</span>.';
+		}
+		
+		//Format date
+		$maintenanceExpirationDate = date('m/d/Y', $maintenanceExpirationDate);
+		
+		if(isset($maintenanceExpirationDateNote)) {
+			$maintenanceExpirationDate = $maintenanceExpirationDate . ' ' . $maintenanceExpirationDateNote;
+		}
+		
+		if(isset($maintenanceExpirationDateStyle)) {
+			$maintenanceExpirationDate = '<span style="' . $maintenanceExpirationDateStyle . '">' . $maintenanceExpirationDate . '</span>'; 
+		}
+	}
 	
 	//Build the license additions
 	if(isset($licenseExpirationDate)) {
@@ -285,6 +316,13 @@ try {
 									<td><a href=\"#\" class=\"info\">Expiration Date:<span>Displays the expiration date of the trial license.</span></a></td>
 									<td>$licenseExpirationDate</td>						
 								</tr>";
+	}
+	
+	if(isset($maintenanceExpirationDate)) {
+		$licenseAdditions .= "	<tr>
+		<td><a href=\"#\" class=\"info\">Maint. Expiration Date:<span>Displays the expiration date of the license maintenance period.</span></a></td>
+		<td>$maintenanceExpirationDate</td>
+		</tr>";
 	}
 	
 	if($license->clientConnections != -1) {
