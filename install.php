@@ -8,20 +8,35 @@
  *Purpose      : Create, upgrade, and populate tables
  */
 
-global $db, $amp_conf;
+global $db, $amp_conf, $active_modules;
+
+//Check if the manager module is installed. If not stop installation.
+$mod_keys = array_keys($active_modules);
+if(!in_array("manager", $mod_keys)) {
+	echo 'Failed to install due to the following missing required module(s):<br /><br />manager<br /><br />';
+	return;
+}
 
 //Includes
 require_once(dirname(__FILE__)."/lib/table.class.php");
 require_once(dirname(__FILE__)."/lib/util.php");
 require_once(dirname(__FILE__)."/brand.php");
 
-//Set operator panel web root
+//Set operator panel web root and enable dev state
 if(class_exists("freepbx_conf")) {
-	echo "Setting operator panel web root....<br>";
+	echo "Setting operator panel web root and enabling dev state....<br>";
 	$set["FOPWEBROOT"] = "cxpanel";
+	$set["USEDEVSTATE"] = true;
 	$freepbx_conf =& freepbx_conf::create();
 	$freepbx_conf->set_conf_values($set, true, true);
 	echo "Done<br>";
+}
+
+//Set callevents = yes for hold events
+if(function_exists("sipsettings_edit")) {
+	echo "Setting callevents = yes....<br>";
+	$sip_settings['callevents'] = 'yes';
+	sipsettings_edit($sip_settings);
 }
 
 //Create symlink that points to the module directory in order to run the client redirect script
