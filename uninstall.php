@@ -74,6 +74,14 @@ if(DB::IsError($results)) {
 	echo "ERROR: could not remove table.<br>";
 }
 
+//Drop managed items table
+$query = "DROP TABLE IF EXISTS cxpanel_managed_items";
+echo "Removing \"cxpanel_managed_items\" Table....<br>";
+$results = $db->query($query);
+if(DB::IsError($results)) {
+	echo "ERROR: could not remove table.<br>";
+}
+
 //Remove manager entry
 $query = "DELETE FROM manager WHERE name = 'cxpanel'";
 echo "Removing manager entry....<br>";

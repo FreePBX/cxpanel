@@ -99,7 +99,7 @@ $table = new cxpanel_table("cxpanel_voicemail_agent", $columns);
 $builder = new cxpanel_table_builder($table);
 $builder->build(array(array("junk")));
 
-//Build recording agnet table
+//Build recording agent table
 $columns = array(	new cxpanel_column("identifier", "string", "local-rec", "", false, true),
 					new cxpanel_column("directory", "string", "/var/spool/asterisk/monitor", "", false, true),
 					new cxpanel_column("resource_host", "string", php_uname('n'), "", false, true),
@@ -208,7 +208,7 @@ $columns = array(	new cxpanel_column("cxpanel_conference_room_id", "primary", ""
 $table = new cxpanel_table("cxpanel_conference_rooms", $columns);
 $builder = new cxpanel_table_builder($table);
 
-//Gather queue info
+//Gather conference room info
 $entries = array();
 if((function_exists("conferences_list")) && (($freePBXConferenceRooms = conferences_list()) !== null)) {
 	foreach($freePBXConferenceRooms as $freePBXConferenceRoom) {
@@ -219,5 +219,14 @@ if((function_exists("conferences_list")) && (($freePBXConferenceRooms = conferen
 }
 
 $builder->build($entries);
+
+//Build managed items table
+$columns = array(	new cxpanel_column("cxpanel_id", "string", "", "", false, true),
+					new cxpanel_column("fpbx_id", "string", "", "", false, true),
+					new cxpanel_column("type", "string", "", "", false, true));
+
+$table = new cxpanel_table("cxpanel_managed_items", $columns);
+$builder = new cxpanel_table_builder($table);
+$builder->build();
 
 
