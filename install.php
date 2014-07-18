@@ -33,8 +33,9 @@ if(class_exists("freepbx_conf")) {
 }
 
 //Set callevents = yes for hold events
-if(function_exists("sipsettings_edit")) {
+if(function_exists("sipsettings_edit") && function_exists("sipsettings_get")) {
 	echo "Setting callevents = yes....<br>";
+	$sip_settings = sipsettings_get();
 	$sip_settings['callevents'] = 'yes';
 	sipsettings_edit($sip_settings);
 }
