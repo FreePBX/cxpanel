@@ -1451,6 +1451,53 @@ function cxpanel_conference_room_get($conferenceRoomId) {
 
 /**
  *
+ * API function to check if the object with the give type and cxpanel id are managed by this
+ * instance of the module.
+ * 
+ * @param String $type the type of object to check for [user|extension|queue|conference_room|parking_lot].
+ * @param String $cxpanelId the uuid of the cxpanel configuration object to check for.
+ * @return true if this module instance manages the given item.
+ *
+ */
+function cxpanel_has_managed_item($type, $cxpanelId) {
+	global $db;
+	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
+	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	return !DB::IsError($results) && !empty($results);
+}
+
+/**
+ *
+ * API function to add a managed item.
+ *
+ * @param String $type the type of object [user|extension|queue|conference_room|parking_lot].
+ * @param String $fpbxId the fpbx id of the object.
+ * @param String $cxpanelId the uuid of the cxpanel configuration object.
+ *
+ */
+function cxpanel_managed_item_add($type, $fpbxId, $cxpanelId) {
+	global $db;
+	$prepStatement = $db->prepare("INSERT INTO cxpanel_managed_items (type, fbpx_id, cxpanel_id) VALUES (?, ?, ?)");
+	$values = array($type, $fpbxId, $cxpanelId);
+	$db->execute($prepStatement, $values);
+}
+
+/**
+ *
+ * API function to remove a managed item.
+ *
+ * @param String $type the type of object [user|extension|queue|conference_room|parking_lot].
+ * @param String $cxpanelId the uuid of the cxpanel configuration object.
+ *
+ */
+function cxpanel_managed_item_del($type, $cxpanelId) {
+	global $db;
+	$query = "DELETE FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
+	$db->query($query);
+}
+
+/**
+ *
  * Updates the request eventwhencalled flag when editing a queue.
  * Used to force the eventwhencalled flag when adding a queue.
  * @param Boolean $addQueue true if the queue is being added
