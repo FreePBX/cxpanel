@@ -24,7 +24,8 @@ if(isset($_REQUEST["cxpanel_settings"])) {
 							trim($_REQUEST["cxpanel_api_username"]), 
 							trim($_REQUEST["cxpanel_api_password"]),
 							($_REQUEST["cxpanel_api_use_ssl"] == "1"),
-							($_REQUEST["cxpanel_sync_with_userman"] == "1"));
+							($_REQUEST["cxpanel_sync_with_userman"] == "1"),
+							($_REQUEST["cxpanel_multi_system"] == "1"));
 		
 	cxpanel_voicemail_agent_update(	trim($_REQUEST["cxpanel_voicemail_agent_identifier"]),
 									trim($_REQUEST["cxpanel_voicemail_agent_directory"]),
@@ -398,8 +399,7 @@ $serverRunningDisplay = isset($serverErrorMessage) ? "<span style=\"color: #FF00
 
 //If the userman module is installed show the general settings
 if(function_exists('setup_userman')) {
-	$generalSettingsAddition = 	'<tr><td colspan="2"><h5>General Settings<hr></h5></td></tr>' .
-								'<tr>' .
+	$syncWithUsermanAddition = 	'<tr>' .
 						        	'<td><a href="#" class="info">Sync With User Managment:<span>If checked ' . $cxpanelBrandName . ' users will be created based on the users that are configured in User Managment.<br />If unchecked ' . $cxpanelBrandName . ' users will be created based on the ' . $cxpanelBrandName . ' settings in the Extensions page.</span></a></td>' .
 						            '<td><input type="checkbox" name="cxpanel_sync_with_userman" value="1" ' . ($serverInformation['sync_with_userman'] == '1' ? 'checked' : '')  .'/></td>' .
 						       	'</tr>';
@@ -575,7 +575,12 @@ if($serverInformation['sync_with_userman'] == "1") {
 		<?php echo $licenseActivateAddition; ?>
 		<tr><td colspan="2"><span style="color: #FF0000;"><?php echo $licenseActivationErrorMessage; ?></span></td></tr>
 		<form name="cxpanel_settings_form" id="cxpanel_settings_form" action="config.php?type=setup&display=cxpanel<?php echo $urlAppend; ?>" method="post" onsubmit="return checkForm();">
-		<?php echo $generalSettingsAddition; ?>
+		<tr><td colspan="2"><h5>General Settings<hr></h5></td></tr>
+		<?php echo $syncWithUsermanAddition; ?>
+		<tr>
+        	<td><a href="#" class="info">Multi Server Mode:<span>If selected, prevents this module from modifying <?php echo $cxpanelBrandName; ?> Server configuration objects that it does not manage.<br/>Enable if this system is one of multiple PBXs that are part of a single <?php echo $cxpanelBrandName; ?> core server. </span></a></td>
+			<td><input type="checkbox" name="cxpanel_multi_system" value="1" <?php echo ($serverInformation['"cxpanel_multi_system"'] == '1' ? 'checked' : ''); ?> /></td>
+       	</tr>  
 		<tr><td colspan="2"><h5>Server API Connection Settings<hr></h5></td></tr>
 		<tr>
         	<td><a href="#" class="info">Server Name:<span>Unique id of the core server instance to manage.</span></a></td>

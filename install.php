@@ -83,7 +83,8 @@ $columns = array(	new cxpanel_column("name", "string", "default", "", false, tru
 					new cxpanel_column("api_username", "string", "manager", "", false, true),
 					new cxpanel_column("api_password", "string", "manag3rpa55word", "", false, true),
 					new cxpanel_column("api_use_ssl", "boolean", 0, "", false, true),
-					new cxpanel_column("sync_with_userman", "boolean", $syncWithUserman, "", false, true));
+					new cxpanel_column("sync_with_userman", "boolean", $syncWithUserman, "", false, true),
+					new cxpanel_column("multi_system", "boolean", 0, "", false, true));
 
 $table = new cxpanel_table("cxpanel_server", $columns);
 $builder = new cxpanel_table_builder($table);

@@ -876,12 +876,13 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
  * @param String $apiPassword panel API password used for API authentication
  * @param Boolean $apiUseSSL if true https will be used for communication with the REST API
  * @param Boolean $syncWithUserman if true the User Management module will control the users that are created in the panel
+ * @param Boolean $multiSystem if true the module will only manage server items that it knows it created and manages. Used when dealing with multiple asterisk systems in the same core server.
  * 
  */
-function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman) {
+function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $multiSystem) {
 	global $db;
-	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?");
-	$values = array($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman);
+	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, multi_system = ?");
+	$values = array($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $multiSystem);
 	$db->execute($prepStatement, $values);
 }
 
@@ -1454,7 +1455,7 @@ function cxpanel_conference_room_get($conferenceRoomId) {
  * API function to check if the object with the give type and cxpanel id are managed by this
  * instance of the module.
  * 
- * @param String $type the type of object to check for [user|extension|queue|conference_room|parking_lot].
+ * @param String $type the type of object to check for [admin|user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object to check for.
  * @return true if this module instance manages the given item.
  *
@@ -1470,7 +1471,7 @@ function cxpanel_has_managed_item($type, $cxpanelId) {
  *
  * API function to add a managed item.
  *
- * @param String $type the type of object [user|extension|queue|conference_room|parking_lot].
+ * @param String $type the type of object [admin|user|extension|queue|conference_room|parking_lot].
  * @param String $fpbxId the fpbx id of the object.
  * @param String $cxpanelId the uuid of the cxpanel configuration object.
  *
@@ -1486,7 +1487,7 @@ function cxpanel_managed_item_add($type, $fpbxId, $cxpanelId) {
  *
  * API function to remove a managed item.
  *
- * @param String $type the type of object [user|extension|queue|conference_room|parking_lot].
+ * @param String $type the type of object [admin|user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object.
  *
  */
