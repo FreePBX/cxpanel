@@ -271,7 +271,7 @@ function sync_voicemail_agent() {
 		
 		/*
 		 * Check to see if the configured voicemail agent identifier is bound 
-		 * on the server. If not bind it. If multi_system is disabled
+		 * on the server. If not bind it. If clean_unknown_items is enabled
 		 * remove all other agent identifiers that do not match the 
 		 * configured one.
 		 */
@@ -280,7 +280,7 @@ function sync_voicemail_agent() {
 		foreach($voicemailAgentIdentifiers as $voicemailAgentIdentifier) {
 			if($voicemailAgentIdentifier == $voicemailAgentInformation['identifier']) {
 				$found = true;
-			} else if($serverInformation['multi_system'] != '1') {
+			} else if($serverInformation['clean_unknown_items'] == '1') {
 				$found = true;
 				$logger->debug("Removing voicemail agent identifier:" . $voicemailAgentIdentifier);
 				$pest->delete("asterisk/" . $coreServerId . "/voicemailAgentIdentifiers/" . $voicemailAgentIdentifier);
@@ -334,7 +334,7 @@ function sync_recording_agent() {
  * If no matching PBX server connection is found one is created. If it is found and the
  * CDR database information does not match it is updated.
  * 
- * If multi_system is disabled all other PBX server connections that are found are removed.
+ * If clean_unknown_items is enabled all other PBX server connections that are found are removed.
  * 
  */
 function sync_pbx_server() {
@@ -348,7 +348,7 @@ function sync_pbx_server() {
 		
 		/*
 		 * Check to see if any of the pbx connections match the info stored by the module.
-		 * If not create one. If multi_system is disabled remove all others
+		 * If not create one. If clean_unknown_items is disabled remove all others
 		 * that do not match.
 		 */
 		foreach($pbxConnections as $pbxConnection) {
@@ -359,7 +359,7 @@ function sync_pbx_server() {
 				!isset($foundPBXConnection)) {
 				$logger->debug("Found matching PBX server connection with id:" . $pbxConnection->id);
 				$foundPBXConnection = $pbxConnection;
-			} else if($serverInformation['multi_system'] != '1') {
+			} else if($serverInformation['clean_unknown_items'] == '1') {
 				$logger->debug("Removing PBX server connection with id:" . $pbxConnection->id);
 				$pest->delete("asterisk/" . $coreServerId . "/pbxServers/" . $pbxConnection->id);
 			}

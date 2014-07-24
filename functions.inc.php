@@ -876,13 +876,13 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
  * @param String $apiPassword panel API password used for API authentication
  * @param Boolean $apiUseSSL if true https will be used for communication with the REST API
  * @param Boolean $syncWithUserman if true the User Management module will control the users that are created in the panel
- * @param Boolean $multiSystem if true the module will only manage server items that it knows it created and manages. Used when dealing with multiple asterisk systems in the same core server.
+ * @param Boolean $cleanUnknownItems if true the module will remove all items from the server that are not configured in FreePBX. If false only items that the module created will be removed if they are not configured in FreePBX.
  * 
  */
-function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $multiSystem) {
+function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems) {
 	global $db;
-	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, multi_system = ?");
-	$values = array($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $multiSystem);
+	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, clean_unknown_items = ?");
+	$values = array($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems);
 	$db->execute($prepStatement, $values);
 }
 
@@ -1455,19 +1455,19 @@ function cxpanel_conference_room_get($conferenceRoomId) {
  * API function to check if the object with the give type and cxpanel id are managed by this
  * instance of the module.
  * 
- * NOTE if the multi_system flag is disabled this method will always return true.
+ * NOTE if the clean_unknown_items flag is enabled this method will always return true.
  * 
  * @param String $type the type of object to check for [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object to check for.
- * @return Boolean true if this module instance manages the given item or multi_system is disabled.
+ * @return Boolean true if this module instance manages the given item or clean_unknown_items is enabled.
  *
  */
 function cxpanel_has_managed_item($type, $cxpanelId) {
 	global $db;
 	$serverInformation = cxpanel_server_get();
 	
-	//Check if we are in multi system mode
-	if($serverInformation['multi_system'] != '1') {
+	//Check if clean_unknown_items is enabled
+	if($serverInformation['clean_unknown_items'] == '1') {
 		return true;
 	}
 	

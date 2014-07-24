@@ -25,7 +25,7 @@ if(isset($_REQUEST["cxpanel_settings"])) {
 							trim($_REQUEST["cxpanel_api_password"]),
 							($_REQUEST["cxpanel_api_use_ssl"] == "1"),
 							($_REQUEST["cxpanel_sync_with_userman"] == "1"),
-							($_REQUEST["cxpanel_multi_system"] == "1"));
+							($_REQUEST["cxpanel_clean_unknown_items"] == "1"));
 		
 	cxpanel_voicemail_agent_update(	trim($_REQUEST["cxpanel_voicemail_agent_identifier"]),
 									trim($_REQUEST["cxpanel_voicemail_agent_directory"]),
@@ -579,8 +579,8 @@ if($serverInformation['sync_with_userman'] == "1") {
 		<tr><td colspan="2"><h5>General Settings<hr></h5></td></tr>
 		<?php echo $syncWithUsermanAddition; ?>
 		<tr>
-        	<td><a href="#" class="info">Multi Server Mode:<span>If selected, prevents this module from modifying <?php echo $cxpanelBrandName; ?> Server configuration objects that it does not manage.<br/>Enable if this system is one of multiple PBXs that are part of a single <?php echo $cxpanelBrandName; ?> core server. </span></a></td>
-			<td><input type="checkbox" name="cxpanel_multi_system" value="1" <?php echo ($serverInformation['multi_system'] == '1' ? 'checked' : ''); ?> /></td>
+        	<td><a href="#" class="info">Clean Unknown Items:<span>If selected, all items on the <?php echo $cxpanelBrandName; ?> server that are not configured in FreePBX will be removed.<br/><br/>If not selected, only items created by this instance of the module will be removed if they are no longer configured in FreePBX.<br/><br/>For example, you should disable this option if utilizing a single <?php echo $cxpanelBrandName; ?> core server managing multiple PBXs, as this instance of the module should not remove items that were created by other instances of the module on the other PBXs.</span></a></td>
+			<td><input type="checkbox" name="cxpanel_clean_unknown_items" value="1" <?php echo ($serverInformation['clean_unknown_items'] == '1' ? 'checked' : ''); ?> /></td>
        	</tr>  
 		<tr><td colspan="2"><h5>Server API Connection Settings<hr></h5></td></tr>
 		<tr>
