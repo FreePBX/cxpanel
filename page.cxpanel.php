@@ -73,6 +73,7 @@ if(isset($_REQUEST["cxpanel_debug"])) {
 	$debugAddition .= "<tr><td colspan=\"2\"><b>Phone Numbers</b></td></tr><tr><td colspan=\"2\">" . cxpanel_array_to_table_2d(cxpanel_phone_number_list_all()) . "</td></tr>";
 	$debugAddition .= "<tr><td colspan=\"2\"><b>Queues</b></td></tr><tr><td colspan=\"2\">" . cxpanel_array_to_table_2d(cxpanel_queue_list()) . "</td></tr>";
 	$debugAddition .= "<tr><td colspan=\"2\"><b>Conference Rooms</b></td></tr><tr><td colspan=\"2\">" . cxpanel_array_to_table_2d(cxpanel_conference_room_list()) . "</td></tr>";
+	$debugAddition .= "<tr><td colspan=\"2\"><b>Managed Items</b></td></tr><tr><td colspan=\"2\">" . cxpanel_array_to_table_2d(cxpanel_managed_item_get_all()) . "</td></tr>";
 	
 	//Add the debug flag to the url append
 	$urlAppend .= "&cxpanel_debug";
@@ -579,7 +580,7 @@ if($serverInformation['sync_with_userman'] == "1") {
 		<?php echo $syncWithUsermanAddition; ?>
 		<tr>
         	<td><a href="#" class="info">Multi Server Mode:<span>If selected, prevents this module from modifying <?php echo $cxpanelBrandName; ?> Server configuration objects that it does not manage.<br/>Enable if this system is one of multiple PBXs that are part of a single <?php echo $cxpanelBrandName; ?> core server. </span></a></td>
-			<td><input type="checkbox" name="cxpanel_multi_system" value="1" <?php echo ($serverInformation['"cxpanel_multi_system"'] == '1' ? 'checked' : ''); ?> /></td>
+			<td><input type="checkbox" name="cxpanel_multi_system" value="1" <?php echo ($serverInformation['multi_system'] == '1' ? 'checked' : ''); ?> /></td>
        	</tr>  
 		<tr><td colspan="2"><h5>Server API Connection Settings<hr></h5></td></tr>
 		<tr>

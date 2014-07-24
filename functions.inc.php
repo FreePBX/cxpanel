@@ -1455,30 +1455,74 @@ function cxpanel_conference_room_get($conferenceRoomId) {
  * API function to check if the object with the give type and cxpanel id are managed by this
  * instance of the module.
  * 
- * @param String $type the type of object to check for [admin|user|extension|queue|conference_room|parking_lot].
+ * NOTE if the multi_system flag is disabled this method will always return true.
+ * 
+ * @param String $type the type of object to check for [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object to check for.
- * @return true if this module instance manages the given item.
+ * @return Boolean true if this module instance manages the given item or multi_system is disabled.
  *
  */
 function cxpanel_has_managed_item($type, $cxpanelId) {
 	global $db;
+	$serverInformation = cxpanel_server_get();
+	
+	//Check if we are in multi system mode
+	if($serverInformation['multi_system'] != '1') {
+		return true;
+	}
+	
 	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
 	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
 	return !DB::IsError($results) && !empty($results);
 }
 
 /**
+ * 
+ * API function to get all managed items
+ * 
+ */
+function cxpanel_managed_item_get_all() {
+	global $db;
+	$query = "SELECT * FROM cxpanel_managed_items";
+	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	if((DB::IsError($results)) || (empty($results))) {
+		return array();
+	} else {
+		return $results;
+	}
+}
+
+/**
+ * 
+ * API function to get a managed item
+ * 
+ * @param String $type the type of object to get [admin|user|userman_user|extension|queue|conference_room|parking_lot].
+ * @param String $cxpanelId the cxpanle id to lookup the item with
+ * 
+ */
+function cxpanel_managed_item_get($type, $cxpanelId) {
+	global $db;
+	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
+	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	if((DB::IsError($results)) || (empty($results))) {
+		return array();
+	} else {
+		return $results;
+	}
+}
+
+/**
  *
  * API function to add a managed item.
  *
- * @param String $type the type of object [admin|user|extension|queue|conference_room|parking_lot].
+ * @param String $type the type of object [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $fpbxId the fpbx id of the object.
  * @param String $cxpanelId the uuid of the cxpanel configuration object.
  *
  */
 function cxpanel_managed_item_add($type, $fpbxId, $cxpanelId) {
 	global $db;
-	$prepStatement = $db->prepare("INSERT INTO cxpanel_managed_items (type, fbpx_id, cxpanel_id) VALUES (?, ?, ?)");
+	$prepStatement = $db->prepare("INSERT INTO cxpanel_managed_items (type, fpbx_id, cxpanel_id) VALUES (?, ?, ?)");
 	$values = array($type, $fpbxId, $cxpanelId);
 	$db->execute($prepStatement, $values);
 }
@@ -1487,7 +1531,7 @@ function cxpanel_managed_item_add($type, $fpbxId, $cxpanelId) {
  *
  * API function to remove a managed item.
  *
- * @param String $type the type of object [admin|user|extension|queue|conference_room|parking_lot].
+ * @param String $type the type of object [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object.
  *
  */
@@ -1495,6 +1539,65 @@ function cxpanel_managed_item_del($type, $cxpanelId) {
 	global $db;
 	$query = "DELETE FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
 	$db->query($query);
+}
+
+/**
+ * 
+ * API function to update the cxpanel id for a managed item.
+ * 
+ * If the managed item does not exist the entry is created.
+ * 
+ * @param unknown $type the type of object to update [admin|user|userman_user|extension|queue|conference_room|parking_lot].
+ * @param unknown $fpbxId the fpbx id of the object to update.
+ * @param unknown $cxpanelId the uuid to update with.
+ */
+function cxpanel_managed_item_update($type, $fpbxId, $cxpanelId) {
+	global $db;
+	
+	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND fpbx_id = '$fpbxId'";
+	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	
+	if(DB::IsError($results) || empty($results)){
+		cxpanel_managed_item_add($type, $fpbxId, $cxpanelId);
+	} else {
+		$query = "UPDATE cxpanel_managed_items SET cxpanel_id = '$cxpanelId' WHERE type = '$type' AND fpbx_id = '$fpbxId'";
+		$db->query($query);
+	}
+}
+
+/**
+ * 
+ * API function that generates a uuid for a managed object.
+ * 
+ * If this is a new object a new uuid will be generated
+ * else the one from the existing record will be returned.
+ * 
+ * If a new uuid is generated a new entry will be made into cxpanel_managed_items.
+ * 
+ * @param String $type the type of object [admin|user|userman_user|extension|queue|conference_room|parking_lot].
+ * @param String $fpbxId the FreePBX id of the object
+ * @return String the uuid for the server end
+ */
+function cxpanel_gen_managed_uuid($type, $fpbxId) {
+	global $db;
+	
+	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND fpbx_id = '$fpbxId'";
+	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	
+	/*
+	 * If there was no match return a new UUID
+	 * else return the UUID in the record
+	 */
+	if(DB::IsError($results) || empty($results)){
+		$uuid = cxpanel_gen_uuid();
+		
+		//Create an entry into cxpanel_managed_items
+		cxpanel_managed_item_add($type, $fpbxId, $uuid);
+		
+		return $uuid;
+	}
+		
+	return $results[0]['cxpanel_id'];
 }
 
 /**
