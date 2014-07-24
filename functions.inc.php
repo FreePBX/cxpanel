@@ -47,6 +47,7 @@ if(function_exists('setup_userman')){
 	$userman = setup_userman();
 	$userman->registerHook('addUser','cxpanel_userman_add');
 	$userman->registerHook('updateUser','cxpanel_userman_update');
+	$userman->registerHook('delUser','cxpanel_userman_delete');
 }
 
 /**
@@ -408,7 +409,20 @@ function cxpanel_userman_update($id, $display, $data) {
 	$passwordDirty = !empty($data['password']) ? '1' : '0';
 	$userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', $passwordDirty);
 
-	//Flag FreePBX for reload if the values have changed
+	//Flag FreePBX for reload
+	needreload();
+}
+
+/**
+ * Called when a FreePBX user is deleted from the system.
+ *
+ * @param Int $id The User Manager ID
+ * @param String $display The page in FreePBX that initiated this function
+ * @param Array $data an array of all relevant data returned from User Manager
+ */
+function cxpanel_userman_delete($id, $display, $data) {
+
+	//Flag FreePBX for reload
 	needreload();
 }
 
