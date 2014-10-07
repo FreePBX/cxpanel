@@ -43,17 +43,24 @@ $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cx
 $cxpanelUserPasswordMask = "********";
 
 //Setup userman hooks
-if (!function_exists('setup_userman')) {
+if(!function_exists('setup_userman')){
 	global $amp_conf;
-	if (file_exists($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php')) {
+	$um = module_getinfo('userman', MODULE_STATUS_ENABLED);
+	if(file_exists($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php') && (isset($um['userman']['status']) && $um['userman']['status'] === MODULE_STATUS_ENABLED)) {
 		include_once($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php');
+	} else {
+		//dont do anymore work, we need userman and it needs to be enabled
+		return false;
 	}
 }
 
-if(function_exists('setup_userman')){
+try {
 	$userman = setup_userman();
 	$userman->registerHook('addUser','cxpanel_userman_add');
 	$userman->registerHook('updateUser','cxpanel_userman_update');
+} catch(\Exception $e) {
+	//dont do anymore work, we need userman and it needs to be enabled
+	return false;
 }
 
 /**
