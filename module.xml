@@ -26,7 +26,4 @@
 		<version>2.11</version>
 	</supported>
 	<repo>standard</repo>
-	<depends>
-		<module>userman ge 2.11.6</module>
-	</depends>
 </module>
