@@ -50,7 +50,6 @@ if(!function_exists('setup_userman')){
 		include_once($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php');
 	} else {
 		//dont do anymore work, we need userman and it needs to be enabled
-		return false;
 	}
 }
 
@@ -60,7 +59,6 @@ try {
 	$userman->registerHook('updateUser','cxpanel_userman_update');
 } catch(\Exception $e) {
 	//dont do anymore work, we need userman and it needs to be enabled
-	return false;
 }
 
 /**
