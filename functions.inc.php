@@ -57,7 +57,7 @@ if(function_exists('setup_userman')) {
 	try {
 		$userman = setup_userman();
 		$userman->registerHook('addUser','cxpanel_userman_add');
-		$userman->registerHook('updateUser','cxpanel_userman_update');
+		//$userman->registerHook('updateUser','cxpanel_userman_update');
 	} catch(\Exception $e) {
 		//dont do anymore work, we need userman and it needs to be enabled
 		return;
