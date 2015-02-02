@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>3.1.9</version>
+	<version>4.1.2</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -12,11 +12,13 @@
 		<cxpanel_menu category="reports" requires_auth="false" target="_blank" access="all">iSymphonyV3 Panel</cxpanel_menu>
 	</menuitems>
 	<depends>
-		<version>>=2.10.0</version>
+		<version>12.0</version>
 	</depends>
 	<location>junk</location>
 	<md5sum>junk</md5sum>
 	<changelog>
+		*4.1.2* Use branding file
+		*4.1.1* Support password reset and email ability through userman
 		*3.1.9* Fix userman hook
 	</changelog>
 	<info>http://www.getisymphony.com</info>
@@ -24,7 +26,13 @@
 	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
-		<version>2.11</version>
+		<version>12.0</version>
 	</supported>
+	<hooks>
+		<userman namespace="FreePBX\modules" class="Userman">
+			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="updateUser">usermanUpdateUser</method>
+			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="sendWelcomeEmail">usermanSendEmail</method>
+		</userman>
+	</hooks>
 	<repo>standard</repo>
 </module>
