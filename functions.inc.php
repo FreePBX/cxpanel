@@ -57,7 +57,6 @@ if(function_exists('setup_userman')) {
 	try {
 		$userman = setup_userman();
 		$userman->registerHook('addUser','cxpanel_userman_add');
-		//$userman->registerHook('updateUser','cxpanel_userman_update');
 	} catch(\Exception $e) {
 		//dont do anymore work, we need userman and it needs to be enabled
 		return;
@@ -405,29 +404,6 @@ function cxpanel_userman_add($id, $display, $data) {
 	//Flag FreePBX for reload
 	needreload();
 }
-
-/**
- * Called when a FreePBX user is updated in the system.
- *
- * @param Int $id The User Manager ID
- * @param String $display The page in FreePBX that initiated this function
- * @param Array $data an array of all relevant data returned from User Manager
- */
-function cxpanel_userman_update($id, $display, $data) {
-	$userman = setup_userman();
-
-	//Set the add flag on the user
-	$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
-	$userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
-
-	//If a new password was set mark the user's password as dirty
-	$passwordDirty = !empty($data['password']) ? '1' : '0';
-	$userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', $passwordDirty);
-
-	//Flag FreePBX for reload if the values have changed
-	needreload();
-}
-
 /**
  *
  * Function used to hook the extension/user page in FreePBX

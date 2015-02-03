@@ -36,12 +36,15 @@ class Cxpanel implements \BMO {
 	 * @param {array} $data    Array of data to be able to use
 	 */
 	public function usermanUpdateUser($id, $display, $data) {
-		if(!function_exists('cxpanel_get_config')) {
-			include(__DIR__.'/functions.inc.php');
+		if(isset($_REQUEST['cxpanel_add_user'])) {
+			$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
+			$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
+			$isUser = $add;
+		} else {
+			$isUser = $this->userman->getModuleSettingByID($id, 'cxpanel', 'add');
 		}
-		cxpanel_userman_update($id, $display, $data);
-		$isUser = $this->userman->getModuleSettingByID($id, 'cxpanel', 'add');
-		if($isUser) {
+		if($isUser && (!empty($data['password']) || ($data['prevUsername'] != $data['username']))) {
+			$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
 			exec("php " . $amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/modify.php > /dev/null 2>/dev/null &");
 		}
 	}
