@@ -20,7 +20,7 @@ msgstr ""
 
 #: cxpanel.i18n.php:4
 msgid "Admin"
-msgstr ""
+msgstr "管理员"
 
 #: cxpanel.i18n.php:5
 msgid ""
