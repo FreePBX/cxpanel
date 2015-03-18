@@ -12,6 +12,7 @@
 		<cxpanel_menu category="reports" requires_auth="false" target="_blank" access="all">iSymphonyV3 Panel</cxpanel_menu>
 	</menuitems>
 	<depends>
+		<module>manager</module>
 		<version>12.0</version>
 	</depends>
 	<location>junk</location>
