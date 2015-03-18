@@ -11,11 +11,6 @@
 global $db, $amp_conf, $active_modules;
 
 //Check if the manager module is installed. If not stop installation.
-$mod_keys = array_keys($active_modules);
-if(!in_array("manager", $mod_keys)) {
-	echo 'Failed to install due to the following missing required module(s):<br /><br />manager<br /><br />';
-	return;
-}
 
 //Includes
 require_once(dirname(__FILE__)."/lib/table.class.php");
