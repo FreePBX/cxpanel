@@ -115,7 +115,7 @@ class Cxpanel implements \BMO {
 					*/
 					$serverUsers = $pest->get("core/" . $coreServerId . "/users");
 					foreach($serverUsers as $serverUser) {
-						if($serverUser->username == $data['prevUsername']) {
+						if((string)$serverUser->username == $data['prevUsername']) {
 
 							/*
 							* Send an event to update the password on the user.
@@ -136,6 +136,7 @@ class Cxpanel implements \BMO {
 					}
 
 				} catch (\Exception $e) {
+					dbug($e->getMessage());
 					//The server may be down, or the configured core server is not available
 				}
 			}
