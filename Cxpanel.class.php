@@ -125,7 +125,9 @@ class Cxpanel implements \BMO {
 							* will be hashed by the server during the update.
 							*/
 							$serverUser->username = $data['username'];
-							$serverUser->password = $data['password'];
+							if(!empty($data['password'])) {
+								$serverUser->password = $data['password'];
+							}
 							$pest->put("core/" . $coreServerId . "/users/" . $serverUser->id, $serverUser);
 
 							//The password is no longer dirty
