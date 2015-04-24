@@ -19,12 +19,6 @@ if (!@include_once(getenv('FREEPBX_CONF') ? getenv('FREEPBX_CONF') : '/etc/freep
 
 if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed');}
 
-//Flag used to determine if other pbx connections should be removed
-$cleanPBXServerConnections = true;
-
-//Flag used to determine if other voicemail agent identifiers should be removed
-$cleanVoicemailAgentIdentifiers = true;
-
 //Multiplier used to determine the execution timeout based on the number of extensions
 $executionTimeoutMultiplier = 3;
 
@@ -256,7 +250,7 @@ function sync_core_server() {
  * 
  */
 function sync_voicemail_agent() {
-	global $coreServerId, $logger, $pest, $voicemailAgentInformation, $cleanVoicemailAgentIdentifiers;
+	global $coreServerId, $logger, $pest, $voicemailAgentInformation, $serverInformation;
 	
 	$logger->debug("Syncing voicemail agent");
 	
@@ -277,8 +271,8 @@ function sync_voicemail_agent() {
 		
 		/*
 		 * Check to see if the configured voicemail agent identifier is bound 
-		 * on the server. If not bind it. If $cleanVoicemailAgentIdentifiers
-		 * is true remove all other agent identifiers that do not match the 
+		 * on the server. If not bind it. If clean_unknown_items is enabled
+		 * remove all other agent identifiers that do not match the 
 		 * configured one.
 		 */
 		$found = false;
@@ -286,7 +280,8 @@ function sync_voicemail_agent() {
 		foreach($voicemailAgentIdentifiers as $voicemailAgentIdentifier) {
 			if($voicemailAgentIdentifier == $voicemailAgentInformation['identifier']) {
 				$found = true;
-			} else if($cleanVoicemailAgentIdentifiers) {
+			} else if($serverInformation['clean_unknown_items'] == '1') {
+				$found = true;
 				$logger->debug("Removing voicemail agent identifier:" . $voicemailAgentIdentifier);
 				$pest->delete("asterisk/" . $coreServerId . "/voicemailAgentIdentifiers/" . $voicemailAgentIdentifier);
 			}
@@ -339,11 +334,11 @@ function sync_recording_agent() {
  * If no matching PBX server connection is found one is created. If it is found and the
  * CDR database information does not match it is updated.
  * 
- * If $cleanPBXServerConnections is true all other PBX server connections that are found are removed.
+ * If clean_unknown_items is enabled all other PBX server connections that are found are removed.
  * 
  */
 function sync_pbx_server() {
-	global $coreServerId, $logger, $pest, $serverInformation, $amp_conf, $cleanPBXServerConnections, $recordingAgentInformation;
+	global $coreServerId, $logger, $pest, $serverInformation, $amp_conf, $recordingAgentInformation;
 	
 	$logger->debug("Checking PBX server connection");
 	
@@ -353,7 +348,7 @@ function sync_pbx_server() {
 		
 		/*
 		 * Check to see if any of the pbx connections match the info stored by the module.
-		 * If not create one. If $cleanPBXServerConnections is true remove all others
+		 * If not create one. If clean_unknown_items is disabled remove all others
 		 * that do not match.
 		 */
 		foreach($pbxConnections as $pbxConnection) {
@@ -364,7 +359,7 @@ function sync_pbx_server() {
 				!isset($foundPBXConnection)) {
 				$logger->debug("Found matching PBX server connection with id:" . $pbxConnection->id);
 				$foundPBXConnection = $pbxConnection;
-			} else if($cleanPBXServerConnections) {
+			} else if($serverInformation['clean_unknown_items'] == '1') {
 				$logger->debug("Removing PBX server connection with id:" . $pbxConnection->id);
 				$pest->delete("asterisk/" . $coreServerId . "/pbxServers/" . $pbxConnection->id);
 			}
@@ -374,20 +369,20 @@ function sync_pbx_server() {
 		 * If no pbx server connection was found that matches the database
 		 * create a new one else verify the cdr info is correct if not update it.
 		 */
+		$displayName = "FreePBX-" . $serverInformation['asterisk_host'];
 		if(!isset($foundPBXConnection)) {
 			$logger->debug("No matching PBX server connection found. Creating");
-			$pbxConnection = new cxpanel_pbx_server("FreePBX", $serverInformation['asterisk_host'], "5038", "cxpanel", "cxmanager*con", 
+			$pbxConnection = new cxpanel_pbx_server($displayName, $serverInformation['asterisk_host'], "5038", "cxpanel", "cxmanager*con", 
 													$serverInformation['asterisk_host'], "3306", $amp_conf['AMPDBUSER'], 
 													$amp_conf['AMPDBPASS'], true, $recordingAgentInformation['identifier']);
 			$pest->post("asterisk/" . $coreServerId . "/pbxServers", $pbxConnection);
-		} else if(	$foundPBXConnection->displayName != "FreePBX" ||
-					$foundPBXConnection->cdrHost != $serverInformation['asterisk_host'] ||
+		} else if(	$foundPBXConnection->cdrHost != $serverInformation['asterisk_host'] ||
 					$foundPBXConnection->cdrPort != "3306" ||
 					$foundPBXConnection->cdrUsername != $amp_conf['AMPDBUSER'] ||
 					$foundPBXConnection->cdrPassword != $amp_conf['AMPDBPASS'] ||
 					$foundPBXConnection->recordingAgentIdentifier != $recordingAgentInformation['identifier']) {
 			$logger->debug("PBX server info does not match. Updating");
-			$foundPBXConnection->displayName = "FreePBX";
+			$foundPBXConnection->displayName = $displayName;
 			$foundPBXConnection->cdrHost = $serverInformation['asterisk_host'];
 			$foundPBXConnection->cdrPort = "3306";
 			$foundPBXConnection->cdrUsername = $amp_conf['AMPDBUSER'];
@@ -424,7 +419,7 @@ function sync_administrators() {
 		//Grab the administrators
 		$administrators = cxpanel_get_core_ampusers_list();
 		
-		//Filter list to exclude administrators that do not have acess to the cxpanel module while creating an associative array for quick indexing
+		//Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
 		$administratorsAccoc = array();
 		foreach($administrators as $admin) {
 			if($admin["sections"] == "*" || strstr($admin["sections"], "cxpanel") !== false) {
@@ -432,10 +427,20 @@ function sync_administrators() {
 			}
 		}
 
-		//Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module
+		/*
+		 * Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module.
+		 * Only remove items that this module manages.
+		 */
 		foreach($serverAdminAssoc as $username => $admin) {
-			if(!array_key_exists($username, $administratorsAccoc)) {
+			if(	!array_key_exists($username, $administratorsAccoc) && 
+				cxpanel_has_managed_item('admin', $admin->id)) {
+				
 				$logger->debug("Removing administrator: " . $username);
+				
+				//Remove the managed entry
+				cxpanel_managed_item_del('admin', $admin->id);
+				
+				//Remove the object from the server
 				try {
 					$pest->delete("server/administrators/" . $admin->id);
 					unset($serverAdminAssoc[$username]);
@@ -450,9 +455,16 @@ function sync_administrators() {
 		
 			//Add administrator
 			if(!array_key_exists($admin['username'], $serverAdminAssoc)) {
+				
+				$logger->debug("Adding administrator: " . $admin['username']);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('admin', $admin['username']);
+				
+				//Add object from server
 				try {
-					$logger->debug("Adding administrator: " . $admin['username']);
 					$adminObj = new cxpanel_administrator($admin['username'], $admin['password_sha1'], true);
+					$adminObj->id = $uuid;
 					$pest->post("server/administrators/noHash", $adminObj);
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add administrator:" . $admin['username'], $e);
@@ -460,10 +472,18 @@ function sync_administrators() {
 		
 			//Update administrator
 			} else {
+				
 				$serverAdmin = $serverAdminAssoc[$admin['username']];
+				
+				//Update the managed item uuid 
+				cxpanel_managed_item_update('admin', $admin['username'], $serverAdmin->id);
+			
+				//Update the administrator if needed
 				if($serverAdmin->password != strtolower($admin['password_sha1'])) {
+					
+					$logger->debug("Updating administrator: " . $admin['username']);
+					
 					try {
-						$logger->debug("Updating administrator: " . $admin['username']);
 						$serverAdmin->password = $admin['password_sha1'];
 						$pest->put("server/administrators/noHash/" . $serverAdmin->id, $serverAdmin);
 					} catch (Exception $e) {
@@ -506,10 +526,20 @@ function sync_extensions() {
 			}
 		}
 		
-		//Remove all extensions from the server that are not stored in the database
+		/*
+		 * Remove all extensions from the server that are not stored in the database
+		 * Only remove items that this module manages.
+		 */
 		foreach($serverExtensionAssoc as $extensionNumber => $extension) {
-			if(!array_key_exists($extensionNumber, $extensions)) {
+			if(	!array_key_exists($extensionNumber, $extensions) && 
+				cxpanel_has_managed_item('extension', $extension->id)) {
+				
 				$logger->debug("Removing extension: " . $extensionNumber);
+
+				//Remove the managed entry
+				cxpanel_managed_item_del('extension', $extension->id);
+				
+				//Remove the extension from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/extensions/" . $extension->id);
 					unset($serverExtensionAssoc[$extensionNumber]);
@@ -532,14 +562,20 @@ function sync_extensions() {
 			
 			//Add extension
 			if(!array_key_exists($extensionNumber, $serverExtensionAssoc)) {
+				
+				$logger->debug("Adding extension: " . $extensionNumber);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('extension', $extensionNumber);
+				
+				//Add the extension to the server
 				try {
-					$logger->debug("Adding extension: " . $extensionNumber);
 					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer, 
 															$peer, "", $displayName, 
 															$agentLoginLocation,$agentLoginInterface, 
 															0, false, "", "", 0, "default", $extensionNumber);
+					$extensionObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/extensions/", $extensionObj);
-					
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add extension:" . $extensionNumber, $e);
 				}
@@ -547,6 +583,11 @@ function sync_extensions() {
 			//Update extension	
 			} else {
 				$serverExtension = $serverExtensionAssoc[$extensionNumber];
+				
+				//Update the managed item uuid
+				cxpanel_managed_item_update('extension', $extensionNumber, $serverExtension->id);
+				
+				//Update the extension item if needed
 				if(	$serverExtension->displayName != $displayName ||
 					$serverExtension->peer != $peer ||
 					$serverExtension->autoAnswer != $autoAnswer ||
@@ -611,10 +652,22 @@ function sync_users() {
 			}
 		}
 				
-		//Remove all users from the server that are not stored in the database
+		/*
+		 * Remove all users from the server that are not stored in the database.
+		 * Only remove users that are managed by this module.
+		 * 
+		 * Removes all known users managed by userman as well
+		 */
 		foreach($serverUserAssoc as $username => $user) {
-			if(!array_key_exists($username, $users)) {
+			if((!array_key_exists($username, $users) && 
+				cxpanel_has_managed_item('user', $user->id))) {
+				
 				$logger->debug("Removing user: " . $username);
+				
+				//Remove the managed entry
+				cxpanel_managed_item_del('user', $user->id);
+				
+				//Remove the user from the server
 				try {
 					$pest->delete("core/" . $coreServerId . "/users/" . $user->id);
 					unset($serverUserAssoc[$username]);
@@ -632,9 +685,16 @@ function sync_users() {
 			
 			//Add user
 			if(!array_key_exists($user['user_id'], $serverUserAssoc)) {
+				
+				$logger->debug("Adding user: " . $user['user_id']);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('user', $user['user_id']);
+				
+				//Add the user to the server
 				try {
-					$logger->debug("Adding user: " . $user['user_id']);
 					$serverUser = new cxpanel_user(false, $user['user_id'], $user['hashed_password'], true, $full);
+					$serverUser->id = $uuid;
 					$pest->post("core/" . $coreServerId . "/users/noHash", $serverUser);
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add user:" . $user['user_id'], $e);
@@ -643,6 +703,9 @@ function sync_users() {
 			//Update user
 			} else {
 				$serverUser = $serverUserAssoc[$user['user_id']];
+				
+				//Update the managed item uuid
+				cxpanel_managed_item_update('user', $user['user_id'], $serverUser->id);
 				
 				//Check if the user password needs updating
 				$passwordUpdated = false;
@@ -718,7 +781,8 @@ function sync_users_userman() {
 			if($add == '1') {
 
 				//Create a panel user entry for the freePBX user
-				$fauxUser['user_id'] = $freePBXUser['username'];
+				$fauxUser['user_id'] = $freePBXUser['id'];
+				$fauxUser['username'] = $freePBXUser['username'];
 				$fauxUser['hashed_password'] = $freePBXUser['password'];
 				$fauxUser['full'] = '1';
 
@@ -742,15 +806,26 @@ function sync_users_userman() {
 			}
 		}
 
-		//Remove all users from the server that are not stored in the database
-		foreach($serverUserAssoc as $username => $user) {
-			if(!array_key_exists($username, $users)) {
-				$logger->debug("Removing user: " . $username);
+		/*
+		 * Remove all users from the server that are not stored in the database.
+		 * Only remove items that this module manages.
+		 * 
+		 * Removes all known users not managed by userman as well
+		 */
+		foreach($serverUserAssoc as $userid => $user) {
+			if((!array_key_exists($userid, $users) && 
+				cxpanel_has_managed_item('user', $user->id))) {
+			
+				$logger->debug("Removing user: " . $user->username);
+				
+				//Remove the managed entry
+				cxpanel_managed_item_del('user', $user->id);
+
 				try {
 					$pest->delete("core/" . $coreServerId . "/users/" . $user->id);
-					unset($serverUserAssoc[$username]);
+					unset($serverUserAssoc[$userid]);
 				} catch (Exception $e) {
-					$logger->error_exception("Failed to remove user:" . $username, $e);
+					$logger->error_exception("Failed to remove user:" . $user->username, $e);
 				}
 			}
 		}
@@ -762,19 +837,29 @@ function sync_users_userman() {
 			$full = ($user['full'] == "1");
 				
 			//Add user
-			if(!array_key_exists($user['user_id'], $serverUserAssoc)) {
+			if(!array_key_exists($user['username'], $serverUserAssoc)) {
+				
+				$logger->debug("Adding user: " . $user['username']);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('user', $user['username']);
+				
+				//Add user to the server
 				try {
-					$logger->debug("Adding user: " . $user['user_id']);
-					$serverUser = new cxpanel_user(false, $user['user_id'], $user['hashed_password'], true, $full);
+					$serverUser = new cxpanel_user(false, $user['username'], $user['hashed_password'], true, $full);
+					$serverUser->id = $uuid;
 					$pest->post("core/" . $coreServerId . "/users/noHash", $serverUser);
 				} catch (Exception $e) {
-					$logger->error_exception("Failed to add user:" . $user['user_id'], $e);
+					$logger->error_exception("Failed to add user:" . $user['username'], $e);
 				}
 
-				//Update user
+			//Update user
 			} else {
-				$serverUser = $serverUserAssoc[$user['user_id']];
-
+				$serverUser = $serverUserAssoc[$user['username']];
+				
+				//Update the managed item uuid
+				cxpanel_managed_item_update('user', $user['username'], $serverUser->id);
+				
 				//Check if the user password needs updating
 				$passwordUpdated = false;
 				if(	$serverUser->password != strtolower($user['hashed_password']) &&
@@ -782,15 +867,16 @@ function sync_users_userman() {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
-
-				//If the user password or the full flag on the user has changed update the user
-				if($passwordUpdated || ($full != $serverUser->full)) {
+				
+				//Check if the user needs to be updated
+				if($passwordUpdated || ($full != $serverUser->full) || ($serverUser->username != $user['username'])) {
 					try {
-						$logger->debug("Updating user: " . $user['user_id']);
+						$logger->debug("Updating user: " . $user['username']);
 						$serverUser->full = $full;
+						$serverUser->username = $user['username'];
 						$pest->put("core/" . $coreServerId . "/users/noHash/" . $serverUser->id, $serverUser);
 					} catch (Exception $e) {
-						$logger->error_exception("Failed to update user:" . $user['user_id'], $e);
+						$logger->error_exception("Failed to update user:" . $user['username'], $e);
 					}
 				}
 			}
@@ -1120,10 +1206,16 @@ function sync_extension_users() {
 		//Grab the extension list from the server
 		$serverExtensions = $pest->get("asterisk/" . $coreServerId . "/extensions");
 			
-		//Create associative array of the server extension numbers to the extension objects for quick indexing
+		/*
+		 * Create associative array of the server extension numbers to the extension objects for quick indexing.
+		 * 
+		 * Only add extensions that this module manages.
+		 */
 		$serverExtensionAssoc = array();
 		foreach($serverExtensions as $serverExtension) {
-			$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
+			if(cxpanel_has_managed_item('extension', $serverExtension->id)) {
+				$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
+			}
 		}
 		
 		//Remove users from extensions that are currently not bound in the module
@@ -1233,10 +1325,16 @@ function sync_extension_users_userman() {
 		//Grab the extension list from the server
 		$serverExtensions = $pest->get("asterisk/" . $coreServerId . "/extensions");
 			
-		//Create associative array of the server extension numbers to the extension objects for quick indexing
+		/*
+		 * Create associative array of the server extension numbers to the extension objects for quick indexing.
+		 * 
+		 * Only add extensions that this module manages
+		 */
 		$serverExtensionAssoc = array();
 		foreach($serverExtensions as $serverExtension) {
-			$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
+			if(cxpanel_has_managed_item('extension', $serverExtension->id)) {
+				$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
+			}
 		}
 		
 		//Remove users from extensions that are currently not bound in the module
@@ -1353,8 +1451,15 @@ function sync_queues() {
 		
 		//Remove all queues from the server that are not stored in the database
 		foreach($serverQueueAssoc as $queueId => $queue) {
-			if(!array_key_exists($queueId, $queues)) {
+			if(	!array_key_exists($queueId, $queues) && 
+				cxpanel_has_managed_item('queue', $queue->id)) {
+				
 				$logger->debug("Removing queue: " . $queueId);
+				
+				//Remove the managed entry
+				cxpanel_managed_item_del('queue', $queue->id);
+				
+				//Remove the queue from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/queues/" . $queue->id);
 					unset($serverQueueAssoc[$queueId]);
@@ -1369,9 +1474,16 @@ function sync_queues() {
 		
 			//Add queue
 			if(!array_key_exists($queue['queue_id'], $serverQueueAssoc)) {
+				
+				$logger->debug("Adding queue: " . $queue['queue_id']);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('queue', $queue['queue_id']);
+				
+				//Add the queue to the server
 				try {
-					$logger->debug("Adding queue: " . $queue['queue_id']);
 					$queueObj = new cxpanel_queue(false, $queue['display_name'], $queue['queue_id'], $queue['queue_id'], "from-internal", true);
+					$queueObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/queues/", $queueObj);		
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add queue:" . $queue['queue_id'], $e);
@@ -1380,6 +1492,11 @@ function sync_queues() {
 			//Update queue	
 			} else {
 				$serverQueue = $serverQueueAssoc[$queue['queue_id']];
+				
+				//Update the managed item uuid
+				cxpanel_managed_item_update('queue', $queue['queue_id'], $serverQueue->id);
+				
+				//Update the queue if needed
 				if(	$serverQueue->displayName != $queue['display_name'] ||
 					$serverQueue->destinationExtension != $queue['queue_id'] ||
 					$serverQueue->destinationContext != "from-internal" ||
@@ -1433,8 +1550,15 @@ function sync_conference_rooms() {
 
 		//Remove all conference rooms from the server that are not stored in the database
 		foreach($serverRoomAssoc as $roomId => $room) {
-			if(!array_key_exists($roomId, $rooms)) {
+			if(	!array_key_exists($roomId, $rooms) && 
+				cxpanel_has_managed_item('conference_room', $room->id)) {
+				
 				$logger->debug("Removing conference room: " . $roomId);
+				
+				//Remove the managed entry
+				cxpanel_managed_item_del('conference_room', $room->id);
+				
+				//Remove the conference room from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/conferenceRooms/" . $room->id);
 					unset($serverRoomAssoc[$roomId]);
@@ -1449,9 +1573,16 @@ function sync_conference_rooms() {
 
 			//Add conference room
 			if(!array_key_exists($room['conference_room_id'], $serverRoomAssoc)) {
+				
+				$logger->debug("Adding conference room: " . $room['conference_room_id']);
+				
+				//Generate uuid and a managed item entry
+				$uuid = cxpanel_gen_managed_uuid('conference_room', $room['conference_room_id']);
+				
+				//Add the conference room to the server
 				try {
-					$logger->debug("Adding conference room: " . $room['conference_room_id']);
 					$roomObj = new cxpanel_conference_room(false, $room['display_name'], $room['conference_room_id'], $room['conference_room_id'], "from-internal");
+					$roomObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/conferenceRooms/", $roomObj);
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add conference room:" . $room['conference_room_id'], $e);
@@ -1460,6 +1591,11 @@ function sync_conference_rooms() {
 			//Update conference room
 			} else {
 				$serverRoom = $serverRoomAssoc[$room['conference_room_id']];
+				
+				//Update the managed item uuid
+				cxpanel_managed_item_update('conference_room', $room['conference_room_id'], $serverRoom->id);
+				
+				//Update the conference room if needed
 				if(	$serverRoom->name != $room['display_name'] ||
 					$serverRoom->destinationExtension != $room['conference_room_id'] ||
 					$serverRoom->destinationContext != "from-internal") {
