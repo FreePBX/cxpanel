@@ -175,5 +175,5 @@ function cxpanel_gen_uuid() {
  * @return boolean true if $source starts with $prefix
  */
 function cxpanel_startswith($source, $prefix) {
-	return strncmp($source, $prefix, strlen($prefix)) == 0;
+	return strncmp($source, $prefix, strlen($prefix)) === 0;
 }
