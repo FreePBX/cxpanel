@@ -1461,9 +1461,10 @@ function cxpanel_has_managed_item($type, $cxpanelId) {
 		return true;
 	}
 	
-	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
-	return !DB::IsError($results) && !empty($results);
+	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND cxpanel_id = ?";
+	$values = array($type, $cxpanelId);
+	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
+	return !$db->IsError($results) && !empty($results);
 }
 
 /**
@@ -1492,9 +1493,12 @@ function cxpanel_managed_item_get_all() {
  */
 function cxpanel_managed_item_get($type, $cxpanelId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
-	if((DB::IsError($results)) || (empty($results))) {
+
+	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND cxpanel_id = ?";
+	$values = array($type, $cxpanelId);
+	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
+
+	if($db->IsError($results) || (empty($results))) {
 		return array();
 	} else {
 		return $results;
@@ -1527,8 +1531,9 @@ function cxpanel_managed_item_add($type, $fpbxId, $cxpanelId) {
  */
 function cxpanel_managed_item_del($type, $cxpanelId) {
 	global $db;
-	$query = "DELETE FROM cxpanel_managed_items WHERE type = '$type' AND cxpanel_id = '$cxpanelId'";
-	$db->query($query);
+	$prepStatement = $db->prepare("DELETE FROM cxpanel_managed_items WHERE type = ? AND cxpanel_id = ?");
+	$values = array($type, $cxpanelId);
+	$db->execute($prepStatement, $values);
 }
 
 /**
@@ -1544,14 +1549,16 @@ function cxpanel_managed_item_del($type, $cxpanelId) {
 function cxpanel_managed_item_update($type, $fpbxId, $cxpanelId) {
 	global $db;
 	
-	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND fpbx_id = '$fpbxId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND fpbx_id = ?";
+	$values = array($type, $fpbxId);
+	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
 	
-	if(DB::IsError($results) || empty($results)){
+	if($db->IsError($results) || empty($results)){
 		cxpanel_managed_item_add($type, $fpbxId, $cxpanelId);
 	} else {
-		$query = "UPDATE cxpanel_managed_items SET cxpanel_id = '$cxpanelId' WHERE type = '$type' AND fpbx_id = '$fpbxId'";
-		$db->query($query);
+		$prepStatement = $db->prepare("UPDATE cxpanel_managed_items SET cxpanel_id = ? WHERE type = ? AND fpbx_id = ?");
+		$values = array($cxpanelId, $type, $fpbxId);
+		$db->execute($prepStatement, $values);
 	}
 }
 
@@ -1571,14 +1578,15 @@ function cxpanel_managed_item_update($type, $fpbxId, $cxpanelId) {
 function cxpanel_gen_managed_uuid($type, $fpbxId) {
 	global $db;
 	
-	$query = "SELECT * FROM cxpanel_managed_items WHERE type = '$type' AND fpbx_id = '$fpbxId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND fpbx_id = ?";
+	$values = array($type, $fpbxId);
+	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
 	
 	/*
 	 * If there was no match return a new UUID
 	 * else return the UUID in the record
 	 */
-	if(DB::IsError($results) || empty($results)){
+	if($db->IsError($results) || empty($results)){
 		$uuid = cxpanel_gen_uuid();
 		
 		//Create an entry into cxpanel_managed_items
