@@ -369,7 +369,8 @@ function sync_pbx_server() {
 		 * If no pbx server connection was found that matches the database
 		 * create a new one else verify the cdr info is correct if not update it.
 		 */
-		$displayName = "FreePBX-" . $serverInformation['asterisk_host'];
+		$brand = !empty($amp_conf['DASHBOARD_FREEPBX_BRAND']) ? $amp_conf['DASHBOARD_FREEPBX_BRAND'] : 'FreePBX';
+		$displayName = $brand . '-' . $serverInformation['asterisk_host'];
 		if(!isset($foundPBXConnection)) {
 			$logger->debug("No matching PBX server connection found. Creating");
 			$pbxConnection = new cxpanel_pbx_server($displayName, $serverInformation['asterisk_host'], "5038", "cxpanel", "cxmanager*con", 
