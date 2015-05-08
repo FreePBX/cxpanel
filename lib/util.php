@@ -56,7 +56,7 @@ function cxpanel_read_file($file) {
 
 /**
  * 
- * Converts a 2 dimentional array into a table
+ * Converts a 2 dimensional array into a table
  * @param Array $array the array to convert
  * @param String $tagAdditions content to add to the <table> tag
  * 
@@ -77,7 +77,7 @@ function cxpanel_array_to_table_2d($array, $tagAdditions = "") {
 
 /**
  *
- * Converts a 1 dimentional array into a table
+ * Converts a 1 dimensional array into a table
  * @param Array $array the array to convert
  *
  */
@@ -138,4 +138,42 @@ function cxpanel_get_current_url() {
 	return $pageURL;
 }
   
+/**
+ * 
+ * Generates a pseudo-random v4 UUID
+ * 
+ */
+function cxpanel_gen_uuid() {
+	return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 
+			// 32 bits for "time_low"
+			mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+			// 16 bits for "time_mid"
+			mt_rand(0, 0xffff),
+
+			// 16 bits for "time_hi_and_version",
+			// four most significant bits holds version number 4
+			mt_rand(0, 0x0fff) | 0x4000,
+
+			// 16 bits, 8 bits for "clk_seq_hi_res",
+			// 8 bits for "clk_seq_low",
+			// two most significant bits holds zero and one for variant DCE1.1
+			mt_rand(0, 0x3fff) | 0x8000,
+
+			// 48 bits for "node"
+			mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+	);
+}
+
+/**
+ * 
+ * Checks if a given string starts with the given prefix
+ * 
+ * @param String $source the string to check on
+ * @param String $prefix the prefix to check for
+ * @return boolean true if $source starts with $prefix
+ */
+function cxpanel_startswith($source, $prefix) {
+	return strncmp($source, $prefix, strlen($prefix)) === 0;
+}
