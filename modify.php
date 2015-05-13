@@ -13,8 +13,8 @@ require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
 require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
 
 //Bootstrap FreePBX
-if (!@include_once(getenv('FREEPBX_CONF') ? getenv('FREEPBX_CONF') : '/etc/freepbx.conf')) { 
-	  include_once('/etc/asterisk/freepbx.conf'); 
+if (!@include_once(getenv('FREEPBX_CONF') ? getenv('FREEPBX_CONF') : '/etc/freepbx.conf')) {
+	  include_once('/etc/asterisk/freepbx.conf');
 }
 
 if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed');}
@@ -28,7 +28,7 @@ $logger = new cxpanel_logger(dirname(__FILE__) . "/modify.log");
 $logger->open();
 
 /*
- * Set execution timeout to a large value so that we can wait for a lock if another instance of the script is running. 
+ * Set execution timeout to a large value so that we can wait for a lock if another instance of the script is running.
  * The timeout will be modified later in the script based on the number of extension elements.
  */
 set_time_limit(6000);
@@ -41,15 +41,15 @@ if(!flock($lock, LOCK_EX)) {
 }
 
 /*
- * Reset execution timeout so that the script does not die if a small amount of time 
- * was left after the wait for the script lock. This is to prevent the script from 
+ * Reset execution timeout so that the script does not die if a small amount of time
+ * was left after the wait for the script lock. This is to prevent the script from
  * dying without releasing the lock.
  */
 set_time_limit(60);
 
-//Create running time tracker 
-$runningTimeStart = microtime(true);		
-	
+//Create running time tracker
+$runningTimeStart = microtime(true);
+
 $logger->debug("Starting modify script");
 
 //Get the agent interface type
@@ -171,9 +171,9 @@ $logger->debug("Total Running Time:" . ($runningTimeStop - $runningTimeStart) . 
 cleanup();
 
 /**
- * 
+ *
  * Gets the core server id relating the stored core server slug
- * 
+ *
  */
 function get_core_server_id() {
 	global $logger, $pest, $serverInformation;
@@ -189,16 +189,16 @@ function get_core_server_id() {
 }
 
 /**
- * 
+ *
  * Checks if a core server with the stored core server slug exists.
  * If it does not exist it is created.
- * 
+ *
  */
 function check_core_server() {
 	global $logger, $pest, $serverInformation;
-	
+
 	$logger->debug("Checking core server " . $serverInformation['name']);
-	
+
 	//Check if the core server exists if not create it
 	try {
 		$pest->get("server/coreServers/getBySlug/" . $serverInformation['name']);
@@ -206,7 +206,7 @@ function check_core_server() {
 		$logger->debug("Core server not found. Creating");
 		$coreServer = new cxpanel_core_server($serverInformation['name'], $serverInformation['name'], "localhost", "50000");
 		try {
-			$pest->post("server/coreServers/", $coreServer);			
+			$pest->post("server/coreServers/", $coreServer);
 		} catch (Exception $e) {
 			$logger->error_exception("Failed to create core server", $e);
 		}
@@ -216,15 +216,15 @@ function check_core_server() {
 }
 
 /**
- * 
+ *
  * Syncs the Asterisk core server information.
- * 
+ *
  */
 function sync_core_server() {
 	global $coreServerId, $logger, $pest, $serverInformation;
-	
+
 	$logger->debug("Syncing core server");
-	
+
 	try {
 		$coreServer = $pest->get("asterisk/" . $coreServerId);
 
@@ -232,7 +232,7 @@ function sync_core_server() {
 		if(	$coreServer->originatingContext != "from-internal" ||
 			$coreServer->redirectingContext != "from-internal" ||
 			$coreServer->musicOnHoldClass != "default") {
-			
+
 			$logger->debug("Core server info does not match. Updating");
 			$coreServer->originatingContext = "from-internal";
 			$coreServer->redirectingContext = "from-internal";
@@ -245,34 +245,34 @@ function sync_core_server() {
 }
 
 /**
- * 
+ *
  * Syncs the voicemail agent information.
- * 
+ *
  */
 function sync_voicemail_agent() {
 	global $coreServerId, $logger, $pest, $voicemailAgentInformation, $serverInformation;
-	
+
 	$logger->debug("Syncing voicemail agent");
-	
+
 	try {
 		$voicemailAgent = $pest->get("asterisk/voicemailAgents/" . $voicemailAgentInformation['identifier']);
-	
+
 		//Check if the voicemail agent config information matches if not update the voicemail agent properties.
 		if(	$voicemailAgent->rootPath != $voicemailAgentInformation['directory'] ||
 			$voicemailAgent->resourceHost != $voicemailAgentInformation['resource_host'] ||
 			$voicemailAgent->resourceExtension != $voicemailAgentInformation['resource_extension']) {
-			
+
 			$logger->debug("Voicemail agent info does not match. Updating");
 			$voicemailAgent->rootPath = $voicemailAgentInformation['directory'];
 			$voicemailAgent->resourceHost = $voicemailAgentInformation['resource_host'];
 			$voicemailAgent->resourceExtension = $voicemailAgentInformation['resource_extension'];
 			$pest->put("asterisk/voicemailAgents/" . $voicemailAgentInformation['identifier'], $voicemailAgent);
 		}
-		
+
 		/*
-		 * Check to see if the configured voicemail agent identifier is bound 
+		 * Check to see if the configured voicemail agent identifier is bound
 		 * on the server. If not bind it. If clean_unknown_items is enabled
-		 * remove all other agent identifiers that do not match the 
+		 * remove all other agent identifiers that do not match the
 		 * configured one.
 		 */
 		$found = false;
@@ -286,12 +286,12 @@ function sync_voicemail_agent() {
 				$pest->delete("asterisk/" . $coreServerId . "/voicemailAgentIdentifiers/" . $voicemailAgentIdentifier);
 			}
 		}
-		
+
 		if(!$found) {
 			$logger->debug("Adding voicemail agent identifier:" . $voicemailAgentInformation['identifier']);
 			$pest->post("asterisk/" . $coreServerId . "/voicemailAgentIdentifiers/", $voicemailAgentInformation['identifier']);
 		}
-		
+
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to sync voicemail agent", $e);
 	}
@@ -315,7 +315,7 @@ function sync_recording_agent() {
 			$recordingAgent->resourceHost != $recordingAgentInformation['resource_host'] ||
 			$recordingAgent->resourceExtension != $recordingAgentInformation['resource_extension'] ||
 			$recordingAgent->fileNameMask != $recordingAgentInformation['file_name_mask']) {
-				
+
 			$logger->debug("Recording agent info does not match. Updating");
 			$recordingAgent->rootPath = $recordingAgentInformation['directory'];
 			$recordingAgent->resourceHost = $recordingAgentInformation['resource_host'];
@@ -329,23 +329,23 @@ function sync_recording_agent() {
 }
 
 /**
- * 
+ *
  * Checks if there is a PBX server connection that matches the info in the database.
  * If no matching PBX server connection is found one is created. If it is found and the
  * CDR database information does not match it is updated.
- * 
+ *
  * If clean_unknown_items is enabled all other PBX server connections that are found are removed.
- * 
+ *
  */
 function sync_pbx_server() {
 	global $coreServerId, $logger, $pest, $serverInformation, $amp_conf, $recordingAgentInformation;
-	
+
 	$logger->debug("Checking PBX server connection");
-	
+
 	//Check if the pbx server connection exists if not create it
 	try {
 		$pbxConnections = $pest->get("asterisk/" . $coreServerId . "/pbxServers");
-		
+
 		/*
 		 * Check to see if any of the pbx connections match the info stored by the module.
 		 * If not create one. If clean_unknown_items is disabled remove all others
@@ -364,7 +364,7 @@ function sync_pbx_server() {
 				$pest->delete("asterisk/" . $coreServerId . "/pbxServers/" . $pbxConnection->id);
 			}
 		}
-		
+
 		/*
 		 * If no pbx server connection was found that matches the database
 		 * create a new one else verify the cdr info is correct if not update it.
@@ -373,8 +373,8 @@ function sync_pbx_server() {
 		$displayName = $brand . '-' . $serverInformation['asterisk_host'];
 		if(!isset($foundPBXConnection)) {
 			$logger->debug("No matching PBX server connection found. Creating");
-			$pbxConnection = new cxpanel_pbx_server($displayName, $serverInformation['asterisk_host'], "5038", "cxpanel", "cxmanager*con", 
-													$serverInformation['asterisk_host'], "3306", $amp_conf['AMPDBUSER'], 
+			$pbxConnection = new cxpanel_pbx_server($displayName, $serverInformation['asterisk_host'], "5038", "cxpanel", "cxmanager*con",
+													$serverInformation['asterisk_host'], "3306", $amp_conf['AMPDBUSER'],
 													$amp_conf['AMPDBPASS'], true, $recordingAgentInformation['identifier']);
 			$pest->post("asterisk/" . $coreServerId . "/pbxServers", $pbxConnection);
 		} else if(	$foundPBXConnection->cdrHost != $serverInformation['asterisk_host'] ||
@@ -397,29 +397,29 @@ function sync_pbx_server() {
 }
 
 /**
- * 
+ *
  * Syncs administrators
- * 
+ *
  */
 function sync_administrators() {
 	global $coreServerId, $logger, $pest;
-	
+
 	$logger->debug("Syncing administrators");
-	
+
 	try {
-		
+
 		//Get the server administrators
 		$serverAdministrators = $pest->get("server/administrators");
-		
+
 		//Create associative array of the server admin usernames to the administrator objects for quick indexing
 		$serverAdminAssoc = array();
 		foreach($serverAdministrators as $serverAdministrator) {
 			$serverAdminAssoc[$serverAdministrator->userName] = $serverAdministrator;
 		}
-		
+
 		//Grab the administrators
 		$administrators = cxpanel_get_core_ampusers_list();
-		
+
 		//Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
 		$administratorsAccoc = array();
 		foreach($administrators as $admin) {
@@ -433,14 +433,14 @@ function sync_administrators() {
 		 * Only remove items that this module manages.
 		 */
 		foreach($serverAdminAssoc as $username => $admin) {
-			if(	!array_key_exists($username, $administratorsAccoc) && 
+			if(	!array_key_exists($username, $administratorsAccoc) &&
 				cxpanel_has_managed_item('admin', $admin->id)) {
-				
+
 				$logger->debug("Removing administrator: " . $username);
-				
+
 				//Remove the managed entry
 				cxpanel_managed_item_del('admin', $admin->id);
-				
+
 				//Remove the object from the server
 				try {
 					$pest->delete("server/administrators/" . $admin->id);
@@ -450,18 +450,18 @@ function sync_administrators() {
 				}
 			}
 		}
-		
+
 		//Add admins that are missing on the server and update ones that are not up to date
 		foreach($administratorsAccoc as $admin) {
-		
+
 			//Add administrator
 			if(!array_key_exists($admin['username'], $serverAdminAssoc)) {
-				
+
 				$logger->debug("Adding administrator: " . $admin['username']);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('admin', $admin['username']);
-				
+
 				//Add object from server
 				try {
 					$adminObj = new cxpanel_administrator($admin['username'], $admin['password_sha1'], true);
@@ -470,20 +470,20 @@ function sync_administrators() {
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add administrator:" . $admin['username'], $e);
 				}
-		
+
 			//Update administrator
 			} else {
-				
+
 				$serverAdmin = $serverAdminAssoc[$admin['username']];
-				
-				//Update the managed item uuid 
+
+				//Update the managed item uuid
 				cxpanel_managed_item_update('admin', $admin['username'], $serverAdmin->id);
-			
+
 				//Update the administrator if needed
 				if($serverAdmin->password != strtolower($admin['password_sha1'])) {
-					
+
 					$logger->debug("Updating administrator: " . $admin['username']);
-					
+
 					try {
 						$serverAdmin->password = $admin['password_sha1'];
 						$pest->put("server/administrators/noHash/" . $serverAdmin->id, $serverAdmin);
@@ -493,32 +493,32 @@ function sync_administrators() {
 				}
 			}
 		}
-		
+
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to sync administrators", $e);
 	}
 }
 
 /**
- * 
+ *
  * Syncs extensions.
- * 
+ *
  */
 function sync_extensions() {
 	global $coreServerId, $logger, $pest, $userInformation, $agentLoginContext;
-	
+
 	$logger->debug("Syncing extensions");
-	
+
 	try {
 		//Grab the extension list from the server
 		$serverExtensions = $pest->get("asterisk/" . $coreServerId . "/extensions");
-			
+
 		//Create associative array of the server extension numbers to the extension objects for quick indexing
 		$serverExtensionAssoc = array();
 		foreach($serverExtensions as $serverExtension) {
 			$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
 		}
-		
+
 		//Filter list to exclude extensions that are not marked for addition while creating an associative array for quick indexing
 		$extensions = array();
 		foreach($userInformation as $user) {
@@ -526,20 +526,20 @@ function sync_extensions() {
 				$extensions[$user['user_id']] = $user;
 			}
 		}
-		
+
 		/*
 		 * Remove all extensions from the server that are not stored in the database
 		 * Only remove items that this module manages.
 		 */
 		foreach($serverExtensionAssoc as $extensionNumber => $extension) {
-			if(	!array_key_exists($extensionNumber, $extensions) && 
+			if(	!array_key_exists($extensionNumber, $extensions) &&
 				cxpanel_has_managed_item('extension', $extension->id)) {
-				
+
 				$logger->debug("Removing extension: " . $extensionNumber);
 
 				//Remove the managed entry
 				cxpanel_managed_item_del('extension', $extension->id);
-				
+
 				//Remove the extension from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/extensions/" . $extension->id);
@@ -552,42 +552,42 @@ function sync_extensions() {
 
 		//Add extensions that are missing on the server and update ones that are not up to date
 		foreach($extensions as $extension) {
-			
+
 			//Grab values from database
-			$extensionNumber = $extension['user_id']; 
+			$extensionNumber = $extension['user_id'];
 			$displayName = $extension['display_name'];
 			$autoAnswer = $extension['auto_answer'] == "1";
 			$peer = $extension['peer'];
 			$agentLoginLocation = "Local/" . $extensionNumber . "@" . $agentLoginContext . "/n";
 			$agentLoginInterface = get_agent_login_interface($extension);
-			
+
 			//Add extension
 			if(!array_key_exists($extensionNumber, $serverExtensionAssoc)) {
-				
+
 				$logger->debug("Adding extension: " . $extensionNumber);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('extension', $extensionNumber);
-				
+
 				//Add the extension to the server
 				try {
-					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer, 
-															$peer, "", $displayName, 
-															$agentLoginLocation,$agentLoginInterface, 
+					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer,
+															$peer, "", $displayName,
+															$agentLoginLocation,$agentLoginInterface,
 															0, false, "", "", 0, "default", $extensionNumber);
 					$extensionObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/extensions/", $extensionObj);
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add extension:" . $extensionNumber, $e);
 				}
-				
-			//Update extension	
+
+			//Update extension
 			} else {
 				$serverExtension = $serverExtensionAssoc[$extensionNumber];
-				
+
 				//Update the managed item uuid
 				cxpanel_managed_item_update('extension', $extensionNumber, $serverExtension->id);
-				
+
 				//Update the extension item if needed
 				if(	$serverExtension->displayName != $displayName ||
 					$serverExtension->peer != $peer ||
@@ -599,7 +599,7 @@ function sync_extensions() {
 					$serverExtension->redirectingContextOverride != "" ||
 					$serverExtension->voiceMailContext != "default" ||
 					$serverExtension->voiceMailBox != $extensionNumber) {
-									
+
 					try {
 						$logger->debug("Updating extension: " . $extensionNumber);
 						$serverExtension->displayName = $displayName;
@@ -618,33 +618,33 @@ function sync_extensions() {
 					}
 				}
 			}
-		}	
+		}
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to sync extensions", $e);
 	}
 }
 
 /**
- * 
+ *
  * Sync users
- * 
+ *
  */
 function sync_users() {
 	global $coreServerId, $logger, $pest, $userInformation, $serverInformation;
-	
+
 	$logger->debug("Syncing users");
-	
+
 	try {
-		
+
 		//Grab the list of users from the server
 		$serverUsers = $pest->get("core/" . $coreServerId . "/users");
-		
+
 		//Create associative array of the server usernames to the user objects for quick indexing
 		$serverUserAssoc = array();
 		foreach($serverUsers as $serverUser) {
 			$serverUserAssoc[$serverUser->username] = $serverUser;
 		}
-		
+
 		//Add users from cxpanel_users
 		$users = array();
 		foreach($userInformation as $user) {
@@ -652,22 +652,22 @@ function sync_users() {
 				$users[$user['user_id']] = $user;
 			}
 		}
-				
+
 		/*
 		 * Remove all users from the server that are not stored in the database.
 		 * Only remove users that are managed by this module.
-		 * 
+		 *
 		 * Removes all known users managed by userman as well
 		 */
 		foreach($serverUserAssoc as $username => $user) {
-			if((!array_key_exists($username, $users) && 
+			if((!array_key_exists($username, $users) &&
 				cxpanel_has_managed_item('user', $user->id))) {
-				
+
 				$logger->debug("Removing user: " . $username);
-				
+
 				//Remove the managed entry
 				cxpanel_managed_item_del('user', $user->id);
-				
+
 				//Remove the user from the server
 				try {
 					$pest->delete("core/" . $coreServerId . "/users/" . $user->id);
@@ -677,21 +677,21 @@ function sync_users() {
 				}
 			}
 		}
-		
+
 		//Add users that are missing on the server and update ones that are not up to date
 		foreach($users as $user) {
-								
+
 			//Format the full flag
 			$full = ($user['full'] == "1");
-			
+
 			//Add user
 			if(!array_key_exists($user['user_id'], $serverUserAssoc)) {
-				
+
 				$logger->debug("Adding user: " . $user['user_id']);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('user', $user['user_id']);
-				
+
 				//Add the user to the server
 				try {
 					$serverUser = new cxpanel_user(false, $user['user_id'], $user['hashed_password'], true, $full);
@@ -700,14 +700,14 @@ function sync_users() {
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add user:" . $user['user_id'], $e);
 				}
-		
+
 			//Update user
 			} else {
 				$serverUser = $serverUserAssoc[$user['user_id']];
-				
+
 				//Update the managed item uuid
 				cxpanel_managed_item_update('user', $user['user_id'], $serverUser->id);
-				
+
 				//Check if the user password needs updating
 				$passwordUpdated = false;
 				if(	$serverUser->password != strtolower($user['hashed_password']) &&
@@ -715,7 +715,7 @@ function sync_users() {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
-				
+
 				//If the user password or the full flag on the user has changed update the user
 				if($passwordUpdated || ($full != $serverUser->full)) {
 					try {
@@ -728,10 +728,10 @@ function sync_users() {
 				}
 			}
 		}
-		
+
 		//Clean all password dirty flags
 		cxpanel_mark_all_user_passwords_dirty(false);
-		
+
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to sync users", $e);
 	}
@@ -749,7 +749,7 @@ function sync_users_userman() {
 
 	//Setup userman
 	$userman = setup_userman();
-	
+
 	try {
 
 		//Grab the list of users from the server
@@ -765,7 +765,7 @@ function sync_users_userman() {
 		$users = array();
 		$freePBXUsers = $userman->getAllUsers();
 		foreach($freePBXUsers as $freePBXUser) {
-				
+
 			/*
 			 * Determine the add property.
 			 *
@@ -777,7 +777,7 @@ function sync_users_userman() {
 				$add = '1';
 				$userman->setModuleSettingByID($freePBXUser['id'], 'cxpanel', 'add', '1');
 			}
-		
+
 			//If the add property is set add the user
 			if($add == '1') {
 
@@ -789,7 +789,7 @@ function sync_users_userman() {
 
 				/*
 				 * Determine the value of the password_dirty property.
-				 * 
+				 *
 				 * If no password_dirty property can be found assume true in case there are
 			 	 * FreePBX users that existed before the module was installed.
 				 */
@@ -810,15 +810,15 @@ function sync_users_userman() {
 		/*
 		 * Remove all users from the server that are not stored in the database.
 		 * Only remove items that this module manages.
-		 * 
+		 *
 		 * Removes all known users not managed by userman as well
 		 */
 		foreach($serverUserAssoc as $userid => $user) {
-			if((!array_key_exists($userid, $users) && 
+			if((!array_key_exists($userid, $users) &&
 				cxpanel_has_managed_item('user', $user->id))) {
-			
+
 				$logger->debug("Removing user: " . $user->username);
-				
+
 				//Remove the managed entry
 				cxpanel_managed_item_del('user', $user->id);
 
@@ -836,15 +836,15 @@ function sync_users_userman() {
 
 			//Format the full flag
 			$full = ($user['full'] == "1");
-				
+
 			//Add user
 			if(!array_key_exists($user['username'], $serverUserAssoc)) {
-				
+
 				$logger->debug("Adding user: " . $user['username']);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('user', $user['username']);
-				
+
 				//Add user to the server
 				try {
 					$serverUser = new cxpanel_user(false, $user['username'], $user['hashed_password'], true, $full);
@@ -857,10 +857,10 @@ function sync_users_userman() {
 			//Update user
 			} else {
 				$serverUser = $serverUserAssoc[$user['username']];
-				
+
 				//Update the managed item uuid
 				cxpanel_managed_item_update('user', $user['username'], $serverUser->id);
-				
+
 				//Check if the user password needs updating
 				$passwordUpdated = false;
 				if(	$serverUser->password != strtolower($user['hashed_password']) &&
@@ -868,7 +868,7 @@ function sync_users_userman() {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
-				
+
 				//Check if the user needs to be updated
 				if($passwordUpdated || ($full != $serverUser->full) || ($serverUser->username != $user['username'])) {
 					try {
@@ -892,26 +892,26 @@ function sync_users_userman() {
 }
 
 /**
- * 
+ *
  * Sync user contacts
- * 
+ *
  */
 function sync_user_contacts() {
 	global $coreServerId, $logger, $pest, $userInformation;
-	
+
 	$logger->debug("Syncing user contact information");
-	
+
 	try {
-		
+
 		//Grab the list of users from the server
 		$serverUsers = $pest->get("core/" . $coreServerId . "/users");
-		
+
 		//Create associative array of the server usernames to the user objects for quick indexing
 		$serverUserAssoc = array();
 		foreach($serverUsers as $serverUser) {
 			$serverUserAssoc[$serverUser->username] = $serverUser;
 		}
-		
+
 		//Filter list to exclude users that are not marked for addition while creating an associative array for quick indexing
 		$users = array();
 		foreach($userInformation as $user) {
@@ -919,13 +919,13 @@ function sync_user_contacts() {
 				$users[$user['user_id']] = $user;
 			}
 		}
-		
+
 		//Upate the contact information on each of the server users
 		foreach($users as $user) {
-			
+
 			//Grab the server user
 			$serverUser = $serverUserAssoc[$user['user_id']];
-			
+
 			//Grab the users email
 			$email = "";
 			$voiceMailBox = voicemail_mailbox_get($user['user_id']);
@@ -933,7 +933,7 @@ function sync_user_contacts() {
 				isset($voiceMailBox['email'])) {
 				$email = $voiceMailBox['email'];
 			}
-				
+
 			//Split the user display name into first and last name
 			$userDisplayNameArray = explode(" ", $user['display_name']);
 			$firstName = $userDisplayNameArray[0];
@@ -944,20 +944,20 @@ function sync_user_contacts() {
 					$lastName .= " ";
 				}
 			}
-				
+
 			//Get the current user contact information
 			try {
 				$serverUserContact = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id);
 			} catch (CXPest_NotFound $e) {
 				//Eat exception
 			}
-				
+
 			//Check if the user contact information needs to be updated
 			if(	!isset($serverUserContact) ||
 				$serverUserContact->firstName != $firstName ||
 				$serverUserContact->lastName != $lastName) {
 				$logger->debug("Updating user contact information: " . $user['user_id']);
-			
+
 				try {
 					$serverUserContact = new cxpanel_user_contact($firstName, $lastName);
 					$pest->put("contact/" . $coreServerId . "/users/" . $serverUser->id, $serverUserContact);
@@ -965,12 +965,12 @@ function sync_user_contacts() {
 					$logger->error_exception("Failed to update user contact information:" . $user['user_id'], $e);
 				}
 			}
-				
+
 			//Check if the user email address should be added
 			if($email != "") {
 				try {
 					$serverUserEmailAddresses = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id . "/emailAddresses");
-					
+
 					//Search for the current email
 					$emailFound = false;
 					foreach($serverUserEmailAddresses as $serverUserEmailAddress) {
@@ -979,7 +979,7 @@ function sync_user_contacts() {
 							break;
 						}
 					}
-				
+
 					//If the email was not found add it
 					if(!$emailFound) {
 						$logger->debug("Adding user contact email address: " . $user['user_id']);
@@ -990,29 +990,29 @@ function sync_user_contacts() {
 					$logger->error_exception("Failed to update user contact email address information:" . $user['user_id'], $e);
 				}
 			}
-			
+
 			//Create associative array of the server user phone number strings to the user objects for quick indexing
 			$serverUserPhoneNumberAssoc = array();
 			$serverUserPhoneNumbers = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id . "/phoneNumbers");
 			foreach($serverUserPhoneNumbers as $serverUserPhoneNumber) {
 				$serverUserPhoneNumberAssoc[$serverUserPhoneNumber->number . '@#' . $serverUserPhoneNumber->type] = $serverUserPhoneNumber;
 			}
-		
+
 			//Look for phone numbers to add while bilding the local user phone number associative array
 			$userPhoneNumbers = cxpanel_phone_number_list($user['user_id']);
 			$userPhoneNumberAssoc = array();
 			foreach($userPhoneNumbers as $userPhoneNumber) {
-				
+
 				$idString = $userPhoneNumber['phone_number'] . '@#' . $userPhoneNumber['type'];
 				array_push($userPhoneNumberAssoc, $idString);
-				
+
 				if(!array_key_exists($idString, $serverUserPhoneNumberAssoc)) {
 					$logger->debug("Adding user contact phone number: " . $userPhoneNumber['phone_number'] . "(" . $userPhoneNumber['type'] . ") to user:" . $user['user_id']);
 					$userPhoneNumberObj = new cxpanel_user_contact_phone_number($userPhoneNumber['type'], $userPhoneNumber['phone_number']);
 					$pest->post("contact/" . $coreServerId . "/users/" . $serverUser->id . "/phoneNumbers", $userPhoneNumberObj);
 				}
 			}
-						
+
 			//Look for phone numbers to remove
 			foreach($serverUserPhoneNumbers as $serverUserPhoneNumber) {
 				if(!in_array($serverUserPhoneNumber->number . '@#' . $serverUserPhoneNumber->type, $userPhoneNumberAssoc)) {
@@ -1038,7 +1038,7 @@ function sync_user_contacts_userman() {
 
 	//Setup userman
 	$userman = setup_userman();
-	
+
 	try {
 
 		//Grab the list of users from the server
@@ -1053,7 +1053,7 @@ function sync_user_contacts_userman() {
 		//Add users from userman
 		$freePBXUsers = $userman->getAllUsers();
 		foreach($freePBXUsers as $freePBXUser) {
-				
+
 			/*
 			 * If the add property is set add the user.
 			 *
@@ -1063,18 +1063,18 @@ function sync_user_contacts_userman() {
 			$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
 			$add = $add === false ? '1' : $add;
 			if($add == '1') {
-				
+
 				//Add the user to the list
 				$users[$freePBXUser['username']] = $freePBXUser;
 			}
 		}
-		
+
 		//Upate the contact information on each of the server users
 		foreach($users as $user) {
-				
+
 			//Grab the server user
 			$serverUser = $serverUserAssoc[$user['username']];
-				
+
 			//Get the current user contact information
 			try {
 				$serverUserContact = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id);
@@ -1083,16 +1083,22 @@ function sync_user_contacts_userman() {
 			}
 
 			//Get the user's first and last name
-			$firstName = $user['fname'] === null ? '' : $user['fname'];
-			$lastName = $user['lname'] === null ? '' : $user['lname'];
-						
+			if(!empty($user['displayname'])) {
+				$parts = explode(" ", $user['displayname'], 1);
+				$firstName = $parts[0];
+				$lastName = isset($parts[1]) ? $parts[1] : '';
+			} else {
+				$firstName = $user['fname'] === null ? '' : $user['fname'];
+				$lastName = $user['lname'] === null ? '' : $user['lname'];
+			}
+
 			//Check if the user contact information needs to be updated
 			if(	!isset($serverUserContact) ||
 				$serverUserContact->firstName != $firstName ||
 				$serverUserContact->lastName != $lastName) {
-				
+
 				$logger->debug("Updating user contact information: " . $user['username']);
-					
+
 				try {
 					$serverUserContact = new cxpanel_user_contact($firstName, $lastName);
 					$pest->put("contact/" . $coreServerId . "/users/" . $serverUser->id, $serverUserContact);
@@ -1103,12 +1109,12 @@ function sync_user_contacts_userman() {
 
 			//Get the user's email address
 			$email = $user['email'] === null ? '' : $user['email'];
-			
+
 			//Check if the user email address should be added
 			if($email != "") {
 				try {
 					$serverUserEmailAddresses = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id . "/emailAddresses");
-						
+
 					//Search for the current email
 					$emailFound = false;
 					foreach($serverUserEmailAddresses as $serverUserEmailAddress) {
@@ -1128,7 +1134,7 @@ function sync_user_contacts_userman() {
 					$logger->error_exception("Failed to update user contact email address information:" . $user['username'], $e);
 				}
 			}
-				
+
 			//Create associative array of the server user phone number strings to the user objects for quick indexing
 			$serverUserPhoneNumberAssoc = array();
 			$serverUserPhoneNumbers = $pest->get("contact/" . $coreServerId . "/users/" . $serverUser->id . "/phoneNumbers");
@@ -1143,19 +1149,19 @@ function sync_user_contacts_userman() {
 				$userPhoneNumber['type'] = 'Cell';
 				array_push($userPhoneNumbers, $userPhoneNumber);
 			}
-			
+
 			if($user['work'] !== null && !empty($user['work'])) {
 				$userPhoneNumber['phone_number'] = $user['work'];
 				$userPhoneNumber['type'] = 'Work';
 				array_push($userPhoneNumbers, $userPhoneNumber);
 			}
-			
+
 			if($user['home'] !== null && !empty($user['home'])) {
 				$userPhoneNumber['phone_number'] = $user['home'];
 				$userPhoneNumber['type'] = 'Home';
 				array_push($userPhoneNumbers, $userPhoneNumber);
 			}
-			
+
 			//Look for phone numbers to add while building the local user phone number associative array
 			$userPhoneNumberAssoc = array();
 			foreach($userPhoneNumbers as $userPhoneNumber) {
@@ -1184,32 +1190,32 @@ function sync_user_contacts_userman() {
 }
 
 /**
- * 
+ *
  * Sync the extensions that are bound to the users.
- * 
+ *
  */
 function sync_extension_users() {
 	global $coreServerId, $logger, $pest, $userInformation;
-		
+
 	$logger->debug("Syncing extension users");
-	
+
 	try {
 
 		//Grab the list of users from the server
 		$serverUsers = $pest->get("core/" . $coreServerId . "/users");
-		
+
 		//Create associative array of the server usernames to the user objects for quick indexing
 		$serverUserAssoc = array();
 		foreach($serverUsers as $serverUser) {
 			$serverUserAssoc[$serverUser->username] = $serverUser;
 		}
-		
+
 		//Grab the extension list from the server
 		$serverExtensions = $pest->get("asterisk/" . $coreServerId . "/extensions");
-			
+
 		/*
 		 * Create associative array of the server extension numbers to the extension objects for quick indexing.
-		 * 
+		 *
 		 * Only add extensions that this module manages.
 		 */
 		$serverExtensionAssoc = array();
@@ -1218,14 +1224,14 @@ function sync_extension_users() {
 				$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
 			}
 		}
-		
+
 		//Remove users from extensions that are currently not bound in the module
 		foreach($serverExtensionAssoc as $serverExtension) {
 			try {
-		
+
 				//Get the current user set on this extension
 				$extensionUser = $pest->get("asterisk/" . $coreServerId . "/extensions/" . $serverExtension->id . "/managingUser");
-		
+
 				//Get the current bound extensions for the user
 				$boundExtensionObjs = cxpanel_user_extension_list($extensionUser->username);
 
@@ -1234,7 +1240,7 @@ function sync_extension_users() {
 				foreach($boundExtensionObjs as $boundExtensionObj) {
 					array_push($boundExtensions, $boundExtensionObj['user_id']);
 				}
-						
+
 				//If this extension is no longer in the users bound extension list remove it
 				if(!in_array($serverExtension->extension, $boundExtensions)) {
 					try {
@@ -1250,36 +1256,36 @@ function sync_extension_users() {
 				$logger->error_exception("Failed to unsync extension user for extension:" . $serverExtension->extension, $e);
 			}
 		}
-		
+
 		//Cycle through all the users and see if they need to have an extensions bound to them
-		foreach($userInformation as $user) {			
+		foreach($userInformation as $user) {
 			if($user['add_user'] == "1") {
-				
+
 				//Get the users bound extensions
 				$boundExtensions = cxpanel_user_extension_list($user['user_id']);
 				foreach($boundExtensions as $boundExtension) {
 					if($boundExtension['add_extension'] == "1") {
-							
+
 						$boundUserFound = true;
 						try {
-			
+
 							//Get the extension
 							$relativeExtension = $serverExtensionAssoc[$boundExtension['user_id']];
-			
+
 							//Get the user that is currently set on the relative extension
 							$extensionUser = $pest->get("asterisk/" . $coreServerId . "/extensions/" . $relativeExtension->id . "/managingUser");
-			
+
 							//If the extension user that is set is not the proper one flag for a set
 							if($extensionUser->username != $user['user_id']) {
 								$boundUserFound = false;
 							}
-			
+
 						} catch (CXPest_NotFound $e) {
 							$boundUserFound = false;
 						} catch (Exception $e) {
 							$logger->error_exception("Failed to sync extension user for extension:" . $boundExtension['user_id'], $e);
 						}
-		
+
 						//If no bound user was found set the proper user
 						if(!$boundUserFound) {
 							try {
@@ -1308,7 +1314,7 @@ function sync_extension_users_userman() {
 	global $coreServerId, $logger, $pest;
 
 	$logger->debug("Syncing extension users (userman)");
-	
+
 	//Setup userman
 	$userman = setup_userman();
 
@@ -1325,10 +1331,10 @@ function sync_extension_users_userman() {
 
 		//Grab the extension list from the server
 		$serverExtensions = $pest->get("asterisk/" . $coreServerId . "/extensions");
-			
+
 		/*
 		 * Create associative array of the server extension numbers to the extension objects for quick indexing.
-		 * 
+		 *
 		 * Only add extensions that this module manages
 		 */
 		$serverExtensionAssoc = array();
@@ -1337,20 +1343,20 @@ function sync_extension_users_userman() {
 				$serverExtensionAssoc[$serverExtension->extension] = $serverExtension;
 			}
 		}
-		
+
 		//Remove users from extensions that are currently not bound in the module
 		foreach($serverExtensionAssoc as $serverExtension) {
 			try {
-				
+
 				//Get the current user set on this extension
 				$extensionUser = $pest->get("asterisk/" . $coreServerId . "/extensions/" . $serverExtension->id . "/managingUser");
-				
+
 				//Get the FreePBX user for the extensions's panel user
 				$freePBXUser = $userman->getUserByUsername($extensionUser->username);
-				
+
 				//Get the freePBX user's bound extensions
 				$boundExtensions = $userman->getAssignedDevices($freePBXUser['id']);
-				
+
 				//If this extension is no longer in the users bound extension list remove it
 				if(!in_array($serverExtension->extension, $boundExtensions)) {
 					try {
@@ -1366,11 +1372,11 @@ function sync_extension_users_userman() {
 				$logger->error_exception("Failed to unsync extension user for extension:" . $serverExtension->extension, $e);
 			}
 		}
-		
+
 		//Cycle through all the users and see if they need to have extensions bound to them
 		$freePBXUsers = $userman->getAllUsers();
 		foreach($freePBXUsers as $freePBXUser) {
-		
+
 			//Only look at users that are flaged to be added
 			$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
 			$add = $add === false ? '1' : $add;
@@ -1379,31 +1385,31 @@ function sync_extension_users_userman() {
 				//Get the users bound extensions
 				$boundExtensions = $userman->getAssignedDevices($freePBXUser['id']);
 				foreach($boundExtensions as $boundExtension) {
-					
+
 					//Do not pay attention to extensions that are not added
 					$dbExtension = cxpanel_user_get($boundExtension);
 					if($dbExtension['add_extension'] == "1") {
-						
+
 						$boundUserFound = true;
 						try {
-						
+
 							//Get the extension
 							$relativeExtension = $serverExtensionAssoc[$boundExtension];
-						
+
 							//Get the user that is currently set on the relative extension
 							$extensionUser = $pest->get("asterisk/" . $coreServerId . "/extensions/" . $relativeExtension->id . "/managingUser");
-						
+
 							//If the extension user that is set is not the proper one flag for a set
 							if($extensionUser->username != $freePBXUser['username']) {
 								$boundUserFound = false;
 							}
-						
+
 						} catch (CXPest_NotFound $e) {
 							$boundUserFound = false;
 						} catch (Exception $e) {
 							$logger->error_exception("Failed to sync extension user for extension:" . $boundExtension, $e);
 						}
-						
+
 						//If no bound user was found set the proper user
 						if(!$boundUserFound) {
 							try {
@@ -1429,19 +1435,19 @@ function sync_extension_users_userman() {
  */
 function sync_queues() {
 	global $coreServerId, $logger, $pest, $queueInformation;
-	
+
 	$logger->debug("Syncing queues");
-	
+
 	try {
 		//Grab the queue list from the server
 		$serverQueues = $pest->get("asterisk/" . $coreServerId . "/queues");
-			
+
 		//Create associative array of the server queue identifier to the queue objects for quick indexing
 		$serverQueueAssoc = array();
 		foreach($serverQueues as $serverQueue) {
 			$serverQueueAssoc[$serverQueue->identifier] = $serverQueue;
 		}
-		
+
 		//Filter list to exclude queues that are not marked for addition while creating an associative array for quick indexing
 		$queues = array();
 		foreach($queueInformation as $queue) {
@@ -1449,17 +1455,17 @@ function sync_queues() {
 				$queues[$queue['queue_id']] = $queue;
 			}
 		}
-		
+
 		//Remove all queues from the server that are not stored in the database
 		foreach($serverQueueAssoc as $queueId => $queue) {
-			if(	!array_key_exists($queueId, $queues) && 
+			if(	!array_key_exists($queueId, $queues) &&
 				cxpanel_has_managed_item('queue', $queue->id)) {
-				
+
 				$logger->debug("Removing queue: " . $queueId);
-				
+
 				//Remove the managed entry
 				cxpanel_managed_item_del('queue', $queue->id);
-				
+
 				//Remove the queue from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/queues/" . $queue->id);
@@ -1472,37 +1478,37 @@ function sync_queues() {
 
 		//Add queues that are missing on the server and update ones that are not up to date
 		foreach($queues as $queue) {
-		
+
 			//Add queue
 			if(!array_key_exists($queue['queue_id'], $serverQueueAssoc)) {
-				
+
 				$logger->debug("Adding queue: " . $queue['queue_id']);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('queue', $queue['queue_id']);
-				
+
 				//Add the queue to the server
 				try {
 					$queueObj = new cxpanel_queue(false, $queue['display_name'], $queue['queue_id'], $queue['queue_id'], "from-internal", true);
 					$queueObj->id = $uuid;
-					$pest->post("asterisk/" . $coreServerId . "/queues/", $queueObj);		
+					$pest->post("asterisk/" . $coreServerId . "/queues/", $queueObj);
 				} catch (Exception $e) {
 					$logger->error_exception("Failed to add queue:" . $queue['queue_id'], $e);
 				}
-				
-			//Update queue	
+
+			//Update queue
 			} else {
 				$serverQueue = $serverQueueAssoc[$queue['queue_id']];
-				
+
 				//Update the managed item uuid
 				cxpanel_managed_item_update('queue', $queue['queue_id'], $serverQueue->id);
-				
+
 				//Update the queue if needed
 				if(	$serverQueue->displayName != $queue['display_name'] ||
 					$serverQueue->destinationExtension != $queue['queue_id'] ||
 					$serverQueue->destinationContext != "from-internal" ||
 					$serverQueue->enabled !== true) {
-									
+
 					try {
 						$logger->debug("Updating queue: " . $queue['queue_id']);
 						$serverQueue->displayName = $queue['display_name'];
@@ -1515,7 +1521,7 @@ function sync_queues() {
 					}
 				}
 			}
-		}	
+		}
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to sync queues", $e);
 	}
@@ -1534,7 +1540,7 @@ function sync_conference_rooms() {
 	try {
 		//Grab the room list from the server
 		$serverRooms = $pest->get("asterisk/" . $coreServerId . "/conferenceRooms");
-			
+
 		//Create associative array of the server conference room identifier to the conference room objects for quick indexing
 		$serverRoomAssoc = array();
 		foreach($serverRooms as $serverRoom) {
@@ -1551,14 +1557,14 @@ function sync_conference_rooms() {
 
 		//Remove all conference rooms from the server that are not stored in the database
 		foreach($serverRoomAssoc as $roomId => $room) {
-			if(	!array_key_exists($roomId, $rooms) && 
+			if(	!array_key_exists($roomId, $rooms) &&
 				cxpanel_has_managed_item('conference_room', $room->id)) {
-				
+
 				$logger->debug("Removing conference room: " . $roomId);
-				
+
 				//Remove the managed entry
 				cxpanel_managed_item_del('conference_room', $room->id);
-				
+
 				//Remove the conference room from the server
 				try {
 					$pest->delete("asterisk/" . $coreServerId . "/conferenceRooms/" . $room->id);
@@ -1574,12 +1580,12 @@ function sync_conference_rooms() {
 
 			//Add conference room
 			if(!array_key_exists($room['conference_room_id'], $serverRoomAssoc)) {
-				
+
 				$logger->debug("Adding conference room: " . $room['conference_room_id']);
-				
+
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('conference_room', $room['conference_room_id']);
-				
+
 				//Add the conference room to the server
 				try {
 					$roomObj = new cxpanel_conference_room(false, $room['display_name'], $room['conference_room_id'], $room['conference_room_id'], "from-internal");
@@ -1592,15 +1598,15 @@ function sync_conference_rooms() {
 			//Update conference room
 			} else {
 				$serverRoom = $serverRoomAssoc[$room['conference_room_id']];
-				
+
 				//Update the managed item uuid
 				cxpanel_managed_item_update('conference_room', $room['conference_room_id'], $serverRoom->id);
-				
+
 				//Update the conference room if needed
 				if(	$serverRoom->name != $room['display_name'] ||
 					$serverRoom->destinationExtension != $room['conference_room_id'] ||
 					$serverRoom->destinationContext != "from-internal") {
-						
+
 					try {
 						$logger->debug("Updating conference room: " . $room['conference_room_id']);
 						$serverRoom->name = $room['display_name'];
@@ -1632,11 +1638,11 @@ function sync_parking_lot() {
 
 		/*
 		 * Check if parking is enabled and query the parking info.
-		 * 
-		 * If the FreePBX 10 parking module is installed the parking config 
+		 *
+		 * If the FreePBX 10 parking module is installed the parking config
 		 * method will be parking_getconfig() and we will need to check
 		 * the parkingenabled setting to see if parking is enabled or not.
-		 * 
+		 *
 		 * If the FreePBX 11 parking module is installed the parking config
 		 * method will be parking_get() and the parking lot will always be enabled
 		 * if the moduel is installed.
@@ -1651,10 +1657,10 @@ function sync_parking_lot() {
 			$parkingEnabled = true;
 			$parkingExten = $parkingConfig['parkext'];
 		}
-		
+
 		//Grab the parking lot list from the server
 		$serverParkingLots = $pest->get("asterisk/" . $coreServerId . "/parkingLots");
-			
+
 		//Create associative array of the server parking lot identifier to the parking lot objects for quick indexing
 		$serverParkingLotsAssoc = array();
 		foreach($serverParkingLots as $serverParkingLot) {
@@ -1672,7 +1678,7 @@ function sync_parking_lot() {
 				unset($serverParkingLotsAssoc[$parkingLotIdentifier]);
 			}
 		}
-			
+
 		//If parking is enabled and the default parking lot was not found on the server create it else check to see if it needs to be updated
 		if($parkingEnabled) {
 			if(!array_key_exists("default", $serverParkingLotsAssoc)) {
@@ -1684,7 +1690,7 @@ function sync_parking_lot() {
 				if(	$parkingLot->name != "Main" ||
 				$parkingLot->destinationExtension != $parkingExten ||
 				$parkingLot->destinationContext != "from-internal") {
-						
+
 					$logger->debug("Updating parking lot: default");
 					$parkingLot->name = "Main";
 					$parkingLot->destinationExtension = $parkingExten;
@@ -1700,10 +1706,10 @@ function sync_parking_lot() {
 }
 
 /**
- * 
+ *
  * Gets the agent login interface value for the given user
  * @param User $user
- * 
+ *
  */
 function get_agent_login_interface($user) {
 	global $agentInterfaceType;
@@ -1718,9 +1724,9 @@ function get_agent_login_interface($user) {
 }
 
 /**
- * 
+ *
  * Gets the list of amp users
- * 
+ *
  */
 function cxpanel_get_core_ampusers_list() {
 	global $db;
@@ -1734,31 +1740,29 @@ function cxpanel_get_core_ampusers_list() {
 }
 
 /**
- * 
+ *
  * Performs cleanup when stopping the script
- * 
+ *
  */
 function cleanup() {
 	global $logger, $lock, $db;
-	
+
 	//Close logger
 	if(isset($logger)) {
 		$logger->close();
 	}
-	
+
 	//Close lock file and remove lock
 	if(isset($lock)) {
 		flock($lock, LOCK_UN);
 		fclose($lock);
 	}
-	
+
 	//Close database connection
 	if(isset($db)) {
 		$db->disconnect();
 	}
-	
+
 	//Kill the script
 	die;
 }
-
-
