@@ -1715,7 +1715,7 @@ function get_agent_login_interface($user) {
 		case "peer":
 			return $user["peer"];
 		case "hint":
-			return "Hint:" . $user["user_id"] . "@ext-local";
+			return "hint:" . $user["user_id"] . "@ext-local";
 		case "none";
 			return "";
 	}
