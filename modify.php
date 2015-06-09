@@ -1630,7 +1630,7 @@ function sync_conference_rooms() {
  *
  */
 function sync_parking_lot() {
-	global $coreServerId, $logger, $pest;
+	global $coreServerId, $logger, $pest, $serverInformation;
 
 	$logger->debug("Syncing parking lot");
 
@@ -1668,11 +1668,15 @@ function sync_parking_lot() {
 		}
 
 		/*
-		 * Remove all parking lots from the server that are not the default parking lot.
-		 * If the parking lot is not enabled remove all parking lots.
+		 * If the server has the default parking lot configured, and FreePBX has parking disabled,
+		 * remove the default parking lot. 
+		 * 
+		 * If other parking lots are found on the server, and clean unknown items
+		 * is enabled, remove those parking lots.
 		 */
 		foreach($serverParkingLotsAssoc as $parkingLotIdentifier => $parkingLot) {
-			if($parkingLotIdentifier != "default" || !$parkingEnabled) {
+			if(($parkingLotIdentifier == "default" && !$parkingEnabled) ||
+			   ($parkingLotIdentifier != "default" && $serverInformation['clean_unknown_items'] == '1')) {
 				$logger->debug("Removing parking lot: " . $parkingLotIdentifier);
 				$pest->delete("asterisk/" . $coreServerId . "/parkingLots/" . $parkingLot->id);
 				unset($serverParkingLotsAssoc[$parkingLotIdentifier]);
@@ -1717,7 +1721,7 @@ function get_agent_login_interface($user) {
 		case "peer":
 			return $user["peer"];
 		case "hint":
-			return "Hint:" . $user["user_id"] . "@ext-local";
+			return "hint:" . $user["user_id"] . "@ext-local";
 		case "none";
 			return "";
 	}
