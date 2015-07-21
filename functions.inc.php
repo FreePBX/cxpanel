@@ -76,7 +76,11 @@ class cxpanel_radio extends guiinput {
 		}
 
 		$parent_class = get_parent_class($this);
-		parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		if (is_callable('parent::$parent_class')) {
+			parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		} else {
+			parent::__construct($elemname, $currentvalue, $prompttext, $helptext);
+		}
 
 		$this->html_input = $this->buildradiobuttons($valarray, $currentvalue, $disable);
 	}
@@ -118,7 +122,12 @@ class cxpanel_multi_selectbox extends guiinput {
 		// currently no validation functions available for select boxes
 		// using the normal $canbeempty to flag if a blank option is provided
 		$parent_class = get_parent_class($this);
-		parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		if (is_callable('parent::$parent_class')) {
+			parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		} else {
+			parent::__construct($elemname, $currentvalue, $prompttext, $helptext);
+		}
+
 
 		$this->html_input = $this->buildselectbox($valarray, $size, $currentvaluearray, $canbeempty, $onchange, $disable);
 	}
@@ -161,7 +170,11 @@ class cxpanel_phone_number_list extends guiinput {
 		// currently no validation fucntions availble for select boxes
 		// using the normal $canbeempty to flag if a blank option is provided
 		$parent_class = get_parent_class($this);
-		parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		if (is_callable('parent::$parent_class')) {
+			parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
+		} else {
+			parent::__construct($elemname, $currentvalue, $prompttext, $helptext);
+		}
 
 		$this->html_input = $this->buildphonenumberbox($elemname, $currentvaluearray);
 	}
@@ -263,7 +276,11 @@ if(!class_exists("gui_checkbox")) {
 	class gui_checkbox extends guiinput {
 		function gui_checkbox($elemname, $checked=false, $prompttext='', $helptext='', $value='on', $post_text = '', $jsonclick = '', $disable=false) {
 			$parent_class = get_parent_class($this);
-			parent::$parent_class($elemname, '', $prompttext, $helptext);
+			if (is_callable('parent::$parent_class')) {
+				parent::$parent_class($elemname, '', $prompttext, $helptext);
+			} else {
+				parent::__construct($elemname, '', $prompttext, $helptext);
+			}
 
 			$itemchecked = $checked ? 'checked' : '';
 			$disable_state = $disable ? 'disabled="true"' : '';
@@ -867,7 +884,7 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
  * @param Boolean $apiUseSSL if true https will be used for communication with the REST API
  * @param Boolean $syncWithUserman if true the User Management module will control the users that are created in the panel
  * @param Boolean $cleanUnknownItems if true the module will remove all items from the server that are not configured in FreePBX. If false only items that the module created will be removed if they are not configured in FreePBX.
- * 
+ *
  */
 function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems) {
 	global $db;
@@ -1444,9 +1461,9 @@ function cxpanel_conference_room_get($conferenceRoomId) {
  *
  * API function to check if the object with the give type and cxpanel id are managed by this
  * instance of the module.
- * 
+ *
  * NOTE if the clean_unknown_items flag is enabled this method will always return true.
- * 
+ *
  * @param String $type the type of object to check for [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the uuid of the cxpanel configuration object to check for.
  * @return Boolean true if this module instance manages the given item or clean_unknown_items is enabled.
@@ -1455,12 +1472,12 @@ function cxpanel_conference_room_get($conferenceRoomId) {
 function cxpanel_has_managed_item($type, $cxpanelId) {
 	global $db;
 	$serverInformation = cxpanel_server_get();
-	
+
 	//Check if clean_unknown_items is enabled
 	if($serverInformation['clean_unknown_items'] == '1') {
 		return true;
 	}
-	
+
 	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND cxpanel_id = ?";
 	$values = array($type, $cxpanelId);
 	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
@@ -1468,9 +1485,9 @@ function cxpanel_has_managed_item($type, $cxpanelId) {
 }
 
 /**
- * 
+ *
  * API function to get all managed items
- * 
+ *
  */
 function cxpanel_managed_item_get_all() {
 	global $db;
@@ -1484,12 +1501,12 @@ function cxpanel_managed_item_get_all() {
 }
 
 /**
- * 
+ *
  * API function to get a managed item
- * 
+ *
  * @param String $type the type of object to get [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $cxpanelId the cxpanle id to lookup the item with
- * 
+ *
  */
 function cxpanel_managed_item_get($type, $cxpanelId) {
 	global $db;
@@ -1537,22 +1554,22 @@ function cxpanel_managed_item_del($type, $cxpanelId) {
 }
 
 /**
- * 
+ *
  * API function to update the cxpanel id for a managed item.
- * 
+ *
  * If the managed item does not exist the entry is created.
- * 
+ *
  * @param unknown $type the type of object to update [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param unknown $fpbxId the fpbx id of the object to update.
  * @param unknown $cxpanelId the uuid to update with.
  */
 function cxpanel_managed_item_update($type, $fpbxId, $cxpanelId) {
 	global $db;
-	
+
 	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND fpbx_id = ?";
 	$values = array($type, $fpbxId);
 	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
-	
+
 	if($db->IsError($results) || empty($results)){
 		cxpanel_managed_item_add($type, $fpbxId, $cxpanelId);
 	} else {
@@ -1563,38 +1580,38 @@ function cxpanel_managed_item_update($type, $fpbxId, $cxpanelId) {
 }
 
 /**
- * 
+ *
  * API function that generates a uuid for a managed object.
- * 
+ *
  * If this is a new object a new uuid will be generated
  * else the one from the existing record will be returned.
- * 
+ *
  * If a new uuid is generated a new entry will be made into cxpanel_managed_items.
- * 
+ *
  * @param String $type the type of object [admin|user|userman_user|extension|queue|conference_room|parking_lot].
  * @param String $fpbxId the FreePBX id of the object
  * @return String the uuid for the server end
  */
 function cxpanel_gen_managed_uuid($type, $fpbxId) {
 	global $db;
-	
+
 	$prepStatement = "SELECT * FROM cxpanel_managed_items WHERE type = ? AND fpbx_id = ?";
 	$values = array($type, $fpbxId);
 	$results = $db->getAll($prepStatement, $values, DB_FETCHMODE_ASSOC);
-	
+
 	/*
 	 * If there was no match return a new UUID
 	 * else return the UUID in the record
 	 */
 	if($db->IsError($results) || empty($results)){
 		$uuid = cxpanel_gen_uuid();
-		
+
 		//Create an entry into cxpanel_managed_items
 		cxpanel_managed_item_add($type, $fpbxId, $uuid);
-		
+
 		return $uuid;
 	}
-		
+
 	return $results[0]['cxpanel_id'];
 }
 
