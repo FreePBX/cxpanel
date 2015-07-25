@@ -550,6 +550,12 @@ function sync_extensions() {
 			}
 		}
 
+		//Build associative array of user ids to voicemail contexts
+		$voicemailContexts = array();
+		foreach(core_users_list() as $user) {
+			$voicemailContexts[$user[0]] = $user[2];
+		}
+		
 		//Add extensions that are missing on the server and update ones that are not up to date
 		foreach($extensions as $extension) {
 			
@@ -560,6 +566,8 @@ function sync_extensions() {
 			$peer = $extension['peer'];
 			$agentLoginLocation = "Local/" . $extensionNumber . "@" . $agentLoginContext . "/n";
 			$agentLoginInterface = get_agent_login_interface($extension);
+			$voicemailContext = array_key_exists($extensionNumber, $voicemailContexts) && $voicemailContexts[$extensionNumber] != 'novm' ? 
+								$voicemailContexts[$extensionNumber] : 'default';
 			
 			//Add extension
 			if(!array_key_exists($extensionNumber, $serverExtensionAssoc)) {
@@ -574,7 +582,7 @@ function sync_extensions() {
 					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer, 
 															$peer, "", $displayName, 
 															$agentLoginLocation,$agentLoginInterface, 
-															0, false, "", "", 0, "default", $extensionNumber);
+															0, false, "", "", 0, $voicemailContext, $extensionNumber);
 					$extensionObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/extensions/", $extensionObj);
 				} catch (Exception $e) {
@@ -597,7 +605,7 @@ function sync_extensions() {
 					$serverExtension->agentInterface != $agentLoginInterface ||
 					$serverExtension->originatingContextOverride != "" ||
 					$serverExtension->redirectingContextOverride != "" ||
-					$serverExtension->voiceMailContext != "default" ||
+					$serverExtension->voiceMailContext != $voicemailContext ||
 					$serverExtension->voiceMailBox != $extensionNumber) {
 									
 					try {
@@ -610,7 +618,7 @@ function sync_extensions() {
 						$serverExtension->agentInterface = $agentLoginInterface;
 						$serverExtension->originatingContextOverride = "";
 						$serverExtension->redirectingContextOverride = "";
-						$serverExtension->voiceMailContext = "default";
+						$serverExtension->voiceMailContext = $voicemailContext;
 						$serverExtension->voiceMailBox = $extensionNumber;
 						$pest->put("asterisk/" . $coreServerId . "/extensions/" . $serverExtension->id, $serverExtension);
 					} catch (Exception $e) {
