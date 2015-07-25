@@ -1915,7 +1915,7 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 	}
 
 	//Check if the we need to use https
-	$protocal = $serverInformation['client_use_ssl'] == '1' ? "https" : "http";
+	$protocal = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
 	
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
