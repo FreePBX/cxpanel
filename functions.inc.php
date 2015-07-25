@@ -860,6 +860,7 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
  * @param String $asteriskHost ip or host name used by the panel to connect to the AMI
  * @param String $clientHost ip or host name of the panel client
  * @param Integer $clientPort web port of the panel client
+ * @param Boolean $clientUseSSL if true https will be used to construct client urls
  * @param String $apiHost ip or host name of the panel server REST API
  * @param Integer $apiPort web port of the panel server REST API
  * @param String $apiUserName panel API username used for API authentication
@@ -869,10 +870,10 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
  * @param Boolean $cleanUnknownItems if true the module will remove all items from the server that are not configured in FreePBX. If false only items that the module created will be removed if they are not configured in FreePBX.
  * 
  */
-function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems) {
+function cxpanel_server_update($name, $asteriskHost, $clientHost, $clientPort, $clientUseSSL, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems) {
 	global $db;
-	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, clean_unknown_items = ?");
-	$values = array($name, $asteriskHost, $clientHost, $clientPort, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems);
+	$prepStatement = $db->prepare("UPDATE cxpanel_server SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, client_use_ssl = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, clean_unknown_items = ?");
+	$values = array($name, $asteriskHost, $clientHost, $clientPort, $clientUseSSL, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems);
 	$db->execute($prepStatement, $values);
 }
 
@@ -1913,17 +1914,20 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 		$clientHost = $httpHost[0];
 	}
 
+	//Check if the we need to use https
+	$protocal = $serverInformation['client_use_ssl'] == '1' ? "https" : "http";
+	
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
 	$subject = str_replace("%%userId%%", $cxpanelUser['user_id'], $subject);
 	$subject = str_replace("%%password%%", $password, $subject);
-	$subject = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
+	$subject = str_replace('%%clientURL%%', $protocal . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
 
 	//Prepare the body contents
 	$bodyContents = $emailSettings['body'];
 	$bodyContents = str_replace("%%userId%%", $cxpanelUser['user_id'], $bodyContents);
 	$bodyContents = str_replace("%%password%%", $password, $bodyContents);
-	$bodyContents = str_replace('%%clientURL%%', 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
+	$bodyContents = str_replace('%%clientURL%%', $protocal . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
 	$bodyContents = str_replace('%%logo%%', 'cid:logo', $bodyContents);
 
 	//Create new mailer

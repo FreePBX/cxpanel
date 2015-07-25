@@ -73,6 +73,7 @@ $columns = array(	new cxpanel_column("name", "string", "default", "", false, tru
 					new cxpanel_column("asterisk_host", "string", "localhost", "", false, true),
 					new cxpanel_column("client_host", "string", "", "", false, true),
 					new cxpanel_column("client_port", "integer", 58080, "", false, true),
+					new cxpanel_column("client_use_ssl", "boolean", 0, "", false, true),
 					new cxpanel_column("api_host", "string", "localhost", "", false, true),
 					new cxpanel_column("api_port", "integer", 58080, "", false, true),
 					new cxpanel_column("api_username", "string", "manager", "", false, true),

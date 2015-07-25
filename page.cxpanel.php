@@ -19,6 +19,7 @@ if(isset($_REQUEST["cxpanel_settings"])) {
 							trim($_REQUEST["cxpanel_asterisk_host"]), 
 							trim($_REQUEST["cxpanel_client_host"]),
 							trim($_REQUEST["cxpanel_client_port"]),
+							trim($_REQUEST["cxpanel_client_use_ssl"]),
 							trim($_REQUEST["cxpanel_api_host"]), 
 							trim($_REQUEST["cxpanel_api_port"]), 
 							trim($_REQUEST["cxpanel_api_username"]), 
@@ -604,7 +605,7 @@ if($serverInformation['sync_with_userman'] == "1") {
             <td><input size="20" type="password" name="cxpanel_api_password" value="<?php echo htmlspecialchars($serverInformation['api_password']); ?>" /></td>
         </tr>
         <tr>
-            <td><a href="#" class="info">Use SSL:<span>If checked https will be used to communicate with the <?php echo $cxpanelBrandName; ?> server API.<br/><br/>NOTE: If checked your <?php echo $cxpanelBrandName; ?> server must have an SSL keystore configured and the communication_manager servlet security context must have SSL enabled in the security.xml file.</br>You will also need to specify the SSL port number in the API port field above.</span></a></td>
+            <td><a href="#" class="info">Use SSL:<span>Check this option, if you have endabled SSL on the <?php echo $cxpanelBrandName; ?> server API.<br/><br/>NOTE: If checked your <?php echo $cxpanelBrandName; ?> server must have an SSL keystore configured and the communication_manager servlet security context must have SSL enabled in the security.xml file.</br>You will also need to specify the SSL port number in the API port field above.</span></a></td>
             <td><input type="checkbox" name="cxpanel_api_use_ssl" value="1" <?php echo ($serverInformation['api_use_ssl'] == '1' ? 'checked' : '') ?> /></td>
         </tr>        
         <tr><td colspan="2"><h5>Asterisk Connection Settings<hr></h5></td></tr>
@@ -621,6 +622,10 @@ if($serverInformation['sync_with_userman'] == "1") {
             <td><a href="#" class="info">Client Port:<span>Web port of the <?php echo $cxpanelBrandName; ?> client.</span></a></td>
            	<td><input size="20" type="text" name="cxpanel_client_port" value="<?php echo htmlspecialchars($serverInformation['client_port']); ?>" /></td>
         </tr> 
+        <tr>
+            <td><a href="#" class="info">Use SSL:<span>Check this option, if you have enabled SSL on the <?php echo $cxpanelBrandName; ?> client interface.<br/><br/>NOTE: If checked your <?php echo $cxpanelBrandName; ?> server must have an SSL keystore configured and the client servlet security context must have SSL enabled in the security.xml file.</br>You will also need to specify the SSL port number in the Client Port field above.</span></a></td>
+            <td><input type="checkbox" name="cxpanel_client_use_ssl" value="1" <?php echo ($serverInformation['client_use_ssl'] == '1' ? 'checked' : '') ?> /></td>
+        </tr>            
         <tr><td colspan="2"><h5>Voicemail Agent Settings<hr></h5></td></tr>
         <tr>
         	<td><a href="#" class="info">Identifier:<span>Identifier of the voicemail agent to bind and configure.</span></a></td>
