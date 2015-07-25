@@ -1777,6 +1777,18 @@ function cxpanel_add_contexts($contextPrefix, $variablePrefix, $parkingTimeout) 
 	$c = '432117';
 	$ext->add($id, $c, '', new ext_cxpanel_chanspy("\${{$variablePrefix}ChanSpyChannel}", "\${{$variablePrefix}ChanSpyOptions}"));
 	$ext->add($id, $c, '', new ext_hangup());
+	
+	$id = $contextPrefix . '-pjsip-auto-answer-headers';
+	$c = 'addheader';
+	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', '<http://www.notused.com>\;info=alert-autoanswer\;delay=0'));
+	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', 'Ring Answer'));
+	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', 'ring-answer'));
+	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Call-Info)', '\;answer-after=0'));
+	
+	$id = $contextPrefix . '-pjsip-auto-answer-redirect';
+	$c = '_X!';
+	$ext->add($id, $c, '', new ext_execif('$["${D_OPTIONS}"==""]', 'Set', 'D_OPTIONS=TtrI'));
+	$ext->add($id, $c, '', new ext_dial('${CX_AUTOANSWER_REDIRECT_PEER}', ',${D_OPTIONS}b(' .$contextPrefix . '-pjsip-auto-answer-headers^addheader^1)'));
 }
 
 /**
