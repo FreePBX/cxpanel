@@ -176,9 +176,11 @@ class Cxpanel implements \BMO {
 			$clientHost = $httpHost[0];
 		}
 
-
+		//Check if the we need to use https
+		$protocal = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
+		
 		$final = array();
-		$final[] = "\t".sprintf(_('%s Login: %s'), $cxpanelBrandName, 'http://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client');
+		$final[] = "\t".sprintf(_('%s Login: %s'), $cxpanelBrandName, $protocal. '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client');
 		return $final;
 	}
 }
