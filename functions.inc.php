@@ -42,6 +42,10 @@ $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cx
 //Create the global password mask
 $cxpanelUserPasswordMask = "********";
 
+//"read" and "write" permission for the AMI manager entry. 
+//This list should be kept up to date, for supported versions of Asterisk.
+$amiPermissions = 'system,call,log,verbose,command,agent,user,config,dtmf,reporting,cdr,dialplan,originate';
+
 //Setup userman hooks
 if(!function_exists('setup_userman')){
 	global $amp_conf;
@@ -61,6 +65,14 @@ if(function_exists('setup_userman')) {
 	}
 }
 
+//Ensure that the manager module has loaded. If not, load it.
+if(!function_exists('manager_add')){
+	global $amp_conf;
+	$um = module_getinfo('manager', MODULE_STATUS_ENABLED);
+	if(file_exists($amp_conf['AMPWEBROOT'].'/admin/modules/manager/functions.inc.php') && (isset($um['manager']['status']) && $um['manager']['status'] === MODULE_STATUS_ENABLED)) {
+		include_once($amp_conf['AMPWEBROOT'].'/admin/modules/manager/functions.inc.php');
+	}
+}
 
 /**
  *
@@ -1633,7 +1645,7 @@ function cxpanel_queue_eventmemberstatus_modify($addQueue) {
  *
  */
 function cxpanel_create_manager() {
-	global $cxPanelLogger;
+	global $cxPanelLogger, $amiPermissions;
 
 	$cxPanelLogger->debug("Checking manager connection");
 
@@ -1653,7 +1665,7 @@ function cxpanel_create_manager() {
 	//If not found create a manager profile for cxpanel
 	if((function_exists("manager_add")) && (!$managerFound)) {
 		$cxPanelLogger->debug("Creating manager connection");
-		manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", "all", "all");
+		manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", $amiPermissions, $amiPermissions);
 
 		if(function_exists("manager_gen_conf")) {
 			manager_gen_conf();
