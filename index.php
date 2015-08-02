@@ -24,9 +24,9 @@ if($clientHost == "") {
 	$clientHost = $httpHost[0];
 }
 
-$protocal = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
+$protocol = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
 
 //Reidrect to the client
-$redirectUrl = $protocal . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client';
+$redirectUrl = $protocol . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client';
 header('Location: ' . $redirectUrl);
 

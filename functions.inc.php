@@ -1944,19 +1944,19 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 	}
 
 	//Check if the we need to use https
-	$protocal = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
+	$protocol = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
 	
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
 	$subject = str_replace("%%userId%%", $cxpanelUser['user_id'], $subject);
 	$subject = str_replace("%%password%%", $password, $subject);
-	$subject = str_replace('%%clientURL%%', $protocal . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
+	$subject = str_replace('%%clientURL%%', $protocol . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $subject);
 
 	//Prepare the body contents
 	$bodyContents = $emailSettings['body'];
 	$bodyContents = str_replace("%%userId%%", $cxpanelUser['user_id'], $bodyContents);
 	$bodyContents = str_replace("%%password%%", $password, $bodyContents);
-	$bodyContents = str_replace('%%clientURL%%', $protocal . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
+	$bodyContents = str_replace('%%clientURL%%', $protocol . '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client', $bodyContents);
 	$bodyContents = str_replace('%%logo%%', 'cid:logo', $bodyContents);
 
 	//Create new mailer
