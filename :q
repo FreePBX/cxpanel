@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>4.1.7</version>
+	<version>4.1.5</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -9,7 +9,7 @@
 	</description>
 	<menuitems>
 		<cxpanel>iSymphonyV3</cxpanel>
-		<cxpanel_menu category="Reports" requires_auth="false" target="_blank" access="all">iSymphonyV3 Panel</cxpanel_menu>
+		<cxpanel_menu category="reports" requires_auth="false" target="_blank" access="all">iSymphonyV3 Panel</cxpanel_menu>
 	</menuitems>
 	<depends>
 		<module>manager</module>
@@ -18,8 +18,7 @@
 	<location>junk</location>
 	<md5sum>junk</md5sum>
 	<changelog>
-		*4.1.7* FREEPBX-9781 Fix fatal class errors in 13
-		*4.1.6* Fatal error fix in installer
+		*4.1.5* Fatal error fix in installer
 		*4.1.4* Use displayname if exists, else use first,last name
 		*4.1.3* Username change support
 		*4.1.2* Use branding file
