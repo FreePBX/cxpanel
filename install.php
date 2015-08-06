@@ -73,6 +73,7 @@ $columns = array(	new cxpanel_column("name", "string", "default", "", false, tru
 					new cxpanel_column("asterisk_host", "string", "localhost", "", false, true),
 					new cxpanel_column("client_host", "string", "", "", false, true),
 					new cxpanel_column("client_port", "integer", 58080, "", false, true),
+					new cxpanel_column("client_use_ssl", "boolean", 0, "", false, true),
 					new cxpanel_column("api_host", "string", "localhost", "", false, true),
 					new cxpanel_column("api_port", "integer", 58080, "", false, true),
 					new cxpanel_column("api_username", "string", "manager", "", false, true),
@@ -161,7 +162,8 @@ if((function_exists("core_users_list")) && (($freePBXUsers = core_users_list()) 
 			
 			//Determine user info
 			$userId = $freePBXUser[0];
-			$peer = ($freePBXDeviceInfo['dial'] != "") ? $freePBXDeviceInfo['dial'] : "SIP/$userId";
+			$userDevice = core_devices_get($userId);
+			$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
 			$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
 			
 			//Generate a password for the user
