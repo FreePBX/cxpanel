@@ -35,7 +35,7 @@ require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
 if(!class_exists("PHPMailer")) {
 	require_once(dirname(__FILE__)."/lib/PHPMailer/class.phpmailer.php");
 }
-
+global $amp_conf;
 //Create the logger
 $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
 
@@ -588,7 +588,7 @@ function cxpanel_extension_configpageload() {
 			//Create validation javascript that is called when the form is submited
 			$js = " if($('input[name=cxpanel_add_user]:checked').val() == '1' &&
 						document.getElementById('cxpanel_password').value == '') {
-						alert('".sprintf(_('Please specify a password for the $cxpanelBrandName user or uncheck "Create User" under "%s User Settings"'),$cxpanelBrandName)."');
+						warnInvalid(document.getElementById('cxpanel_password'), '".sprintf(_('Please specify a password for the %s user or uncheck "Create User" under "%s User Settings"'),$cxpanelBrandName,$cxpanelBrandName)."');
 						return false;
 					}";
 			$currentcomponent->addjsfunc('onsubmit()', $js);

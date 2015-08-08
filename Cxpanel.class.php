@@ -33,7 +33,6 @@ class Cxpanel implements \BMO {
 			throw new \Exception("Not given a FreePBX Object");
 		}
 		$this->freepbx = $freepbx;
-		$this->userman = $this->freepbx->Userman;
 	}
 
 	public function doConfigPageInit($page) {
@@ -64,6 +63,8 @@ class Cxpanel implements \BMO {
 		if(!function_exists('cxpanel_get_config')) {
 			include(__DIR__.'/functions.inc.php');
 		}
+
+		$this->userman = $this->freepbx->Userman;
 
 		//Set the add flag on the user
 		$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
@@ -138,7 +139,6 @@ class Cxpanel implements \BMO {
 					}
 
 				} catch (\Exception $e) {
-					dbug($e->getMessage());
 					//The server may be down, or the configured core server is not available
 				}
 			}
@@ -157,6 +157,8 @@ class Cxpanel implements \BMO {
 		}
 		include(__DIR__."/brand.php");
 		$cxpanelBrandName = !empty($cxpanelBrandName) ? $cxpanelBrandName : "iSymphony";
+
+		$this->userman = $this->freepbx->Userman;
 
 		$isUser = $this->userman->getModuleSettingByID($id, 'cxpanel', 'add');
 
