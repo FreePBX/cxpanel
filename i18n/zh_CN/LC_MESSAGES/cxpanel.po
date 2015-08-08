@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-13 19:50-0400\n"
+"POT-Creation-Date: 2015-08-08 13:36-0700\n"
 "PO-Revision-Date: 2015-02-20 19:16-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,9 +18,128 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 
-#: Cxpanel.class.php:181
+#: Cxpanel.class.php:185
 #, php-format
 msgid "%s Login: %s"
+msgstr ""
+
+#: functions.inc.php:383 functions.inc.php:535
+#, php-format
+msgid "%s Settings"
+msgstr ""
+
+#: functions.inc.php:387 functions.inc.php:542
+#, php-format
+msgid "Add to %s"
+msgstr ""
+
+#: functions.inc.php:570
+msgid "Alt. Phone Numbers"
+msgstr ""
+
+#: functions.inc.php:543
+msgid "Auto Answer"
+msgstr ""
+
+#: functions.inc.php:550
+msgid "Create User"
+msgstr ""
+
+#: functions.inc.php:550
+#, php-format
+msgid "Creates an %s user login which is associated with this extension."
+msgstr ""
+
+#: functions.inc.php:584
+msgid "Email Inital Password"
+msgstr ""
+
+#: functions.inc.php:552
+msgid "Email Password"
+msgstr ""
+
+#: functions.inc.php:551
+msgid "Full User"
+msgstr ""
+
+#: functions.inc.php:518
+msgid ""
+"If you do not know the password for this user you can change it in the User "
+"Password field above"
+msgstr ""
+
+#: functions.inc.php:551
+#, php-format
+msgid ""
+"Makes this extension a full user in %s. Full users have access to all the "
+"fuctionality in %s that the current license allows. The amount of full users "
+"allowed in %s is restricted via the license. If you mark this user as a full "
+"user and there are no more user licenes available the user will remain a "
+"lite user."
+msgstr ""
+
+#: functions.inc.php:543
+#, php-format
+msgid ""
+"Makes this extension automatically answer the initial call received from the "
+"system when performing an origination within %s. Only works with Aastra, "
+"Grandstream, Linksys, Polycom, and Snom phones."
+msgstr ""
+
+#: functions.inc.php:542
+#, php-format
+msgid "Makes this extension available in %s"
+msgstr ""
+
+#: functions.inc.php:387
+#, php-format
+msgid "Makes this user available in %s"
+msgstr ""
+
+#: functions.inc.php:570
+#, php-format
+msgid "Manages alternative phone numbers for this %s user."
+msgstr ""
+
+#: functions.inc.php:591
+#, php-format
+msgid ""
+"Please specify a password for the %s user or uncheck \"Create User\" under "
+"\"%s User Settings\""
+msgstr ""
+
+#: functions.inc.php:553
+#, php-format
+msgid "Specifies the password to be used for the %s User"
+msgstr ""
+
+#: functions.inc.php:566
+msgid ""
+"Specifies which extensions will be bound to the $cxpanelBrandName user "
+"created for this extension. \"Self\" refers to this extension"
+msgstr ""
+
+#: functions.inc.php:516
+msgid "The inital password for this user is set to"
+msgstr ""
+
+#: functions.inc.php:518
+msgid "The inital password for this user was never created or has been changed"
+msgstr ""
+
+#: functions.inc.php:567
+msgid "User Extensions"
+msgstr ""
+
+#: functions.inc.php:553
+msgid "User Password"
+msgstr ""
+
+#: functions.inc.php:552
+msgid ""
+"When checked the new specified password will be sent to the email cofigured "
+"in the voicemail settings. No email will be sent if no email address is "
+"specified or the password is not changing."
 msgstr ""
 
 #~ msgid "Admin"
