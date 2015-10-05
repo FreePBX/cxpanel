@@ -42,7 +42,7 @@ $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cx
 //Create the global password mask
 $cxpanelUserPasswordMask = "********";
 
-//"read" and "write" permission for the AMI manager entry. 
+//"read" and "write" permission for the AMI manager entry.
 //This list should be kept up to date, for supported versions of Asterisk.
 $amiPermissions = 'system,call,log,verbose,command,agent,user,config,dtmf,reporting,cdr,dialplan,originate';
 
@@ -52,16 +52,6 @@ if(!function_exists('setup_userman')){
 	$um = module_getinfo('userman', MODULE_STATUS_ENABLED);
 	if(file_exists($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php') && (isset($um['userman']['status']) && $um['userman']['status'] === MODULE_STATUS_ENABLED)) {
 		include_once($amp_conf['AMPWEBROOT'].'/admin/modules/userman/functions.inc.php');
-	}
-}
-
-if(function_exists('setup_userman')) {
-	try {
-		$userman = setup_userman();
-		$userman->registerHook('addUser','cxpanel_userman_add');
-	} catch(\Exception $e) {
-		//dont do anymore work, we need userman and it needs to be enabled
-		return;
 	}
 }
 
@@ -411,26 +401,6 @@ function cxpanel_hook_userman() {
 	return $html;
 }
 
-/**
- * Called when a FreePBX user is added to the system.
- *
- * @param Int $id The User Manager ID
- * @param String $display The page in FreePBX that initiated this function
- * @param Array $data an array of all relevant data returned from User Manager
- */
-function cxpanel_userman_add($id, $display, $data) {
-	$userman = setup_userman();
-
-	//Set the add flag on the user
-	$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
-	$userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
-
-	//Mark the user's password as dirty
-	$userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
-
-	//Flag FreePBX for reload
-	needreload();
-}
 /**
  *
  * Function used to hook the extension/user page in FreePBX
@@ -1807,14 +1777,14 @@ function cxpanel_add_contexts($contextPrefix, $variablePrefix, $parkingTimeout) 
 	$c = '432117';
 	$ext->add($id, $c, '', new ext_cxpanel_chanspy("\${{$variablePrefix}ChanSpyChannel}", "\${{$variablePrefix}ChanSpyOptions}"));
 	$ext->add($id, $c, '', new ext_hangup());
-	
+
 	$id = $contextPrefix . '-pjsip-auto-answer-headers';
 	$c = 'addheader';
 	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', '<http://www.notused.com>\;info=alert-autoanswer\;delay=0'));
 	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', 'Ring Answer'));
 	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Alert-Info)', 'ring-answer'));
 	$ext->add($id, $c, '', new ext_set('PJSIP_HEADER(add,Call-Info)', '\;answer-after=0'));
-	
+
 	$id = $contextPrefix . '-pjsip-auto-answer-redirect';
 	$c = '_X!';
 	$ext->add($id, $c, '', new ext_execif('$["${D_OPTIONS}"==""]', 'Set', 'D_OPTIONS=TtrI'));
@@ -1945,7 +1915,7 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 
 	//Check if the we need to use https
 	$protocol = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
-	
+
 	//Prepare the subject
 	$subject = $emailSettings['subject'];
 	$subject = str_replace("%%userId%%", $cxpanelUser['user_id'], $subject);

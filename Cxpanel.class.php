@@ -54,12 +54,37 @@ class Cxpanel implements \BMO {
 	}
 
 	/**
+	 * Called when a FreePBX user is added to the system.
+	 *
+	 * @param Int $id The User Manager ID
+	 * @param String $display The page in FreePBX that initiated this function
+	 * @param Array $data an array of all relevant data returned from User Manager
+	 */
+	public function usermanAddUser($id, $display, $data) {
+		if($display != "userman") {
+			return;
+		}
+		$this->userman = $this->freepbx->Userman;
+		//Set the add flag on the user
+		$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
+		$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
+
+		//Mark the user's password as dirty
+		$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
+
+		//Flag FreePBX for reload
+		needreload();
+	}
+	/**
 	 * Hook functionality from userman when a user is updated
 	 * @param {int} $id      The userman user id
 	 * @param {string} $display The display page name where this was executed
 	 * @param {array} $data    Array of data to be able to use
 	 */
 	public function usermanUpdateUser($id, $display, $data) {
+		if($display != "userman") {
+			return;
+		}
 		if(!function_exists('cxpanel_get_config')) {
 			include(__DIR__.'/functions.inc.php');
 		}
@@ -180,7 +205,7 @@ class Cxpanel implements \BMO {
 
 		//Check if the we need to use https
 		$protocol = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
-		
+
 		$final = array();
 		$final[] = "\t".sprintf(_('%s Login: %s'), $cxpanelBrandName, $protocol. '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client');
 		return $final;
