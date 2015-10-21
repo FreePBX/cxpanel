@@ -52,6 +52,9 @@ $runningTimeStart = microtime(true);
 
 $logger->debug("Starting modify script");
 
+//Synchronize user tables
+sync_user_tables();
+
 //Get the agent interface type
 $agentInterfaceType = cxpanel_get_agent_interface_type();
 $logger->debug("Agent interface type: " . $agentInterfaceType);
@@ -212,6 +215,37 @@ function check_core_server() {
 		}
 	} catch (Exception $e) {
 		$logger->error_exception("Failed to check for core server", $e);
+	}
+}
+
+/**
+ * Looks for any users that exist in FreePBX but are missing from the cxpanel user table.
+ * If a missing user is found, a default entry is created in the cxpanel user table for it.
+ * 
+ * Calling this function before calling sync_extensions() will ensure that all extensions
+ * are added properly to the server, even if thier creation was not detected via the UI hooks.
+ */
+function sync_user_tables() {
+	global $logger;
+	
+	if(function_exists("core_users_list") && function_exists("core_devices_get") && (($freePBXUsers = core_users_list()) !== null)) {
+		foreach($freePBXUsers as $freePBXUser) {
+			$userId = $freePBXUser[0];
+			if(cxpanel_user_get($userId) === null) {
+				
+				//Determine user info
+				$userDevice = core_devices_get($userId);
+				$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
+				$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
+				
+				//Generate a password for the user
+				$password = cxpanel_generate_password(10);
+				
+				//Add user
+				$logger->debug("Adding missing user " . $userId);
+				cxpanel_user_add_with_initial_password($userId, true, true, $password, false, $peer, $displayName, true, $userId);
+			}
+		}
 	}
 }
 
