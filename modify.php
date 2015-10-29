@@ -24,7 +24,7 @@ $executionTimeoutMultiplier = 3;
 
 //Create the logger
 $logger = new cxpanel_logger(dirname(__FILE__) . "/modify.log");
-$logger->echoLog = true;
+//$logger->echoLog = true;
 $logger->open();
 
 /*
