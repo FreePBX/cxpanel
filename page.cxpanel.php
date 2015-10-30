@@ -14,7 +14,14 @@ require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
 
 //Check for a server settings update action
 if(isset($_REQUEST["cxpanel_settings"])) {
-		
+
+	//If we are changing synchronization methods, mark all passwords as dirty. 
+	$serverInformation = cxpanel_server_get();
+	$syncWithUserMan = isset($_REQUEST['cxpanel_sync_with_userman']) ? $_REQUEST['cxpanel_sync_with_userman'] : '0';
+	if($serverInformation['sync_with_userman'] !== $syncWithUserMan) {
+		cxpanel_mark_all_user_passwords_dirty(true);
+	}
+	
 	cxpanel_server_update(	trim($_REQUEST["cxpanel_name"]), 
 							trim($_REQUEST["cxpanel_asterisk_host"]), 
 							trim($_REQUEST["cxpanel_client_host"]),
