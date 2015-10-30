@@ -40,6 +40,7 @@
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="addUser">usermanAddUser</method>
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="updateUser">usermanUpdateUser</method>
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="sendWelcomeEmail">usermanSendEmail</method>
+			<method namespace="FreePBX\modules" class="Cxpanel" callingMethod="myShowPage">usermanShowPage</method>
 		</userman>
 	</hooks>
 	<repo>standard</repo>
