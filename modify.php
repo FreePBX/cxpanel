@@ -1869,11 +1869,6 @@ function cleanup() {
 		fclose($lock);
 	}
 
-	//Close database connection
-	if(isset($db)) {
-		$db->disconnect();
-	}
-
 	//Kill the script
 	die;
 }
