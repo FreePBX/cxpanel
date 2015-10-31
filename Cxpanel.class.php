@@ -53,6 +53,35 @@ class Cxpanel implements \BMO {
 	public function genConfig() {
 	}
 
+	public function usermanShowPage() {
+		global $cxpanelBrandName;
+				
+		/** 
+		 * Add the cxpanel tab to the userman page if the following contitions are met:
+		 * - The FreePBX verison is >= 13. The section will be added in older versions via cxpanel_hook_userman() in functions.inc.php.
+		 * - Sync with user managment is enabled.
+		 * - We are adding or editing a user.
+		 */
+		$serverSettings = cxpanel_server_get();
+		$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : "";
+		if(version_compare_freepbx(getVersion(), '13.0', '>=') && $serverSettings['sync_with_userman'] == '1' && ($action == 'showuser' || $action == 'adduser')) {
+			
+			//If the user is specified check if the user has the add flag
+			$user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : null;
+			$addUser = $user === null || $this->freepbx->Userman->getModuleSettingByID($user, 'cxpanel', 'add') == '1';
+						
+			return array(
+					array(
+							'title' => _($cxpanelBrandName),
+							'rawname' => 'cxpanel',
+							'content' => load_view(dirname(__FILE__).'/views/userman_hook.php',array('cxpanelBrandName' => $cxpanelBrandName, 'addUser' => $addUser))
+					)
+			);
+		}
+		
+		return array();
+	}
+	
 	/**
 	 * Called when a FreePBX user is added to the system.
 	 *
