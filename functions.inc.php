@@ -730,22 +730,6 @@ function cxpanel_hookProcess_queues($viewing_itemid, $request) {
 	$name = isset($request["name"]) ? $request["name"] : null;
 	$queue = ($queue == null) ? $account : $queue;
 
-	/*
-	 * On addition check if the extension is in conflict with another account.
-	 * If this is the case we can assume that the FreePBX core
-	 * is not going to add this object so we must abort adding it
-	 * to the table.
-	 *
-	 * Note this works because we are called first before the hooked
-	 * module makes its own check and addition.
-	 */
-	if($action == "add") {
-		$usage_arr = framework_check_extension_usage($account);
-		if (!empty($usage_arr)) {
-			return;
-		}
-	}
-
 	//Query add option
 	$addQueue = isset($request["cxpanel_add_queue"]);
 
@@ -816,22 +800,6 @@ function cxpanel_hookProcess_conferences($viewing_itemid, $request) {
 	$action = isset($request["action"]) ? $request["action"] : null;
 	$name = isset($request["name"]) ? $request["name"] : null;
 	$conferenceRoom = ($conferenceRoom == null) ? $account : $conferenceRoom;
-
-	/*
-	 * On addition check if the extension is in conflict with another account.
-	 * If this is the case we can assume that the FreePBX core
-	 * is not going to add this object so we must abort adding it
-	 * to the table.
-	 *
-	 * Note this works because we are called first before the hooked
-	 * module makes its own check and addition.
-	 */
-	if($action == "add") {
-		$usage_arr = framework_check_extension_usage($account);
-		if (!empty($usage_arr)) {
-			return;
-		}
-	}
 
 	//Query add option
 	$addConferenceRoom = isset($request["cxpanel_add_conference_room"]);

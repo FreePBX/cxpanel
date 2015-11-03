@@ -24,7 +24,7 @@ $executionTimeoutMultiplier = 3;
 
 //Create the logger
 $logger = new cxpanel_logger(dirname(__FILE__) . "/modify.log");
-// $logger->echoLog = true;
+//$logger->echoLog = true;
 $logger->open();
 
 /*
@@ -51,6 +51,9 @@ set_time_limit(60);
 $runningTimeStart = microtime(true);
 
 $logger->debug("Starting modify script");
+
+//Synchronize tables before we synchronize the server configuration
+sync_database();
 
 //Get the agent interface type
 $agentInterfaceType = cxpanel_get_agent_interface_type();
@@ -169,6 +172,101 @@ $logger->debug("Total Running Time:" . ($runningTimeStop - $runningTimeStart) . 
 
 //Cleanup
 cleanup();
+
+/**
+ * Synchronizes the user, queue, and conference room cxpanel tables with the values
+ * stored in the FreePBX tables, adding missing items and removing non existent items.
+ *
+ * This function ensures that the cxpanel tables match up with the values stored in FreePBX
+ * before we synchronize configuration with the server.
+ */
+function sync_database() {
+	global $logger;
+	
+	$logger->debug('Synchronizing database');
+
+	//Synchronize the user table
+	if(function_exists('core_users_list') && function_exists('core_devices_get') && (($freePBXUsers = core_users_list()) !== null)) {
+
+		//Add missing users
+		$freePBXUserIds = array();
+		foreach($freePBXUsers as $freePBXUser) {
+			$userId = $freePBXUser[0];
+			array_push($freePBXUserIds, $userId);
+			if(cxpanel_user_get($userId) === null) {
+
+				//Determine user info
+				$userDevice = core_devices_get($userId);
+				$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
+				$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
+
+				//Generate a password for the user
+				$password = cxpanel_generate_password(10);
+
+				//Add user
+				$logger->debug('Adding missing user to database ' . $userId);
+				cxpanel_user_add_with_initial_password($userId, true, true, $password, false, $peer, $displayName, true, $userId);
+			}
+		}
+
+		//Remove users that do not exist
+		foreach(cxpanel_user_list() as $cxpanelUser) {
+			$userId = $cxpanelUser['user_id'];
+			if(!in_array($userId, $freePBXUserIds)) {
+				$logger->debug('Removing non existent user from database ' . $userId);
+				cxpanel_user_del($userId);
+			}
+		}
+	}
+
+	//Synchronize the queue table
+	if(function_exists('queues_list') && (($freePBXQueues = queues_list()) !== null)) {
+
+		//Add missing queues
+		$freePBXQueueIds = array();
+		foreach($freePBXQueues as $freePBXQueue) {
+			$queueId = $freePBXQueue[0];
+			array_push($freePBXQueueIds, $queueId);
+			if(cxpanel_queue_get($queueId) === null) {
+				$logger->debug('Adding missing queue to database ' . $queueId);
+				cxpanel_queue_add($queueId, true, $freePBXQueue[1]);
+			}
+		}
+
+		//Remove queues that do not exist
+		foreach(cxpanel_queue_list() as $cxpanelQueue) {
+			$queueId = $cxpanelQueue['queue_id'];
+			if(!in_array($queueId, $freePBXQueueIds)) {
+				$logger->debug('Removing non existent queue from database ' . $queueId);
+				cxpanel_queue_del($queueId);
+			}
+		}
+	}
+
+	//Synchronize the conference room table
+	if(function_exists('conferences_list') && (($freePBXConferences = conferences_list()) !== null)) {
+
+		//Add missing conference rooms
+		$freePBXConferenceIds = array();
+		foreach($freePBXConferences as $freePBXConference) {
+			$conferenceId = $freePBXConference[0];
+			array_push($freePBXConferenceIds, $conferenceId);
+			if(cxpanel_conference_room_get($conferenceId) === null) {
+				$logger->debug('Adding missing conference room to database ' . $conferenceId);
+				cxpanel_conference_room_add($conferenceId, true, $freePBXConference[1]);
+			}
+		}
+
+		//Remove conference rooms that do not exist
+		foreach(cxpanel_conference_room_list() as $cxpanelConference) {
+			$conferenceId = $cxpanelConference['conference_room_id'];
+			if(!in_array($conferenceId, $freePBXConferenceIds)) {
+				$logger->debug('Removing non existent conference room from database ' . $conferenceId);
+				cxpanel_conference_room_del($conferenceId);
+			}
+		}
+	}
+}
 
 /**
  *
@@ -1059,6 +1157,7 @@ function sync_user_contacts_userman() {
 		}
 
 		//Add users from userman
+		$users = array();
 		$freePBXUsers = $userman->getAllUsers();
 		foreach($freePBXUsers as $freePBXUser) {
 
@@ -1768,11 +1867,6 @@ function cleanup() {
 	if(isset($lock)) {
 		flock($lock, LOCK_UN);
 		fclose($lock);
-	}
-
-	//Close database connection
-	if(isset($db)) {
-		$db->disconnect();
 	}
 
 	//Kill the script
