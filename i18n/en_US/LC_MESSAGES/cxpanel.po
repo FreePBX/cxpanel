@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-05 11:36-0700\n"
+"POT-Creation-Date: 2015-11-03 09:24-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Cxpanel.class.php:210
+#: Cxpanel.class.php:239
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
@@ -100,6 +100,10 @@ msgstr ""
 msgid "Manages alternative phone numbers for this %s user."
 msgstr ""
 
+#: views/userman_hook.php:13
+msgid "No"
+msgstr ""
+
 #: functions.inc.php:561
 #, php-format
 msgid ""
@@ -139,4 +143,8 @@ msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "
 "specified or the password is not changing."
+msgstr ""
+
+#: views/userman_hook.php:12
+msgid "Yes"
 msgstr ""
