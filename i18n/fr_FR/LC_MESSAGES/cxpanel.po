@@ -10,32 +10,37 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-17 20:44-0400\n"
-"PO-Revision-Date: 2015-03-17 20:44-0400\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2016-01-22 07:17+0200\n"
+"Last-Translator: Nicolas <forums@riendeau.org>\n"
+"Language-Team: French "
+"<http://weblate.freepbx.org/projects/freepbx/cxpanel/fr_FR/>\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 2.2-dev\n"
 
 #: cxpanel.i18n.php:6 cxpanel.i18n.php:12
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: cxpanel.i18n.php:8
 msgid ""
 "This module automatically configures the operator panel to reflect the PBX "
 "configuration."
 msgstr ""
+"Ce module configure automatiquement le panneau du téléphoniste en fonction "
+"de la configuration du PBX."
 
 #: cxpanel.i18n.php:4 cxpanel.i18n.php:10
 msgid "iSymphonyV3"
-msgstr ""
+msgstr "iSymphonyV3"
 
 #: cxpanel.i18n.php:14
 msgid "iSymphonyV3 Panel"
-msgstr ""
+msgstr "Panneau iSymphonyV3"
 
 #: cxpanel.i18n.php:16
 msgid "reports"
-msgstr ""
+msgstr "rapports"
