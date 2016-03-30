@@ -289,9 +289,17 @@ try {
 	$licenseSerialKeyDisplay = $license->serial;
 	$licenseExpirationDate = isset($license->expirationDate) ? date('m/d/Y', $license->expirationDate / 1000) : null;
 	$maintenanceExpirationDate = isset($license->maintenanceExpirationDate) ? ($license->maintenanceExpirationDate / 1000) : null;
-	
-	//Highlight and format maintenance expiration date
-	if(isset($maintenanceExpirationDate)) {
+
+	// If we are running on a PBXact system (XactView operator panel brand), 
+	// do not display the maintenance expiration date. This modification was 
+	// added at the request of Sangoma, in order to facilitate changes to the
+	// licensing process for XactView.
+	//
+	// See FPBX-36
+	$isXactView = $cxpanelBrandName == "XactView";
+
+	//Highlight and format the maintenance expiration date.
+	if(isset($maintenanceExpirationDate) && !$isXactView) {
 		
 		//Check if maintenance has expired or is about to
 		$warningPeriod = 30 * 86400;
@@ -328,7 +336,7 @@ try {
 								</tr>";
 	}
 	
-	if(isset($maintenanceExpirationDate)) {
+	if(isset($maintenanceExpirationDate) && !$isXactView) {
 		$licenseAdditions .= "	<tr>
 		<td><a href=\"#\" class=\"info\">Maint. Expiration Date:<span>Displays the expiration date of the license maintenance period.</span></a></td>
 		<td>$maintenanceExpirationDate</td>
