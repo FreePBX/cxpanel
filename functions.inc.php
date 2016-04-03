@@ -422,9 +422,12 @@ function cxpanel_configpageinit($pagename) {
 	} else if ($tech_hardware != null || $pagename == "users") {
 		cxpanel_extension_applyhooks();
 		$currentcomponent->addprocessfunc('cxpanel_extension_configprocess', 8);
-	} elseif ($action == "add" || $action == "edit") {
+	} else if ($action == "add") {
 		$currentcomponent->addprocessfunc('cxpanel_extension_configprocess', 8);
-	} elseif ($extdisplay != '') {
+	} else if ($action == "edit") {
+		cxpanel_extension_applyhooks();
+		$currentcomponent->addprocessfunc('cxpanel_extension_configprocess', 8);
+	} else if ($extdisplay != '') {
 		cxpanel_extension_applyhooks();
 		$currentcomponent->addprocessfunc('cxpanel_extension_configprocess', 8);
 	}
