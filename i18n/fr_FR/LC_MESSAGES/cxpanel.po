@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-03 09:24-0800\n"
+"POT-Creation-Date: 2016-04-04 11:13-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,60 +22,74 @@ msgstr ""
 msgid "%s Login: %s"
 msgstr ""
 
-#: functions.inc.php:373 functions.inc.php:505
+#: functions.inc.php:373 functions.inc.php:508
 #, php-format
 msgid "%s Settings"
 msgstr ""
 
-#: functions.inc.php:377 functions.inc.php:512
+#: functions.inc.php:377 functions.inc.php:515
 #, php-format
 msgid "Add to %s"
 msgstr ""
 
-#: functions.inc.php:540
+#: cxpanel.i18n.php:6 cxpanel.i18n.php:12
+msgid "Admin"
+msgstr "Admin"
+
+#: functions.inc.php:543
 msgid "Alt. Phone Numbers"
 msgstr ""
 
-#: functions.inc.php:513
+#: functions.inc.php:516
 msgid "Auto Answer"
 msgstr ""
 
-#: functions.inc.php:520
+#: functions.inc.php:523
 msgid "Create User"
 msgstr ""
 
-#: functions.inc.php:520
+#: functions.inc.php:523
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr ""
 
-#: functions.inc.php:554
+#: functions.inc.php:557
 msgid "Email Inital Password"
 msgstr ""
 
-#: functions.inc.php:522
+#: functions.inc.php:525
 msgid "Email Password"
 msgstr ""
 
-#: functions.inc.php:521
+#: functions.inc.php:524
 msgid "Full User"
 msgstr ""
 
-#: functions.inc.php:488
-msgid "If you do not know the password for this user you can change it in the User Password field above"
+#: functions.inc.php:491
+msgid ""
+"If you do not know the password for this user you can change it in the User "
+"Password field above"
 msgstr ""
 
-#: functions.inc.php:521
+#: functions.inc.php:524
 #, php-format
-msgid "Makes this extension a full user in %s. Full users have access to all the fuctionality in %s that the current license allows. The amount of full users allowed in %s is restricted via the license. If you mark this user as a full user and there are no more user licenes available the user will remain a lite user."
+msgid ""
+"Makes this extension a full user in %s. Full users have access to all the "
+"fuctionality in %s that the current license allows. The amount of full users "
+"allowed in %s is restricted via the license. If you mark this user as a full "
+"user and there are no more user licenes available the user will remain a "
+"lite user."
 msgstr ""
 
-#: functions.inc.php:513
+#: functions.inc.php:516
 #, php-format
-msgid "Makes this extension automatically answer the initial call received from the system when performing an origination within %s. Only works with Aastra, Grandstream, Linksys, Polycom, and Snom phones."
+msgid ""
+"Makes this extension automatically answer the initial call received from the "
+"system when performing an origination within %s. Only works with Aastra, "
+"Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
 
-#: functions.inc.php:512
+#: functions.inc.php:515
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr ""
@@ -85,7 +99,7 @@ msgstr ""
 msgid "Makes this user available in %s"
 msgstr ""
 
-#: functions.inc.php:540
+#: functions.inc.php:543
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
 msgstr ""
@@ -94,51 +108,62 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: functions.inc.php:561
+#: functions.inc.php:564
 #, php-format
-msgid "Please specify a password for the %s user or uncheck \"Create User\" under \"%s User Settings\""
+msgid ""
+"Please specify a password for the %s user or uncheck \"Create User\" under "
+"\"%s User Settings\""
 msgstr ""
 
-#: functions.inc.php:523
+#: cxpanel.i18n.php:16
+msgid "Reports"
+msgstr ""
+
+#: functions.inc.php:526
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr ""
 
-#: functions.inc.php:536
-msgid "Specifies which extensions will be bound to the $cxpanelBrandName user created for this extension. \"Self\" refers to this extension"
+#: functions.inc.php:539
+msgid ""
+"Specifies which extensions will be bound to the $cxpanelBrandName user "
+"created for this extension. \"Self\" refers to this extension"
 msgstr ""
 
-#: functions.inc.php:486
+#: functions.inc.php:489
 msgid "The inital password for this user is set to"
 msgstr ""
 
-#: functions.inc.php:488
+#: functions.inc.php:491
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 
-#: functions.inc.php:537
+#: cxpanel.i18n.php:8
+msgid ""
+"This module automatically configures the operator panel to reflect the PBX "
+"configuration."
+msgstr ""
+"Ce module configure automatiquement le panneau du téléphoniste en fonction "
+"de la configuration du PBX."
+
+#: functions.inc.php:540
 msgid "User Extensions"
 msgstr ""
 
-#: functions.inc.php:523
+#: functions.inc.php:526
 msgid "User Password"
 msgstr ""
 
-#: functions.inc.php:522
-msgid "When checked the new specified password will be sent to the email cofigured in the voicemail settings. No email will be sent if no email address is specified or the password is not changing."
+#: functions.inc.php:525
+msgid ""
+"When checked the new specified password will be sent to the email cofigured "
+"in the voicemail settings. No email will be sent if no email address is "
+"specified or the password is not changing."
 msgstr ""
 
 #: views/userman_hook.php:12
 msgid "Yes"
 msgstr ""
-
-#: cxpanel.i18n.php:6 cxpanel.i18n.php:12
-msgid "Admin"
-msgstr "Admin"
-
-#: cxpanel.i18n.php:8
-msgid "This module automatically configures the operator panel to reflect the PBX configuration."
-msgstr "Ce module configure automatiquement le panneau du téléphoniste en fonction de la configuration du PBX."
 
 #: cxpanel.i18n.php:4 cxpanel.i18n.php:10
 msgid "iSymphonyV3"
@@ -148,6 +173,5 @@ msgstr "iSymphonyV3"
 msgid "iSymphonyV3 Panel"
 msgstr "Panneau iSymphonyV3"
 
-#: cxpanel.i18n.php:16
-msgid "reports"
-msgstr "rapports"
+#~ msgid "reports"
+#~ msgstr "rapports"
