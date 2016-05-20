@@ -1,0 +1,134 @@
+#: Cxpanel.class.php:239
+#, php-format
+msgid "%s Login: %s"
+msgstr ""
+
+#: functions.inc.php:373 functions.inc.php:508
+#, php-format
+msgid "%s Settings"
+msgstr ""
+
+#: functions.inc.php:377 functions.inc.php:515
+#, php-format
+msgid "Add to %s"
+msgstr ""
+
+#: cxpanel.i18n.php:6 cxpanel.i18n.php:12
+msgid "Admin"
+msgstr ""
+
+#: functions.inc.php:543
+msgid "Alt. Phone Numbers"
+msgstr ""
+
+#: functions.inc.php:516
+msgid "Auto Answer"
+msgstr ""
+
+#: functions.inc.php:523
+msgid "Create User"
+msgstr ""
+
+#: functions.inc.php:523
+#, php-format
+msgid "Creates an %s user login which is associated with this extension."
+msgstr ""
+
+#: functions.inc.php:557
+msgid "Email Inital Password"
+msgstr ""
+
+#: functions.inc.php:525
+msgid "Email Password"
+msgstr ""
+
+#: functions.inc.php:524
+msgid "Full User"
+msgstr ""
+
+#: functions.inc.php:491
+msgid "If you do not know the password for this user you can change it in the User Password field above"
+msgstr ""
+
+#: functions.inc.php:524
+#, php-format
+msgid "Makes this extension a full user in %s. Full users have access to all the fuctionality in %s that the current license allows. The amount of full users allowed in %s is restricted via the license. If you mark this user as a full user and there are no more user licenes available the user will remain a lite user."
+msgstr ""
+
+#: functions.inc.php:516
+#, php-format
+msgid "Makes this extension automatically answer the initial call received from the system when performing an origination within %s. Only works with Aastra, Grandstream, Linksys, Polycom, and Snom phones."
+msgstr ""
+
+#: functions.inc.php:515
+#, php-format
+msgid "Makes this extension available in %s"
+msgstr ""
+
+#: functions.inc.php:377
+#, php-format
+msgid "Makes this user available in %s"
+msgstr ""
+
+#: functions.inc.php:543
+#, php-format
+msgid "Manages alternative phone numbers for this %s user."
+msgstr ""
+
+#: views/userman_hook.php:13
+msgid "No"
+msgstr ""
+
+#: functions.inc.php:564
+#, php-format
+msgid "Please specify a password for the %s user or uncheck \"Create User\" under \"%s User Settings\""
+msgstr ""
+
+#: cxpanel.i18n.php:16
+msgid "Reports"
+msgstr ""
+
+#: functions.inc.php:526
+#, php-format
+msgid "Specifies the password to be used for the %s User"
+msgstr ""
+
+#: functions.inc.php:539
+msgid "Specifies which extensions will be bound to the $cxpanelBrandName user created for this extension. \"Self\" refers to this extension"
+msgstr ""
+
+#: functions.inc.php:489
+msgid "The inital password for this user is set to"
+msgstr ""
+
+#: functions.inc.php:491
+msgid "The inital password for this user was never created or has been changed"
+msgstr ""
+
+#: cxpanel.i18n.php:8
+msgid "This module automatically configures the operator panel to reflect the PBX configuration."
+msgstr ""
+
+#: functions.inc.php:540
+msgid "User Extensions"
+msgstr ""
+
+#: functions.inc.php:526
+msgid "User Password"
+msgstr ""
+
+#: functions.inc.php:525
+msgid "When checked the new specified password will be sent to the email cofigured in the voicemail settings. No email will be sent if no email address is specified or the password is not changing."
+msgstr ""
+
+#: views/userman_hook.php:12
+msgid "Yes"
+msgstr ""
+
+#: cxpanel.i18n.php:4 cxpanel.i18n.php:10
+msgid "iSymphonyV3"
+msgstr ""
+
+#: cxpanel.i18n.php:14
+msgid "iSymphonyV3 Panel"
+msgstr ""
