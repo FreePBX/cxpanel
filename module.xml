@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>4.1.14</version>
+	<version>4.1.15</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -13,9 +13,11 @@
 	</menuitems>
 	<depends>
 		<module>manager</module>
+		<module>userman</module>
 		<version>12.0</version>
 	</depends>
 	<changelog>
+		*4.1.15* Require userman
 		*4.1.14* Add group settings
 		*4.1.13* FREEPBX-12333
 		*4.1.12* Remove log file
