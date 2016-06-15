@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>4.1.13</version>
+	<version>4.1.14</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -15,9 +15,8 @@
 		<module>manager</module>
 		<version>12.0</version>
 	</depends>
-	<location>junk</location>
-	<md5sum>junk</md5sum>
 	<changelog>
+		*4.1.14* Add group settings
 		*4.1.13* FREEPBX-12333
 		*4.1.12* Remove log file
 		*4.1.11* Fixes issue with display when editing extensions
@@ -43,6 +42,8 @@
 		<userman namespace="FreePBX\modules" class="Userman">
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="addUser">usermanAddUser</method>
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="updateUser">usermanUpdateUser</method>
+			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="addGroup">usermanAddGroup</method>
+			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="updateGroup">usermanUpdateGroup</method>
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="sendWelcomeEmail">usermanSendEmail</method>
 			<method namespace="FreePBX\modules" class="Cxpanel" callingMethod="myShowPage">usermanShowPage</method>
 		</userman>

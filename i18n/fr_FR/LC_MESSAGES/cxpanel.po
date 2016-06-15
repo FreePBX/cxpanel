@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 11:13-0700\n"
+"POT-Creation-Date: 2016-06-14 17:23-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Cxpanel.class.php:239
+#: Cxpanel.class.php:291
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
@@ -25,6 +25,11 @@ msgstr ""
 #: functions.inc.php:373 functions.inc.php:508
 #, php-format
 msgid "%s Settings"
+msgstr ""
+
+#: views/userman_hook.php:7
+#, php-format
+msgid "Add To %s"
 msgstr ""
 
 #: functions.inc.php:377 functions.inc.php:515
@@ -71,6 +76,10 @@ msgid ""
 "Password field above"
 msgstr ""
 
+#: views/userman_hook.php:18
+msgid "Inherit"
+msgstr ""
+
 #: functions.inc.php:524
 #, php-format
 msgid ""
@@ -104,7 +113,7 @@ msgstr ""
 msgid "Manages alternative phone numbers for this %s user."
 msgstr ""
 
-#: views/userman_hook.php:13
+#: views/userman_hook.php:15
 msgid "No"
 msgstr ""
 
@@ -161,7 +170,7 @@ msgid ""
 "specified or the password is not changing."
 msgstr ""
 
-#: views/userman_hook.php:12
+#: views/userman_hook.php:13
 msgid "Yes"
 msgstr ""
 

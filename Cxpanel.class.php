@@ -55,33 +55,71 @@ class Cxpanel implements \BMO {
 
 	public function usermanShowPage() {
 		global $cxpanelBrandName;
-				
-		/** 
+
+		/**
 		 * Add the cxpanel tab to the userman page if the following contitions are met:
 		 * - The FreePBX verison is >= 13. The section will be added in older versions via cxpanel_hook_userman() in functions.inc.php.
 		 * - Sync with user managment is enabled.
 		 * - We are adding or editing a user.
 		 */
 		$serverSettings = cxpanel_server_get();
-		$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : "";
-		if(version_compare_freepbx(getVersion(), '13.0', '>=') && $serverSettings['sync_with_userman'] == '1' && ($action == 'showuser' || $action == 'adduser')) {
-			
-			//If the user is specified check if the user has the add flag
-			$user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : null;
-			$addUser = $user === null || $this->freepbx->Userman->getModuleSettingByID($user, 'cxpanel', 'add') == '1';
-						
+		if(version_compare_freepbx(getVersion(), '13.0', '>=') && $serverSettings['sync_with_userman'] == '1') {
+			if(isset($_REQUEST['action'])) {
+				switch($_REQUEST['action']) {
+					case 'showgroup':
+						$mode = "group";
+						$addUser = $this->freepbx->Userman->getModuleSettingByID($_REQUEST['group'], 'cxpanel', 'add');
+					break;
+					case 'showuser':
+						$mode = "user";
+						$addUser = $this->freepbx->Userman->getModuleSettingByID($_REQUEST['user'], 'cxpanel', 'add',true);
+					break;
+					case 'addgroup':
+						$mode = "group";
+						$addUser = true;
+					break;
+					case 'adduser':
+						$mode = "user";
+						$addUser = null;
+					break;
+				}
+			}
+
 			return array(
 					array(
-							'title' => _($cxpanelBrandName),
+							'title' => $cxpanelBrandName,
 							'rawname' => 'cxpanel',
-							'content' => load_view(dirname(__FILE__).'/views/userman_hook.php',array('cxpanelBrandName' => $cxpanelBrandName, 'addUser' => $addUser))
+							'content' => load_view(dirname(__FILE__).'/views/userman_hook.php',array('cxpanelBrandName' => $cxpanelBrandName, 'addUser' => $addUser, 'mode' => $mode))
 					)
 			);
 		}
-		
+
 		return array();
 	}
-	
+
+	public function usermanAddGroup($id, $display, $data) {
+		$this->usermanUpdateGroup($id,$display,$data);
+	}
+
+	public function usermanUpdateGroup($id,$display,$data) {
+		$this->userman = $this->freepbx->Userman;
+		if(isset($_REQUEST['cxpanel_add_user'])) {
+			if($_POST['cxpanel_add_user'] == '1') {
+				//Set the add flag on the user
+				$this->userman->setModuleSettingByGID($id, 'cxpanel', 'add', 1);
+			} elseif($_POST['cxpanel_add_user'] == '0') {
+				$this->userman->setModuleSettingByGID($id, 'cxpanel', 'add', 0);
+			} else {
+				$this->userman->setModuleSettingByGID($id, 'cxpanel', 'add', null);
+			}
+		}
+
+		if($display == "userman") {
+			//Flag FreePBX for reload
+			needreload();
+		}
+	}
+
 	/**
 	 * Called when a FreePBX user is added to the system.
 	 *
@@ -90,19 +128,24 @@ class Cxpanel implements \BMO {
 	 * @param Array $data an array of all relevant data returned from User Manager
 	 */
 	public function usermanAddUser($id, $display, $data) {
-		if($display != "userman") {
-			return;
-		}
 		$this->userman = $this->freepbx->Userman;
-		//Set the add flag on the user
-		$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
-		$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
+		if(isset($_REQUEST['cxpanel_add_user'])) {
+			if($_POST['cxpanel_add_user'] == '1') {
+				//Set the add flag on the user
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', 1);
+			} elseif($_POST['cxpanel_add_user'] == '0') {
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', 0);
+			} else {
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', null);
+			}
+			//Mark the user's password as dirty
+			$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
+		}
 
-		//Mark the user's password as dirty
-		$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
-
-		//Flag FreePBX for reload
-		needreload();
+		if($display == "userman") {
+			//Flag FreePBX for reload
+			needreload();
+		}
 	}
 	/**
 	 * Hook functionality from userman when a user is updated
@@ -111,18 +154,25 @@ class Cxpanel implements \BMO {
 	 * @param {array} $data    Array of data to be able to use
 	 */
 	public function usermanUpdateUser($id, $display, $data) {
-		if($display != "userman") {
-			return;
-		}
 		if(!function_exists('cxpanel_get_config')) {
 			include(__DIR__.'/functions.inc.php');
 		}
 
 		$this->userman = $this->freepbx->Userman;
+		if(isset($_REQUEST['cxpanel_add_user'])) {
+			if($_POST['cxpanel_add_user'] == '1') {
+				//Set the add flag on the user
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', 1);
+			} elseif($_POST['cxpanel_add_user'] == '0') {
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', 0);
+			} else {
+				$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', null);
+			}
+			//Mark the user's password as dirty
+			$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
+		}
 
-		//Set the add flag on the user
-		$add = isset($_REQUEST['cxpanel_add_user']) ? $_REQUEST['cxpanel_add_user'] : '1';
-		$this->userman->setModuleSettingByID($id, 'cxpanel', 'add', $add);
+		$add = $this->userman->getCombinedModuleSettingByID($id, 'cxpanel', 'add');
 
 		//If a new password was set mark the user's password as dirty
 		$passwordDirty = !empty($data['password']) ? '1' : '0';
@@ -130,7 +180,9 @@ class Cxpanel implements \BMO {
 
 		$newUsername = ($data['prevUsername'] != $data['username']) ? '1' : '0';
 		//Flag FreePBX for reload
-		needreload();
+		if($display == "userman") {
+			needreload();
+		}
 
 		/*
 		* If the following conditions are met, attempt to apply the password change immediately.

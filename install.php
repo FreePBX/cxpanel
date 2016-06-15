@@ -55,7 +55,7 @@ if(function_exists("voicemail_get_settings")) {
 	if($vmSettings["pollmailboxes"] != "yes" || empty($vmSettings["pollfreq"])) {
 		echo "Enabling voicemail box polling<br/>";
 		if(function_exists("voicemail_update_settings")) {
-			voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));	
+			voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));
 		}
 	}
 }
@@ -111,7 +111,7 @@ $builder->build(array(array("junk")));
 $defaultEmailBody = "<img src=\"%%logo%%\">" .
 					"<br/><br/>" .
 					"Hello," .
-					"<br/><br/> ". 
+					"<br/><br/> ".
 					"This email is to inform you of your " . $cxpanelBrandName ." login credentials:" .
 					"<br/><br/>" .
 					"<b>Username:</b> %%userId%%" .
@@ -159,24 +159,24 @@ $entries = array();
 if((function_exists("core_users_list")) && (($freePBXUsers = core_users_list()) !== null)){
 	foreach($freePBXUsers as $freePBXUser) {
 		if(function_exists("core_devices_get")) {
-			
+
 			//Determine user info
 			$userId = $freePBXUser[0];
 			$userDevice = core_devices_get($userId);
 			$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
 			$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
-			
+
 			//Generate a password for the user
 			$password = cxpanel_generate_password(10);
 			$passwordSHA1 = sha1($password);
-						
+
 			//Add user
 			array_push($entries, array("user_id" => $userId, "display_name" => $displayName, "peer" => $peer, "hashed_password" => $passwordSHA1, "initial_password" => $password, "parent_user_id" => $userId));
 		}
 	}
 }
 
-$builder->build($entries);					
+$builder->build($entries);
 
 //Build queues table
 $columns = array(	new cxpanel_column("cxpanel_queue_id", "primary", "", "", true, true),
@@ -226,5 +226,3 @@ $columns = array(	new cxpanel_column("cxpanel_id", "string", "", "", false, true
 $table = new cxpanel_table("cxpanel_managed_items", $columns);
 $builder = new cxpanel_table_builder($table);
 $builder->build();
-
-

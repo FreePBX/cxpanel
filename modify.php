@@ -182,7 +182,7 @@ cleanup();
  */
 function sync_database() {
 	global $logger;
-	
+
 	$logger->debug('Synchronizing database');
 
 	//Synchronize the user table
@@ -653,7 +653,7 @@ function sync_extensions() {
 		foreach(core_users_list() as $user) {
 			$voicemailContexts[$user[0]] = $user[2];
 		}
-		
+
 		//Add extensions that are missing on the server and update ones that are not up to date
 		foreach($extensions as $extension) {
 
@@ -664,9 +664,9 @@ function sync_extensions() {
 			$peer = $extension['peer'];
 			$agentLoginLocation = "Local/" . $extensionNumber . "@" . $agentLoginContext . "/n";
 			$agentLoginInterface = get_agent_login_interface($extension);
-			$voicemailContext = array_key_exists($extensionNumber, $voicemailContexts) && $voicemailContexts[$extensionNumber] != 'novm' ? 
+			$voicemailContext = array_key_exists($extensionNumber, $voicemailContexts) && $voicemailContexts[$extensionNumber] != 'novm' ?
 								$voicemailContexts[$extensionNumber] : 'default';
-			
+
 			//Add extension
 			if(!array_key_exists($extensionNumber, $serverExtensionAssoc)) {
 
@@ -677,9 +677,9 @@ function sync_extensions() {
 
 				//Add the extension to the server
 				try {
-					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer, 
-															$peer, "", $displayName, 
-															$agentLoginLocation,$agentLoginInterface, 
+					$extensionObj = new cxpanel_extension(	false, $extensionNumber, $displayName, $autoAnswer,
+															$peer, "", $displayName,
+															$agentLoginLocation,$agentLoginInterface,
 															0, false, "", "", 0, $voicemailContext, $extensionNumber);
 					$extensionObj->id = $uuid;
 					$pest->post("asterisk/" . $coreServerId . "/extensions/", $extensionObj);
@@ -878,7 +878,7 @@ function sync_users_userman() {
 			 * If no add property can be found assume true in case there are
 			 * FreePBX users that existed before the module was installed.
 			 */
-			$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
 			if($add === false) {
 				$add = '1';
 				$userman->setModuleSettingByID($freePBXUser['id'], 'cxpanel', 'add', '1');
@@ -1167,7 +1167,7 @@ function sync_user_contacts_userman() {
 			 * If no add property can be found assume true in case there are
 			 * FreePBX users that existed before the module was installed.
 			 */
-			$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
 			$add = $add === false ? '1' : $add;
 			if($add == '1') {
 
@@ -1485,7 +1485,7 @@ function sync_extension_users_userman() {
 		foreach($freePBXUsers as $freePBXUser) {
 
 			//Only look at users that are flaged to be added
-			$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
 			$add = $add === false ? '1' : $add;
 			if($add == '1') {
 
@@ -1776,8 +1776,8 @@ function sync_parking_lot() {
 
 		/*
 		 * If the server has the default parking lot configured, and FreePBX has parking disabled,
-		 * remove the default parking lot. 
-		 * 
+		 * remove the default parking lot.
+		 *
 		 * If other parking lots are found on the server, and clean unknown items
 		 * is enabled, remove those parking lots.
 		 */

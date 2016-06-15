@@ -9,7 +9,7 @@
  */
 
 /**
- * 
+ *
  * Represents a column in the table
  * @author michaely
  *
@@ -34,7 +34,7 @@ class cxpanel_column {
 }
 
 /**
- * 
+ *
  * Represents a table
  * @author michaely
  *
@@ -51,10 +51,10 @@ class cxpanel_table {
 }
 
 /**
- * 
- * Class used to build or modify an existing table in order to 
+ *
+ * Class used to build or modify an existing table in order to
  * match the desired table structure.
- * 
+ *
  * Will echo info statemets for display in the FreePBX module install dialog.
  * @author michaely
  *
@@ -69,24 +69,24 @@ class cxpanel_table_builder {
 
 	function build($entries = null) {
 
-		echo "Creating \"" . $this->table->name . "\" Table....<br>";
+		out("Creating \"" . $this->table->name . "\" Table....");
 
 		if($this->createTableIfItDoesNotExist()) {
-			echo "Populating(New) \"" . $this->table->name. "\"....<br>";
+			out("Populating(New) \"" . $this->table->name. "\"....");
 
 			if(isset($entries)) {
 				$this->populateTableNew($entries);
 			}
-		
+
 		} else {
-			echo "Upgrading \"" . $this->table->name. "\"....<br>";
+			out("Upgrading \"" . $this->table->name. "\"....");
 			$addedColumns = $this->upgradeTableColumns();
 			if(!empty($addedColumns)){
-				echo "Populating(Upgrade) \"" . $this->table->name. "\"....<br>";
+				out("Populating(Upgrade) \"" . $this->table->name. "\"....");
 				$this->populateTableUpgrade($addedColumns);
 			}
 		}
-		echo "Done<br>";
+		out("Done");
 	}
 
 	function createTableIfItDoesNotExist() {
@@ -105,14 +105,14 @@ class cxpanel_table_builder {
 
 		$result = $db->query($query);
 		if(DB::IsError($result)) {
-				
+
 			if($result->getCode() != DB_ERROR_ALREADY_EXISTS) {
 				die_freepbx($result->getDebugInfo());
 			}
-				
+
 			return false;
 		}
-			
+
 		return true;
 	}
 
@@ -126,11 +126,11 @@ class cxpanel_table_builder {
 		foreach($this->table->columns as $column) {
 			$query = "SELECT $column->name FROM " . $this->table->name;
 			$check = $db->getRow($query, DB_FETCHMODE_ASSOC);
-				
+
 			if(DB::IsError($check)) {
 				$query = "ALTER TABLE " . $this->table->name . " ADD " . $this->buildColumnEntry($column);
 				$result = $db->query($query);
-				 
+
 				if(DB::IsError($result)) {
 					die_freepbx($result->getDebugInfo());
 				} else {
@@ -148,11 +148,11 @@ class cxpanel_table_builder {
 
 		//Populate a newly created table
 		foreach($entries as $entry) {
-				
+
 			$queryKeys = "";
 			$queryValues = "";
 			$queryValueArray = array();
-				
+
 			foreach($this->table->columns as $column) {
 				$queryKeys .= $column->name . ",";
 				$queryValues .= "?,";
@@ -164,7 +164,7 @@ class cxpanel_table_builder {
 					array_push($queryValueArray,  $column->defaultValue);
 				}
 			}
-				
+
 			$queryKeys = substr_replace($queryKeys, "", -1);
 			$queryValues = substr_replace($queryValues, "", -1);
 
@@ -214,4 +214,3 @@ class cxpanel_table_builder {
 		return $columnEntry;
 	}
 }
-

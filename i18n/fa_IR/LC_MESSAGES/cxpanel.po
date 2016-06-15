@@ -1,4 +1,4 @@
-#: Cxpanel.class.php:239
+#: Cxpanel.class.php:291
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
@@ -6,6 +6,11 @@ msgstr ""
 #: functions.inc.php:373 functions.inc.php:508
 #, php-format
 msgid "%s Settings"
+msgstr ""
+
+#: views/userman_hook.php:7
+#, php-format
+msgid "Add To %s"
 msgstr ""
 
 #: functions.inc.php:377 functions.inc.php:515
@@ -47,17 +52,31 @@ msgid "Full User"
 msgstr ""
 
 #: functions.inc.php:491
-msgid "If you do not know the password for this user you can change it in the User Password field above"
+msgid ""
+"If you do not know the password for this user you can change it in the User "
+"Password field above"
+msgstr ""
+
+#: views/userman_hook.php:18
+msgid "Inherit"
 msgstr ""
 
 #: functions.inc.php:524
 #, php-format
-msgid "Makes this extension a full user in %s. Full users have access to all the fuctionality in %s that the current license allows. The amount of full users allowed in %s is restricted via the license. If you mark this user as a full user and there are no more user licenes available the user will remain a lite user."
+msgid ""
+"Makes this extension a full user in %s. Full users have access to all the "
+"fuctionality in %s that the current license allows. The amount of full users "
+"allowed in %s is restricted via the license. If you mark this user as a full "
+"user and there are no more user licenes available the user will remain a "
+"lite user."
 msgstr ""
 
 #: functions.inc.php:516
 #, php-format
-msgid "Makes this extension automatically answer the initial call received from the system when performing an origination within %s. Only works with Aastra, Grandstream, Linksys, Polycom, and Snom phones."
+msgid ""
+"Makes this extension automatically answer the initial call received from the "
+"system when performing an origination within %s. Only works with Aastra, "
+"Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
 
 #: functions.inc.php:515
@@ -75,13 +94,15 @@ msgstr ""
 msgid "Manages alternative phone numbers for this %s user."
 msgstr ""
 
-#: views/userman_hook.php:13
+#: views/userman_hook.php:15
 msgid "No"
 msgstr ""
 
 #: functions.inc.php:564
 #, php-format
-msgid "Please specify a password for the %s user or uncheck \"Create User\" under \"%s User Settings\""
+msgid ""
+"Please specify a password for the %s user or uncheck \"Create User\" under "
+"\"%s User Settings\""
 msgstr ""
 
 #: cxpanel.i18n.php:16
@@ -94,7 +115,9 @@ msgid "Specifies the password to be used for the %s User"
 msgstr ""
 
 #: functions.inc.php:539
-msgid "Specifies which extensions will be bound to the $cxpanelBrandName user created for this extension. \"Self\" refers to this extension"
+msgid ""
+"Specifies which extensions will be bound to the $cxpanelBrandName user "
+"created for this extension. \"Self\" refers to this extension"
 msgstr ""
 
 #: functions.inc.php:489
@@ -106,7 +129,9 @@ msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 
 #: cxpanel.i18n.php:8
-msgid "This module automatically configures the operator panel to reflect the PBX configuration."
+msgid ""
+"This module automatically configures the operator panel to reflect the PBX "
+"configuration."
 msgstr ""
 
 #: functions.inc.php:540
@@ -118,10 +143,13 @@ msgid "User Password"
 msgstr ""
 
 #: functions.inc.php:525
-msgid "When checked the new specified password will be sent to the email cofigured in the voicemail settings. No email will be sent if no email address is specified or the password is not changing."
+msgid ""
+"When checked the new specified password will be sent to the email cofigured "
+"in the voicemail settings. No email will be sent if no email address is "
+"specified or the password is not changing."
 msgstr ""
 
-#: views/userman_hook.php:12
+#: views/userman_hook.php:13
 msgid "Yes"
 msgstr ""
 
