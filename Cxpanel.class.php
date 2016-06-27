@@ -53,6 +53,16 @@ class Cxpanel implements \BMO {
 	public function genConfig() {
 	}
 
+	public static function myGuiHooks() {
+		return array("INTERCEPT" => "modules/core/page.ampusers.php");
+	}
+
+	public function doGuiIntercept($filename, &$output) {
+		if ($filename == "modules/core/page.ampusers.php" && !empty($_POST['action']) && ($_POST['action'] == "editampuser" || $_POST['action'] == "addampuser")) {
+			needreload();
+		}
+	}
+
 	public function usermanShowPage() {
 		global $cxpanelBrandName;
 
