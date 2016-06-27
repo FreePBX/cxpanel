@@ -1,4 +1,4 @@
-#: Cxpanel.class.php:291
+#: Cxpanel.class.php:301
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
