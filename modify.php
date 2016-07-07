@@ -878,7 +878,11 @@ function sync_users_userman() {
 			 * If no add property can be found assume true in case there are
 			 * FreePBX users that existed before the module was installed.
 			 */
-			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			if(FreePBX::Modules()->moduleHasMethod("userman", "getCombinedModuleSettingByID")) {
+				$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			} else {
+				$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			}
 			if($add === false) {
 				$add = '1';
 				$userman->setModuleSettingByID($freePBXUser['id'], 'cxpanel', 'add', '1');
@@ -1167,7 +1171,11 @@ function sync_user_contacts_userman() {
 			 * If no add property can be found assume true in case there are
 			 * FreePBX users that existed before the module was installed.
 			 */
-			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			if(FreePBX::Modules()->moduleHasMethod("userman", "getCombinedModuleSettingByID")) {
+				$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			} else {
+				$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			}
 			$add = $add === false ? '1' : $add;
 			if($add == '1') {
 
@@ -1485,7 +1493,11 @@ function sync_extension_users_userman() {
 		foreach($freePBXUsers as $freePBXUser) {
 
 			//Only look at users that are flaged to be added
-			$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			if(FreePBX::Modules()->moduleHasMethod("userman", "getCombinedModuleSettingByID")) {
+				$add = $userman->getCombinedModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			} else {
+				$add = $userman->getModuleSettingByID($freePBXUser['id'], 'cxpanel' , 'add');
+			}
 			$add = $add === false ? '1' : $add;
 			if($add == '1') {
 

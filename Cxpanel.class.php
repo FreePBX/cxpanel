@@ -182,7 +182,12 @@ class Cxpanel implements \BMO {
 			$this->userman->setModuleSettingByID($id, 'cxpanel', 'password_dirty', '1');
 		}
 
-		$add = $this->userman->getCombinedModuleSettingByID($id, 'cxpanel', 'add');
+		if($this->freepbx->Modules->moduleHasMethod("userman", "getCombinedModuleSettingByID")) {
+			$add = $this->userman->getCombinedModuleSettingByID($id, 'cxpanel', 'add');
+		} else {
+			$add = $this->userman->getModuleSettingByID($id, 'cxpanel', 'add');
+		}
+
 
 		//If a new password was set mark the user's password as dirty
 		$passwordDirty = !empty($data['password']) ? '1' : '0';
