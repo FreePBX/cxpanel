@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>4.1.17</version>
+	<version>4.1.18</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -17,6 +17,7 @@
 		<version>12.0</version>
 	</depends>
 	<changelog>
+		*4.1.18* Table sizing
 		*4.1.17* Check to make sure we have the right settings available to us
 		*4.1.16* FREEPBX-12541
 		*4.1.15* Require userman

@@ -194,7 +194,7 @@ class cxpanel_table_builder {
 
 		$columnEntry = $column->name;
 		$modifierEntry = ($column->isUnique ? " UNIQUE" : "") . ($column->isNotNull ? " NOT NULL" : "");
-		$varcharSize = $column->isUnique ? "255" : "1000";
+		$varcharSize = $column->isUnique ? "190" : "1000";
 
 		switch ($column->type) {
 			case "primary":
