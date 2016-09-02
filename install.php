@@ -61,8 +61,8 @@ if(function_exists("voicemail_get_settings")) {
 }
 
 //If userman is installed and this is not an upgrade default sycn_with_userman to true
-$results = $db->query("select * from cxpanel_server");
-if(function_exists('setup_userman') && (DB::IsError($results) || empty($results))) {
+$results = $db->getAll("select * from cxpanel_users");
+if((DB::IsError($results) || empty($results))) {
 	$syncWithUserman = 1;
 } else {
 	$syncWithUserman = 0;
