@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>4.1.19</version>
+	<version>13.0.1</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -14,35 +14,17 @@
 	<depends>
 		<module>manager</module>
 		<module>userman</module>
-		<version>12.0</version>
+		<version>13.0.121</version>
 	</depends>
 	<changelog>
-		*4.1.19* Remove check for user manager
-		*4.1.18* Table sizing
-		*4.1.17* Check to make sure we have the right settings available to us
-		*4.1.16* FREEPBX-12541
-		*4.1.15* Require userman
-		*4.1.14* Add group settings
-		*4.1.13* FREEPBX-12333
-		*4.1.12* Remove log file
-		*4.1.11* Fixes issue with display when editing extensions
-		*4.1.10* Fixes for 13
-		*4.1.9* Depreciate old hooks
-		*4.1.8* FREEPBX-9953 Core requires userman
-		*4.1.7* FREEPBX-9781 Fix fatal class errors in 13
-		*4.1.6* Fatal error fix in installer
-		*4.1.4* Use displayname if exists, else use first,last name
-		*4.1.3* Username change support
-		*4.1.2* Use branding file
-		*4.1.1* Support password reset and email ability through userman
-		*3.1.9* Fix userman hook
+		*13.0.1* New install methods
 	</changelog>
 	<info>http://www.getisymphony.com</info>
 	<publisher>i9 Technologies</publisher>
 	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
-		<version>12.0</version>
+		<version>13.0</version>
 	</supported>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">

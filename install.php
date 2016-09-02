@@ -19,24 +19,25 @@ require_once(dirname(__FILE__)."/brand.php");
 
 //Set operator panel web root and enable dev state
 if(class_exists("freepbx_conf")) {
-	echo "Setting operator panel web root and enabling dev state....<br>";
+	outn("Setting operator panel web root and enabling dev state....");
 	$set["FOPWEBROOT"] = "cxpanel";
 	$set["USEDEVSTATE"] = true;
 	$freepbx_conf =& freepbx_conf::create();
 	$freepbx_conf->set_conf_values($set, true, true);
-	echo "Done<br>";
+	out("Done");
 }
 
 //Set callevents = yes for hold events
 if(function_exists("sipsettings_edit") && function_exists("sipsettings_get")) {
-	echo "Setting callevents = yes....<br>";
+	outn("Setting callevents = yes....");
 	$sip_settings = sipsettings_get();
 	$sip_settings['callevents'] = 'yes';
 	sipsettings_edit($sip_settings);
+	out("Done");
 }
 
 //Create symlink that points to the module directory in order to run the client redirect script
-echo "Creating client symlink....<br>";
+outn("Creating client symlink....");
 if(file_exists($amp_conf['AMPWEBROOT'] . '/cxpanel')) {
 	unlink($amp_conf['AMPWEBROOT'] . '/cxpanel');
 }
@@ -47,65 +48,189 @@ if(file_exists($amp_conf['AMPWEBROOT'] . '/admin/cxpanel')) {
 }
 symlink($amp_conf['AMPWEBROOT'] .'/admin/modules/cxpanel/', $amp_conf['AMPWEBROOT'] . '/admin/cxpanel');
 
-echo "Done<br>";
+out("Done");
 
 //Turn on voicemail polling if not already on
 if(function_exists("voicemail_get_settings")) {
 	$vmSettings = voicemail_get_settings(voicemail_getVoicemail(), "settings");
 	if($vmSettings["pollmailboxes"] != "yes" || empty($vmSettings["pollfreq"])) {
-		echo "Enabling voicemail box polling<br/>";
+		outn("Enabling voicemail box polling...");
 		if(function_exists("voicemail_update_settings")) {
 			voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));
 		}
+		out("Done");
 	}
 }
+outn("Build server table...");
+$table = \FreePBX::Database()->migrate("cxpanel_server");
+$cols = array (
+  'name' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'asterisk_host' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'client_host' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'client_port' =>
+  array (
+    'type' => 'integer',
+  ),
+  'client_use_ssl' =>
+  array (
+    'type' => 'integer',
+  ),
+  'api_host' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'api_port' =>
+  array (
+    'type' => 'integer',
+  ),
+  'api_username' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'api_password' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'api_use_ssl' =>
+  array (
+    'type' => 'integer',
+  ),
+  'sync_with_userman' =>
+  array (
+    'type' => 'integer',
+  ),
+  'clean_unknown_items' =>
+  array (
+    'type' => 'integer',
+  ),
+);
 
-//If userman is installed and this is not an upgrade default sycn_with_userman to true
-$results = $db->getAll("select * from cxpanel_users");
-if((DB::IsError($results) || empty($results))) {
-	$syncWithUserman = 1;
+
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
+
+out("Done");
+
+$results = $db->getAll("SELECT * FROM cxpanel_server");
+if(empty($results)) {
+	outn("New installed detected, adding default server...");
+	$db->query("INSERT INTO cxpanel_server (`name`, `asterisk_host`, `client_port`, `api_username`, `api_password`, `api_use_ssl`, `sync_with_userman`, `clean_unknown_items`) VALUES ('default', 'localhost', 58080, 'manager', 'manag3rpa55word', 0, 1, 1)");
+	out("Done");
 } else {
-	$syncWithUserman = 0;
+	//If userman is installed and this is not an upgrade default sycn_with_userman to true
+	outn("Upgrade detected, checking userman mode...");
+	$results = $db->getAll("SELECT * FROM cxpanel_users");
+	$results2 = $db->getAll("SELECT * FROM cxpanel_server WHERE sync_with_userman = 1");
+	if(empty($results) && !empty($results2)) {
+		$syncWithUserman = 1;
+		outn("Needs to sync with userman...");
+		$db->query("UPDATE cxpanel_server SET sync_with_userman = ".$syncWithUserman);
+	} else {
+		outn("Leaving userman mode unchanged...");
+	}
+	out("Done");
 }
 
-//Build server table
-$columns = array(	new cxpanel_column("name", "string", "default", "", false, true),
-					new cxpanel_column("asterisk_host", "string", "localhost", "", false, true),
-					new cxpanel_column("client_host", "string", "", "", false, true),
-					new cxpanel_column("client_port", "integer", 58080, "", false, true),
-					new cxpanel_column("client_use_ssl", "boolean", 0, "", false, true),
-					new cxpanel_column("api_host", "string", "localhost", "", false, true),
-					new cxpanel_column("api_port", "integer", 58080, "", false, true),
-					new cxpanel_column("api_username", "string", "manager", "", false, true),
-					new cxpanel_column("api_password", "string", "manag3rpa55word", "", false, true),
-					new cxpanel_column("api_use_ssl", "boolean", 0, "", false, true),
-					new cxpanel_column("sync_with_userman", "boolean", $syncWithUserman, "", false, true),
-					new cxpanel_column("clean_unknown_items", "boolean", 1, "", false, true));
 
-$table = new cxpanel_table("cxpanel_server", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build(array(array("junk")));
-
+outn("Build voicemail agent table...");
 //Build voicemail agent table
-$columns = array(	new cxpanel_column("identifier", "string", "local-vm", "", false, true),
-					new cxpanel_column("directory", "string", "/var/spool/asterisk/voicemail", "", false, true),
-					new cxpanel_column("resource_host", "string", php_uname('n'), "", false, true),
-					new cxpanel_column("resource_extension", "string", "wav", "", false, true));
+$table = \FreePBX::Database()->migrate("cxpanel_voicemail_agent");
+$cols = array (
+  'identifier' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'directory' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'resource_host' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'resource_extension' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+);
 
-$table = new cxpanel_table("cxpanel_voicemail_agent", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build(array(array("junk")));
 
-//Build recording agent table
-$columns = array(	new cxpanel_column("identifier", "string", "local-rec", "", false, true),
-					new cxpanel_column("directory", "string", "/var/spool/asterisk/monitor", "", false, true),
-					new cxpanel_column("resource_host", "string", php_uname('n'), "", false, true),
-					new cxpanel_column("resource_extension", "string", "wav", "", false, true),
-					new cxpanel_column("file_name_mask", "string", "\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}", "", false, true));
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
 
-$table = new cxpanel_table("cxpanel_recording_agent", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build(array(array("junk")));
+$db->getAll("SELECT * FROM cxpanel_voicemail_agent");
+if(empty($results)) {
+	$db->query("INSERT INTO cxpanel_voicemail_agent (`identifier`, `directory`, `resource_host`, `resource_extension`) VALUES ('local-vm', '/var/spool/asterisk/voicemail', '".php_uname('n')."', 'wav')");
+}
+out("Done");
+
+outn("Build recording agent table...");
+
+$table = \FreePBX::Database()->migrate("cxpanel_recording_agent");
+$cols = array (
+  'identifier' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'directory' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'resource_host' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'resource_extension' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'file_name_mask' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+);
+
+
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
+
+$db->getAll("SELECT * FROM cxpanel_recording_agent");
+if(empty($results)) {
+	$db->query("INSERT INTO cxpanel_recording_agent (`identifier`, `directory`, `resource_host`, `resource_extension`, `file_name_mask`) VALUES ('local-rec', '/var/spool/asterisk/monitor', '".php_uname('n')."', '\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}')");
+}
+out("Done");
+
+outn("Build email table...");
 
 //Build email table
 $defaultEmailBody = "<img src=\"%%logo%%\">" .
@@ -120,39 +245,149 @@ $defaultEmailBody = "<img src=\"%%logo%%\">" .
 					"<br/><br/> ".
 					"<a href=\"%%clientURL%%\">Click Here To Login</a>";
 
-$columns = array(	new cxpanel_column("subject", "string", $cxpanelBrandName . " user login password", "", false, true),
-					new cxpanel_column("body", "string", $defaultEmailBody, "", false, true));
 
-$table = new cxpanel_table("cxpanel_email", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build(array(array("junk")));
+$table = \FreePBX::Database()->migrate("cxpanel_email");
+$cols = array (
+  'subject' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'body' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+);
 
-//Build phone number table
-$columns = array(	new cxpanel_column("cxpanel_phone_number_id", "primary", "", "", true, true),
-					new cxpanel_column("user_id", "string", "", "", false, true),
-					new cxpanel_column("phone_number", "string", "", "", false, true),
-					new cxpanel_column("type", "string", "", "", false, true));
 
-$table = new cxpanel_table("cxpanel_phone_number", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build();
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
 
+$db->getAll("SELECT * FROM cxpanel_email");
+if(empty($results)) {
+	$db->query("INSERT INTO cxpanel_email (`subject`, `body`) VALUES ('".$cxpanelBrandName." user login password', '".$defaultEmailBody."')");
+}
+
+out("Done");
+
+outn("Build phone number table...");
+
+$table = \FreePBX::Database()->migrate("cxpanel_phone_number");
+$cols = array (
+  'cxpanel_phone_number_id' =>
+  array (
+    'type' => 'integer',
+    'primaryKey' => true,
+    'autoincrement' => true,
+  ),
+  'user_id' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'phone_number' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'type' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+);
+
+
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
+
+$db->getAll("SELECT * FROM cxpanel_phone_number");
+if(empty($results)) {
+	$db->query("INSERT INTO cxpanel_phone_number (`subject`, `body`) VALUES ('".$cxpanelBrandName." user login password', '".$defaultEmailBody."')");
+}
+
+out("Done");
+
+outn("Build users items table...");
 //Build users table
-$columns = array(	new cxpanel_column("cxpanel_user_id", "primary", "", "", true, true),
-					new cxpanel_column("user_id", "string", "", "user_id", true, true),
-					new cxpanel_column("display_name", "string", "", "display_name", false, true),
-					new cxpanel_column("peer", "string", "", "peer", false, true),
-					new cxpanel_column("add_extension", "boolean", 1, "", false, true),
-					new cxpanel_column("full", "boolean", 1, "", false, true),
-					new cxpanel_column("add_user", "boolean", 1, "", false, true),
-					new cxpanel_column("hashed_password", "string", "", "hashed_password", false, true),
-					new cxpanel_column("initial_password", "string", "", "initial_password", false, true),
-					new cxpanel_column("auto_answer", "boolean", 0, "", false, true),
-					new cxpanel_column("parent_user_id", "string", "", "parent_user_id", false, true),
-					new cxpanel_column("password_dirty", "boolean", 1, "", false, true));
+$table = \FreePBX::Database()->migrate("cxpanel_users");
+$cols = array (
+  'cxpanel_user_id' =>
+  array (
+    'type' => 'integer',
+    'primaryKey' => true,
+    'autoincrement' => true,
+  ),
+  'user_id' =>
+  array (
+    'type' => 'string',
+    'length' => '190',
+  ),
+  'display_name' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'peer' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'add_extension' =>
+  array (
+    'type' => 'integer',
+  ),
+  'full' =>
+  array (
+    'type' => 'integer',
+  ),
+  'add_user' =>
+  array (
+    'type' => 'integer',
+  ),
+  'hashed_password' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'initial_password' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'auto_answer' =>
+  array (
+    'type' => 'integer',
+  ),
+  'parent_user_id' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'password_dirty' =>
+  array (
+    'type' => 'integer',
+  ),
+);
 
-$table = new cxpanel_table("cxpanel_users", $columns);
-$builder = new cxpanel_table_builder($table);
+
+$indexes = array (
+  'user_id' =>
+  array (
+    'type' => 'unique',
+    'cols' =>
+    array (
+      0 => 'user_id',
+    ),
+  ),
+);
+$table->modify($cols, $indexes);
+unset($table);
 
 //Gather user info
 $entries = array();
@@ -176,15 +411,53 @@ if((function_exists("core_users_list")) && (($freePBXUsers = core_users_list()) 
 	}
 }
 
-$builder->build($entries);
+foreach($entries as $entry) {
+	$sql = "REPLACE INTO cxpanel_users (`user_id`, `display_name`, `peer`, `hashed_password`, `initial_password`, `parent_user_id`) VALUES (?,?,?,?,?,?)";
+	$sth = FreePBX::Database()->prepare($sql);
+	$sth->execute(array($entry['user_id'], $entry['display_name'], $entry['peer'], $entry['hashed_password'], $entry['initial_password'], $entry['parent_user_id']));
+}
 
+out("Done");
+
+outn("Build queues table...");
 //Build queues table
-$columns = array(	new cxpanel_column("cxpanel_queue_id", "primary", "", "", true, true),
-					new cxpanel_column("queue_id", "string", "", "queue_id", true, true),
-					new cxpanel_column("display_name", "string", "", "display_name", false, true),
-					new cxpanel_column("add_queue", "boolean", 1, "", false, true));
-$table = new cxpanel_table("cxpanel_queues", $columns);
-$builder = new cxpanel_table_builder($table);
+$table = \FreePBX::Database()->migrate("cxpanel_queues");
+$cols = array (
+  'cxpanel_queue_id' =>
+  array (
+    'type' => 'integer',
+    'primaryKey' => true,
+    'autoincrement' => true,
+  ),
+  'queue_id' =>
+  array (
+    'type' => 'string',
+    'length' => '190',
+  ),
+  'display_name' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'add_queue' =>
+  array (
+    'type' => 'integer',
+  ),
+);
+
+
+$indexes = array (
+  'queue_id' =>
+  array (
+    'type' => 'unique',
+    'cols' =>
+    array (
+      0 => 'queue_id',
+    ),
+  ),
+);
+$table->modify($cols, $indexes);
+unset($table);
 
 //Gather queue info
 $entries = array();
@@ -196,15 +469,53 @@ if((function_exists("queues_list")) && (($freePBXQueues = queues_list()) !== nul
 	}
 }
 
-$builder->build($entries);
+foreach($entries as $entry) {
+	$sql = "REPLACE INTO cxpanel_queues (`queue_id`, `display_name`) VALUES (?,?)";
+	$sth = FreePBX::Database()->prepare($sql);
+	$sth->execute(array($entry['queue_id'], $entry['display_name']));
+}
 
+out("Done");
+
+outn("Build conference rooms table...");
 //Build conference rooms table
-$columns = array(	new cxpanel_column("cxpanel_conference_room_id", "primary", "", "", true, true),
-					new cxpanel_column("conference_room_id", "string", "", "conference_room_id", true, true),
-					new cxpanel_column("display_name", "string", "", "display_name", false, true),
-					new cxpanel_column("add_conference_room", "boolean", 1, "", false, true));
-$table = new cxpanel_table("cxpanel_conference_rooms", $columns);
-$builder = new cxpanel_table_builder($table);
+$table = \FreePBX::Database()->migrate("cxpanel_conference_rooms");
+$cols = array (
+  'cxpanel_conference_room_id' =>
+  array (
+    'type' => 'integer',
+    'primaryKey' => true,
+    'autoincrement' => true,
+  ),
+  'conference_room_id' =>
+  array (
+    'type' => 'string',
+    'length' => '190',
+  ),
+  'display_name' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'add_conference_room' =>
+  array (
+    'type' => 'integer',
+  ),
+);
+
+
+$indexes = array (
+  'conference_room_id' =>
+  array (
+    'type' => 'unique',
+    'cols' =>
+    array (
+      0 => 'conference_room_id',
+    ),
+  ),
+);
+$table->modify($cols, $indexes);
+unset($table);
 
 //Gather conference room info
 $entries = array();
@@ -216,13 +527,39 @@ if((function_exists("conferences_list")) && (($freePBXConferenceRooms = conferen
 	}
 }
 
-$builder->build($entries);
+foreach($entries as $entry) {
+	$sql = "REPLACE INTO cxpanel_conference_rooms (`conference_room_id`, `display_name`) VALUES (?,?)";
+	$sth = FreePBX::Database()->prepare($sql);
+	$sth->execute(array($entry['conference_room_id'], $entry['display_name']));
+}
 
+out("Done");
+
+outn("Build managed items table...");
 //Build managed items table
-$columns = array(	new cxpanel_column("cxpanel_id", "string", "", "", false, true),
-					new cxpanel_column("fpbx_id", "string", "", "", false, true),
-					new cxpanel_column("type", "string", "", "", false, true));
+$table = \FreePBX::Database()->migrate("cxpanel_managed_items");
+$cols = array (
+  'cxpanel_id' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'fpbx_id' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+  'type' =>
+  array (
+    'type' => 'string',
+    'length' => '1000',
+  ),
+);
 
-$table = new cxpanel_table("cxpanel_managed_items", $columns);
-$builder = new cxpanel_table_builder($table);
-$builder->build();
+
+$indexes = array (
+);
+$table->modify($cols, $indexes);
+unset($table);
+
+out("Done");
