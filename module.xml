@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.1</version>
+	<version>13.0.2</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -17,6 +17,7 @@
 		<version>13.0.121</version>
 	</depends>
 	<changelog>
+		*13.0.2* Check to see if users are previously installed
 		*13.0.1* New install methods
 	</changelog>
 	<info>http://www.getisymphony.com</info>

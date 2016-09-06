@@ -133,6 +133,19 @@ if(empty($results)) {
 	outn("New installed detected, adding default server...");
 	$db->query("INSERT INTO cxpanel_server (`name`, `asterisk_host`, `client_port`, `api_username`, `api_password`, `api_use_ssl`, `sync_with_userman`, `clean_unknown_items`) VALUES ('default', 'localhost', 58080, 'manager', 'manag3rpa55word', 0, 1, 1)");
 	out("Done");
+} else {
+	//If userman is installed and this is not an upgrade default sycn_with_userman to true		
+	outn("Upgrade detected, checking userman mode...");
+	$results = $db->getAll("SELECT * FROM cxpanel_users");
+	$results2 = $db->getAll("SELECT * FROM cxpanel_server WHERE sync_with_userman = 1");
+	if(empty($results) && !empty($results2)) {
+		$syncWithUserman = 1;
+		outn("Needs to sync with userman...");
+		$db->query("UPDATE cxpanel_server SET sync_with_userman = ".$syncWithUserman);
+	} else {
+		outn("Leaving userman mode unchanged...");
+	}
+	out("Done");
 }
 
 
