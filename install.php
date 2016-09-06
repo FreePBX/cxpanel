@@ -131,10 +131,10 @@ out("Done");
 $results = $db->getAll("SELECT * FROM cxpanel_server");
 if(empty($results)) {
 	outn("New installed detected, adding default server...");
-	$db->query("INSERT INTO cxpanel_server (`name`, `asterisk_host`, `client_port`, `api_username`, `api_password`, `api_use_ssl`, `sync_with_userman`, `clean_unknown_items`) VALUES ('default', 'localhost', 58080, 'manager', 'manag3rpa55word', 0, 1, 1)");
+	$db->query("INSERT INTO cxpanel_server (`name`, `asterisk_host`, `client_host`, `client_port`, `client_use_ssl`, `api_host`, `api_port`, `api_username`, `api_password`, `api_use_ssl`, `sync_with_userman`, `clean_unknown_items`) VALUES ('default', 'localhost', '', 58080, 0, 'localhost', 58080, 'manager', 'manag3rpa55word', 0, 1, 1)");
 	out("Done");
 } else {
-	//If userman is installed and this is not an upgrade default sycn_with_userman to true		
+	//If userman is installed and this is not an upgrade default sycn_with_userman to true
 	outn("Upgrade detected, checking userman mode...");
 	$results = $db->getAll("SELECT * FROM cxpanel_users");
 	$results2 = $db->getAll("SELECT * FROM cxpanel_server WHERE sync_with_userman = 1");
@@ -181,7 +181,7 @@ $indexes = array (
 $table->modify($cols, $indexes);
 unset($table);
 
-$db->getAll("SELECT * FROM cxpanel_voicemail_agent");
+$results = $db->getAll("SELECT * FROM cxpanel_voicemail_agent");
 if(empty($results)) {
 	$db->query("INSERT INTO cxpanel_voicemail_agent (`identifier`, `directory`, `resource_host`, `resource_extension`) VALUES ('local-vm', '/var/spool/asterisk/voicemail', '".php_uname('n')."', 'wav')");
 }
@@ -224,9 +224,9 @@ $indexes = array (
 $table->modify($cols, $indexes);
 unset($table);
 
-$db->getAll("SELECT * FROM cxpanel_recording_agent");
+$results = $db->getAll("SELECT * FROM cxpanel_recording_agent");
 if(empty($results)) {
-	$db->query("INSERT INTO cxpanel_recording_agent (`identifier`, `directory`, `resource_host`, `resource_extension`, `file_name_mask`) VALUES ('local-rec', '/var/spool/asterisk/monitor', '".php_uname('n')."', '\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}')");
+	$db->query("INSERT INTO cxpanel_recording_agent (`identifier`, `directory`, `resource_host`, `resource_extension`, `file_name_mask`) VALUES ('local-rec', '/var/spool/asterisk/monitor', '".php_uname('n')."', 'wav', '\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}')");
 }
 out("Done");
 
@@ -266,7 +266,7 @@ $indexes = array (
 $table->modify($cols, $indexes);
 unset($table);
 
-$db->getAll("SELECT * FROM cxpanel_email");
+$results = $db->getAll("SELECT * FROM cxpanel_email");
 if(empty($results)) {
 	$db->query("INSERT INTO cxpanel_email (`subject`, `body`) VALUES ('".$cxpanelBrandName." user login password', '".$defaultEmailBody."')");
 }
@@ -306,7 +306,7 @@ $indexes = array (
 $table->modify($cols, $indexes);
 unset($table);
 
-$db->getAll("SELECT * FROM cxpanel_phone_number");
+$results = $db->getAll("SELECT * FROM cxpanel_phone_number");
 if(empty($results)) {
 	$db->query("INSERT INTO cxpanel_phone_number (`subject`, `body`) VALUES ('".$cxpanelBrandName." user login password', '".$defaultEmailBody."')");
 }
@@ -412,7 +412,7 @@ if((function_exists("core_users_list")) && (($freePBXUsers = core_users_list()) 
 }
 
 foreach($entries as $entry) {
-	$sql = "REPLACE INTO cxpanel_users (`user_id`, `display_name`, `peer`, `hashed_password`, `initial_password`, `parent_user_id`) VALUES (?,?,?,?,?,?)";
+	$sql = "REPLACE INTO cxpanel_users (`user_id`, `display_name`, `peer`, `hashed_password`, `initial_password`, `parent_user_id`, `add_extension`, `add_user`, `full`) VALUES (?,?,?,?,?,?,1,1,1)";
 	$sth = FreePBX::Database()->prepare($sql);
 	$sth->execute(array($entry['user_id'], $entry['display_name'], $entry['peer'], $entry['hashed_password'], $entry['initial_password'], $entry['parent_user_id']));
 }
@@ -470,7 +470,7 @@ if((function_exists("queues_list")) && (($freePBXQueues = queues_list()) !== nul
 }
 
 foreach($entries as $entry) {
-	$sql = "REPLACE INTO cxpanel_queues (`queue_id`, `display_name`) VALUES (?,?)";
+	$sql = "REPLACE INTO cxpanel_queues (`queue_id`, `display_name`, `add_queue`) VALUES (?,?, 1)";
 	$sth = FreePBX::Database()->prepare($sql);
 	$sth->execute(array($entry['queue_id'], $entry['display_name']));
 }
@@ -528,7 +528,7 @@ if((function_exists("conferences_list")) && (($freePBXConferenceRooms = conferen
 }
 
 foreach($entries as $entry) {
-	$sql = "REPLACE INTO cxpanel_conference_rooms (`conference_room_id`, `display_name`) VALUES (?,?)";
+	$sql = "REPLACE INTO cxpanel_conference_rooms (`conference_room_id`, `display_name`, `add_conference_room`) VALUES (?,?,1)";
 	$sth = FreePBX::Database()->prepare($sql);
 	$sth->execute(array($entry['conference_room_id'], $entry['display_name']));
 }
