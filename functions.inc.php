@@ -38,6 +38,9 @@ if(!class_exists("PHPMailer")) {
 global $amp_conf;
 //Create the logger
 $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
+if(!file_exists($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log")) {
+	touch($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
+}
 chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
 chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
 
