@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-07 14:31-0700\n"
+"POT-Creation-Date: 2016-10-07 14:44-0700\n"
 "PO-Revision-Date: 2015-04-29 08:35+0200\n"
 "Last-Translator: Renato <fiuza@tecnologia.inf.br>\n"
 "Language-Team: Portuguese (Brazil) <http://weblate.freepbx.org/projects/"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "%s Login: %s"
 msgstr ""
 
-#: functions.inc.php:375 functions.inc.php:510
+#: functions.inc.php:378 functions.inc.php:513
 #, php-format
 msgid "%s Settings"
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 msgid "Add To %s"
 msgstr ""
 
-#: functions.inc.php:379 functions.inc.php:517
+#: functions.inc.php:382 functions.inc.php:520
 #, php-format
 msgid "Add to %s"
 msgstr ""
@@ -45,36 +45,36 @@ msgstr ""
 msgid "Admin"
 msgstr "Admin"
 
-#: functions.inc.php:545
+#: functions.inc.php:548
 msgid "Alt. Phone Numbers"
 msgstr ""
 
-#: functions.inc.php:518
+#: functions.inc.php:521
 msgid "Auto Answer"
 msgstr ""
 
-#: functions.inc.php:525
+#: functions.inc.php:528
 msgid "Create User"
 msgstr ""
 
-#: functions.inc.php:525
+#: functions.inc.php:528
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr ""
 
-#: functions.inc.php:559
+#: functions.inc.php:562
 msgid "Email Inital Password"
 msgstr ""
 
-#: functions.inc.php:527
+#: functions.inc.php:530
 msgid "Email Password"
 msgstr ""
 
-#: functions.inc.php:526
+#: functions.inc.php:529
 msgid "Full User"
 msgstr ""
 
-#: functions.inc.php:493
+#: functions.inc.php:496
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
@@ -84,7 +84,7 @@ msgstr ""
 msgid "Inherit"
 msgstr ""
 
-#: functions.inc.php:526
+#: functions.inc.php:529
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -94,7 +94,7 @@ msgid ""
 "lite user."
 msgstr ""
 
-#: functions.inc.php:518
+#: functions.inc.php:521
 #, php-format
 msgid ""
 "Makes this extension automatically answer the initial call received from the "
@@ -102,17 +102,17 @@ msgid ""
 "Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
 
-#: functions.inc.php:517
+#: functions.inc.php:520
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr ""
 
-#: functions.inc.php:379
+#: functions.inc.php:382
 #, php-format
 msgid "Makes this user available in %s"
 msgstr ""
 
-#: functions.inc.php:545
+#: functions.inc.php:548
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
 msgstr ""
@@ -121,7 +121,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: functions.inc.php:566
+#: functions.inc.php:569
 #, php-format
 msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
@@ -132,22 +132,22 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
-#: functions.inc.php:528
+#: functions.inc.php:531
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr ""
 
-#: functions.inc.php:541
+#: functions.inc.php:544
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
 msgstr ""
 
-#: functions.inc.php:491
+#: functions.inc.php:494
 msgid "The inital password for this user is set to"
 msgstr ""
 
-#: functions.inc.php:493
+#: functions.inc.php:496
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 
@@ -159,15 +159,15 @@ msgstr ""
 "Este módulo configura automaticamente o painel de operador para refletir as "
 "configurações do PBX."
 
-#: functions.inc.php:542
+#: functions.inc.php:545
 msgid "User Extensions"
 msgstr ""
 
-#: functions.inc.php:528
+#: functions.inc.php:531
 msgid "User Password"
 msgstr ""
 
-#: functions.inc.php:527
+#: functions.inc.php:530
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "
