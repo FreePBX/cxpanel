@@ -306,4 +306,17 @@ class Cxpanel implements \BMO {
 		$final[] = "\t".sprintf(_('%s Login: %s'), $cxpanelBrandName, $protocol. '://' . $clientHost . ':' . $serverInformation['client_port'] . '/client/client');
 		return $final;
 	}
+
+
+	/**
+	 * FreePBX chown hooks
+	 */
+	public function chownFreepbx() {
+		$files = array();
+
+		$files[] = array('type' => 'file',
+			'path' => __DIR__."/main.log",
+			'perms' => 0775);
+		return $files;
+	}
 }

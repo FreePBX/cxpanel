@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.3</version>
+	<version>13.0.3.1</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -17,6 +17,7 @@
 		<version>13.0.121</version>
 	</depends>
 	<changelog>
+		*13.0.3.1* FREEPBX-13307 attempt to set permissions on main.log
 		*13.0.3* Table fixes
 		*13.0.2* Check to see if users are previously installed
 		*13.0.1* New install methods
@@ -37,6 +38,9 @@
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="sendWelcomeEmail">usermanSendEmail</method>
 			<method namespace="FreePBX\modules" class="Cxpanel" callingMethod="myShowPage">usermanShowPage</method>
 		</userman>
+		<framework class="Chown" namespace="FreePBX\Console\Command">
+			<method callingMethod="fwcChownFiles" namespace="FreePBX\modules" class="Cxpanel">chownFreepbx</method>
+		</framework>
 	</hooks>
 	<repo>standard</repo>
 </module>

@@ -38,6 +38,8 @@ if(!class_exists("PHPMailer")) {
 global $amp_conf;
 //Create the logger
 $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
+chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
+chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
 
 //Create the global password mask
 $cxpanelUserPasswordMask = "********";
@@ -1098,8 +1100,8 @@ function cxpanel_user_set_parent_user_id($userId, $parentUserId) {
  */
 function cxpanel_user_del($userId) {
 	global $db;
-	$query = "DELETE FROM cxpanel_users WHERE user_id = '$userId'";
-	$db->query($query);
+	$query = "DELETE FROM cxpanel_users WHERE user_id = ?";
+	$db->query($query,array($userId));
 
 	//Delete the user's associated phone numbers
 	cxpanel_phone_number_del($userId);
@@ -1129,8 +1131,8 @@ function cxpanel_user_list() {
  */
 function cxpanel_user_get($userId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_users WHERE user_id = '$userId'";
-	$results = sql($query, "getRow", DB_FETCHMODE_ASSOC);
+	$query = "SELECT * FROM cxpanel_users WHERE user_id = ?";
+	$results = $db->getRow($sql,array($userId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return null;
 	} else {
@@ -1146,8 +1148,8 @@ function cxpanel_user_get($userId) {
  */
 function cxpanel_user_extension_list($userId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_users WHERE parent_user_id = '$userId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	$query = "SELECT * FROM cxpanel_users WHERE parent_user_id = ?";
+	$results = $db->getAll($sql,array($userId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return array();
 	} else {
@@ -1223,8 +1225,8 @@ function cxpanel_phone_number_list_all() {
  */
 function cxpanel_phone_number_list($userId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_phone_number WHERE user_id = '$userId'";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+	$query = "SELECT * FROM cxpanel_phone_number WHERE user_id = ?";
+	$results = $db->getAll($query,array($userId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return array();
 	} else {
@@ -1239,8 +1241,8 @@ function cxpanel_phone_number_list($userId) {
  */
 function cxpanel_phone_number_del($userId) {
 	global $db;
-	$query = "DELETE FROM cxpanel_phone_number WHERE user_id = '$userId'";
-	$db->query($query);
+	$query = "DELETE FROM cxpanel_phone_number WHERE user_id = ?";
+	$db->query($query,array($userId));
 }
 
 /**
@@ -1284,8 +1286,8 @@ function cxpanel_queue_add($queueId, $addQueue, $displayName) {
 function cxpanel_queue_update($queueId, $addQueue, $displayName) {
 	global $db;
 	$addQueue = $addQueue ? "1" : "0";
-	$prepStatement = $db->prepare("UPDATE cxpanel_queues SET add_queue = ?, display_name = ? WHERE queue_id = $queueId");
-	$values = array($addQueue, $displayName);
+	$prepStatement = $db->prepare("UPDATE cxpanel_queues SET add_queue = ?, display_name = ? WHERE queue_id = ?");
+	$values = array($addQueue, $displayName, $queueId);
 	$db->execute($prepStatement, $values, $displayName);
 }
 
@@ -1297,8 +1299,8 @@ function cxpanel_queue_update($queueId, $addQueue, $displayName) {
  */
 function cxpanel_queue_del($queueId) {
 	global $db;
-	$query = "DELETE FROM cxpanel_queues WHERE queue_id = '$queueId'";
-	$db->query($query);
+	$query = "DELETE FROM cxpanel_queues WHERE queue_id = ?";
+	$db->query($query, array($queueId));
 }
 
 /**
@@ -1325,8 +1327,8 @@ function cxpanel_queue_list() {
  */
 function cxpanel_queue_get($queueId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_queues WHERE queue_id = '$queueId'";
-	$results = sql($query, "getRow", DB_FETCHMODE_ASSOC);
+	$query = "SELECT * FROM cxpanel_queues WHERE queue_id = ?";
+	$results = $db->getRow($query,array($queueId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return null;
 	} else {
@@ -1361,8 +1363,8 @@ function cxpanel_conference_room_add($conferenceRoomId, $addConferenceRoom, $dis
 function cxpanel_conference_room_update($conferenceRoomId, $addConferenceRoom, $displayName) {
 	global $db;
 	$addConferenceRoom = $addConferenceRoom ? "1" : "0";
-	$prepStatement = $db->prepare("UPDATE cxpanel_conference_rooms SET add_conference_room = ?, display_name = ? WHERE conference_room_id = $conferenceRoomId");
-	$values = array($addConferenceRoom, $displayName);
+	$prepStatement = $db->prepare("UPDATE cxpanel_conference_rooms SET add_conference_room = ?, display_name = ? WHERE conference_room_id = ?");
+	$values = array($addConferenceRoom, $displayName, $conferenceRoomId);
 	$db->execute($prepStatement, $values);
 }
 
@@ -1374,8 +1376,8 @@ function cxpanel_conference_room_update($conferenceRoomId, $addConferenceRoom, $
  */
 function cxpanel_conference_room_del($conferenceRoomId) {
 	global $db;
-	$query = "DELETE FROM cxpanel_conference_rooms WHERE conference_room_id = '$conferenceRoomId'";
-	$db->query($query);
+	$query = "DELETE FROM cxpanel_conference_rooms WHERE conference_room_id = ?";
+	$db->query($query, array($conferenceRoomId));
 }
 
 /**
@@ -1402,8 +1404,8 @@ function cxpanel_conference_room_list() {
  */
 function cxpanel_conference_room_get($conferenceRoomId) {
 	global $db;
-	$query = "SELECT * FROM cxpanel_conference_rooms WHERE conference_room_id = '$conferenceRoomId'";
-	$results = sql($query, "getRow", DB_FETCHMODE_ASSOC);
+	$query = "SELECT * FROM cxpanel_conference_rooms WHERE conference_room_id = ?";
+	$results = $db->getRow($query,array($conferenceRoomId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return null;
 	} else {
