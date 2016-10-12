@@ -40,6 +40,7 @@ global $amp_conf;
 $cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
 if(!file_exists($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log")) {
 	touch($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
+	chmod($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", 0775);
 }
 chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
 chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
@@ -1135,7 +1136,7 @@ function cxpanel_user_list() {
 function cxpanel_user_get($userId) {
 	global $db;
 	$query = "SELECT * FROM cxpanel_users WHERE user_id = ?";
-	$results = $db->getRow($sql,array($userId),DB_FETCHMODE_ASSOC);
+	$results = $db->getRow($query,array($userId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return null;
 	} else {
@@ -1152,7 +1153,7 @@ function cxpanel_user_get($userId) {
 function cxpanel_user_extension_list($userId) {
 	global $db;
 	$query = "SELECT * FROM cxpanel_users WHERE parent_user_id = ?";
-	$results = $db->getAll($sql,array($userId),DB_FETCHMODE_ASSOC);
+	$results = $db->getAll($query,array($userId),DB_FETCHMODE_ASSOC);
 	if((DB::IsError($results)) || (empty($results))) {
 		return array();
 	} else {
