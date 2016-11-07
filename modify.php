@@ -13,9 +13,7 @@ require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
 require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
 
 //Bootstrap FreePBX
-if (!@include_once(getenv('FREEPBX_CONF') ? getenv('FREEPBX_CONF') : '/etc/freepbx.conf')) {
-	  include_once('/etc/asterisk/freepbx.conf');
-}
+include '/etc/freepbx.conf';
 
 if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed');}
 
