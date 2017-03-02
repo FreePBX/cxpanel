@@ -423,14 +423,14 @@ function sync_administrators() {
                 //Grab the administrators
                 $administrators = cxpanel_get_core_ampusers_list();
 
-                //Setup userman
+                //Sync userman administrators if available
                 if(function_exists('setup_userman')) {
                         $logger->debug("Syncing Userman Administrators");
 
                         $userman = setup_userman();
 
                         foreach($userman->getAllUsers() as $user) {
-                                $logger->debug(print_r($user,true));
+                                //if pbx_admin set, create admin
                                 if($userman->getGlobalSettingByID($user['id'],'pbx_admin')) {
                                         $admin = array(
                                                 "username" => $user['username'],
@@ -442,9 +442,9 @@ function sync_administrators() {
                                         );
 
                                         $administrators[] = $admin;
+                                //if pbx_login set, check sections - will only add if * or cxpanel has been set
                                 } else if ($userman->getGlobalSettingByID($user['id'],'pbx_login')) {
                                         $sections = $userman->getGlobalSettingByID($user['id'],'pbx_modules');
-
 
                                         $admin = array(
                                                 "username" => $user['username'],
@@ -458,18 +458,13 @@ function sync_administrators() {
                                         $administrators[] = $admin;
                                 }
                         }
-
-                        $logger->debug("End Userman Administrator sync");
                 }
-
 
                 //Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
                 $administratorsAccoc = array();
                 foreach($administrators as $admin) {
-                        $logger->debug(print_r($admin, true));
-
                         if(strpos($admin["sections"],"*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
-                                $administratorsAccoc[$admin['username']] = $admin;                                                                                       
+                                $administratorsAccoc[$admin['username']] = $admin;
                         }
                 }
 
@@ -538,6 +533,7 @@ function sync_administrators() {
                                 }
                         }
                 }
+
         } catch (Exception $e) {
                 $logger->error_exception("Failed to sync administrators", $e);
         }
