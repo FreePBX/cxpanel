@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-12 11:58-0700\n"
+"POT-Creation-Date: 2017-03-07 14:41-0800\n"
 "PO-Revision-Date: 2015-11-09 14:32+0200\n"
 "Last-Translator: james <zhulizhong@gmail.com>\n"
 "Language-Team: Simplified Chinese <http://weblate.freepbx.org/projects/"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Add to %s"
 msgstr ""
 
-#: cxpanel.i18n.php:6 cxpanel.i18n.php:12
+#: cxpanel.i18n.php:6
 msgid "Admin"
 msgstr "管理"
 
@@ -128,10 +128,6 @@ msgid ""
 "\"%s User Settings\""
 msgstr ""
 
-#: cxpanel.i18n.php:16
-msgid "Reports"
-msgstr ""
-
 #: functions.inc.php:532
 #, php-format
 msgid "Specifies the password to be used for the %s User"
@@ -180,6 +176,6 @@ msgstr ""
 msgid "iSymphonyV3"
 msgstr ""
 
-#: cxpanel.i18n.php:14
+#: cxpanel.i18n.php:12
 msgid "iSymphonyV3 Panel"
 msgstr ""
