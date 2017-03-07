@@ -401,81 +401,142 @@ function sync_pbx_server() {
 }
 
 /**
- * 
+ *
  * Syncs administrators
- * 
+ *
  */
 function sync_administrators() {
-	global $coreServerId, $logger, $pest;
-	
-	$logger->debug("Syncing administrators");
-	
-	try {
-		
-		//Get the server administrators
-		$serverAdministrators = $pest->get("server/administrators");
-		
-		//Create associative array of the server admin usernames to the administrator objects for quick indexing
-		$serverAdminAssoc = array();
-		foreach($serverAdministrators as $serverAdministrator) {
-			$serverAdminAssoc[$serverAdministrator->userName] = $serverAdministrator;
-		}
-		
-		//Grab the administrators
-		$administrators = cxpanel_get_core_ampusers_list();
-		
-		//Filter list to exclude administrators that do not have acess to the cxpanel module while creating an associative array for quick indexing
-		$administratorsAccoc = array();
-		foreach($administrators as $admin) {
-			if($admin["sections"] == "*" || strstr($admin["sections"], "cxpanel") !== false) {
-				$administratorsAccoc[$admin['username']] = $admin;
-			}
-		}
+        global $coreServerId, $logger, $pest;
 
-		//Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module
-		foreach($serverAdminAssoc as $username => $admin) {
-			if(!array_key_exists($username, $administratorsAccoc)) {
-				$logger->debug("Removing administrator: " . $username);
-				try {
-					$pest->delete("server/administrators/" . $admin->id);
-					unset($serverAdminAssoc[$username]);
-				} catch (Exception $e) {
-					$logger->error_exception("Failed to remove administrator:" . $username, $e);
-				}
-			}
-		}
-		
-		//Add admins that are missing on the server and update ones that are not up to date
-		foreach($administratorsAccoc as $admin) {
-		
-			//Add administrator
-			if(!array_key_exists($admin['username'], $serverAdminAssoc)) {
-				try {
-					$logger->debug("Adding administrator: " . $admin['username']);
-					$adminObj = new cxpanel_administrator($admin['username'], $admin['password_sha1'], true);
-					$pest->post("server/administrators/noHash", $adminObj);
-				} catch (Exception $e) {
-					$logger->error_exception("Failed to add administrator:" . $admin['username'], $e);
-				}
-		
-			//Update administrator
-			} else {
-				$serverAdmin = $serverAdminAssoc[$admin['username']];
-				if($serverAdmin->password != strtolower($admin['password_sha1'])) {
-					try {
-						$logger->debug("Updating administrator: " . $admin['username']);
-						$serverAdmin->password = $admin['password_sha1'];
-						$pest->put("server/administrators/noHash/" . $serverAdmin->id, $serverAdmin);
-					} catch (Exception $e) {
-						$logger->error_exception("Failed to update administrator:" . $admin['username'], $e);
-					}
-				}
-			}
-		}
-		
-	} catch (Exception $e) {
-		$logger->error_exception("Failed to sync administrators", $e);
-	}
+        $logger->debug("Syncing administrators");
+
+        try {
+                //Get the server administrators
+                $serverAdministrators = $pest->get("server/administrators");
+
+                //Create associative array of the server admin usernames to the administrator objects for quick indexing
+                $serverAdminAssoc = array();
+                foreach($serverAdministrators as $serverAdministrator) {
+                        $serverAdminAssoc[$serverAdministrator->userName] = $serverAdministrator;
+                }
+
+                //Grab the administrators
+                $administrators = cxpanel_get_core_ampusers_list();
+
+                //Sync userman administrators if available
+                if(function_exists('setup_userman')) {
+                        $logger->debug("Syncing Userman Administrators");
+
+                        $userman = setup_userman();
+
+                        foreach($userman->getAllUsers() as $user) {
+                                //if pbx_admin set, create admin
+                                if($userman->getGlobalSettingByID($user['id'],'pbx_admin')) {
+                                        $admin = array(
+                                                "username" => $user['username'],
+                                                "password_sha1" => $user['password'],
+                                                "extension_low" => "",
+                                                "extension_high" => "",
+                                                "deptname" => $user['department'],
+                                                "sections" => "*"
+                                        );
+
+                                        $administrators[] = $admin;
+                                //if pbx_login set, check sections - will only add if * or cxpanel has been set
+                                } else if ($userman->getGlobalSettingByID($user['id'],'pbx_login')) {
+                                        $sections = $userman->getGlobalSettingByID($user['id'],'pbx_modules');
+
+                                        $admin = array(
+                                                "username" => $user['username'],
+                                                "password_sha1" => $user['password'],
+                                                "extension_low" => "",
+                                                "extension_high" => "",
+                                                "deptname" => $user['department'],
+                                                "sections" => implode(";",$sections)
+                                        );
+
+                                        $administrators[] = $admin;
+                                }
+                        }
+                }
+
+                //Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
+                $administratorsAccoc = array();
+                foreach($administrators as $admin) {
+                        if(strpos($admin["sections"],"*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
+                                $administratorsAccoc[$admin['username']] = $admin;
+                        }
+                }
+
+                /*
+                 * Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module.
+                 * Only remove items that this module manages.
+                 */
+                foreach($serverAdminAssoc as $username => $admin) {
+                        if(     !array_key_exists($username, $administratorsAccoc) &&
+                                cxpanel_has_managed_item('admin', $admin->id)) {
+
+                                $logger->debug("Removing administrator: " . $username);
+
+                                //Remove the managed entry
+                                cxpanel_managed_item_del('admin', $admin->id);
+
+                                //Remove the object from the server
+                                try {
+                                        $pest->delete("server/administrators/" . $admin->id);
+                                        unset($serverAdminAssoc[$username]);
+                                } catch (Exception $e) {
+                                        $logger->error_exception("Failed to remove administrator:" . $username, $e);
+                                }
+                        }
+                }
+
+                //Add admins that are missing on the server and update ones that are not up to date
+                foreach($administratorsAccoc as $admin) {
+
+                        //Add administrator
+                        if(!array_key_exists($admin['username'], $serverAdminAssoc)) {
+
+                                $logger->debug("Adding administrator: " . $admin['username']);
+
+                                //Generate uuid and a managed item entry
+                                $uuid = cxpanel_gen_managed_uuid('admin', $admin['username']);
+
+                                //Add object from server
+                                try {
+                                        $adminObj = new cxpanel_administrator($admin['username'], $admin['password_sha1'], true);
+                                        $adminObj->id = $uuid;
+                                        $pest->post("server/administrators/noHash", $adminObj);
+                                } catch (Exception $e) {
+                                        $logger->error_exception("Failed to add administrator:" . $admin['username'], $e);
+                                }
+
+                        //Update administrator
+                        } else {
+
+                                $serverAdmin = $serverAdminAssoc[$admin['username']];
+
+                                //Update the managed item uuid
+                                cxpanel_managed_item_update('admin', $admin['username'], $serverAdmin->id);
+
+                                //Update the administrator if needed
+                                if($serverAdmin->password != strtolower($admin['password_sha1'])) {
+
+                                        $logger->debug("Updating administrator: " . $admin['username']);
+
+                                        try {
+                                                $serverAdmin->password = $admin['password_sha1'];
+                                                $pest->put("server/administrators/noHash/" . $serverAdmin->id, $serverAdmin);
+                                        } catch (Exception $e) {
+                                                $logger->error_exception("Failed to update administrator:" . $admin['username'], $e);
+                                        }
+                                }
+                        }
+                }
+
+        } catch (Exception $e) {
+                $logger->error_exception("Failed to sync administrators", $e);
+        }
 }
 
 /**
