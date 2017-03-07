@@ -503,7 +503,6 @@ function sync_administrators() {
 	$logger->debug("Syncing administrators");
 
 	try {
-
 		//Get the server administrators
 		$serverAdministrators = $pest->get("server/administrators");
 
@@ -516,21 +515,58 @@ function sync_administrators() {
 		//Grab the administrators
 		$administrators = cxpanel_get_core_ampusers_list();
 
+		//Sync userman administrators if available
+		if(function_exists('setup_userman')) {
+			$logger->debug("Syncing Userman Administrators");
+
+			$userman = setup_userman();
+
+			foreach($userman->getAllUsers() as $user) {
+				//if pbx_admin set, create admin
+				if($userman->getGlobalSettingByID($user['id'],'pbx_admin')) {
+					$admin = array(
+						"username" => $user['username'],
+						"password_sha1" => $user['password'],
+						"extension_low" => "",
+						"extension_high" => "",
+						"deptname" => $user['department'],
+						"sections" => "*"
+					);
+
+					$administrators[] = $admin;
+					//if pbx_login set, check sections - will only add if * or cxpanel has been set
+				} else if ($userman->getGlobalSettingByID($user['id'],'pbx_login')) {
+					$sections = $userman->getGlobalSettingByID($user['id'],'pbx_modules');
+
+					$admin = array(
+						"username" => $user['username'],
+						"password_sha1" => $user['password'],
+						"extension_low" => "",
+						"extension_high" => "",
+						"deptname" => $user['department'],
+						"sections" => implode(";",$sections)
+					);
+
+					$administrators[] = $admin;
+				}
+			}
+		}
+
 		//Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
 		$administratorsAccoc = array();
 		foreach($administrators as $admin) {
-			if($admin["sections"] == "*" || strstr($admin["sections"], "cxpanel") !== false) {
+			if(strpos($admin["sections"],"*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
 				$administratorsAccoc[$admin['username']] = $admin;
 			}
 		}
 
 		/*
-		 * Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module.
-		 * Only remove items that this module manages.
-		 */
+		* Remove all admins from the server that are not stored in the database or do not have access to the cxpanel module.
+		* Only remove items that this module manages.
+		*/
 		foreach($serverAdminAssoc as $username => $admin) {
-			if(	!array_key_exists($username, $administratorsAccoc) &&
-				cxpanel_has_managed_item('admin', $admin->id)) {
+			if(     !array_key_exists($username, $administratorsAccoc) &&
+			cxpanel_has_managed_item('admin', $admin->id)) {
 
 				$logger->debug("Removing administrator: " . $username);
 
@@ -567,7 +603,7 @@ function sync_administrators() {
 					$logger->error_exception("Failed to add administrator:" . $admin['username'], $e);
 				}
 
-			//Update administrator
+				//Update administrator
 			} else {
 
 				$serverAdmin = $serverAdminAssoc[$admin['username']];

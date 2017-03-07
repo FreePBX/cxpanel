@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.3.3</version>
+	<version>13.0.4</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -17,6 +17,7 @@
 		<version>13.0.121</version>
 	</depends>
 	<changelog>
+		*13.0.4* FREEPBX-12550 Allow userman to create iSymphony Administrators as well as users
 		*13.0.3.3* FREEPBX-13339 unable to set setting on non-usermanager mode
 		*13.0.3.2* FREEPBX-13307 touch the log if it does not exist
 		*13.0.3.1* FREEPBX-13307 attempt to set permissions on main.log
