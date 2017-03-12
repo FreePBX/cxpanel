@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-07 14:41-0800\n"
-"PO-Revision-Date: 2017-03-12 17:22+0200\n"
+"PO-Revision-Date: 2017-03-12 18:35+0200\n"
 "Last-Translator: Nicolas <freepbx@riendeau.org>\n"
 "Language-Team: French "
 "<http://weblate.freepbx.org/projects/freepbx/cxpanel/fr_FR/>\n"
@@ -119,7 +119,7 @@ msgstr ""
 
 #: views/userman_hook.php:15
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: functions.inc.php:570
 #, php-format
@@ -172,7 +172,7 @@ msgstr ""
 
 #: views/userman_hook.php:13
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: cxpanel.i18n.php:4 cxpanel.i18n.php:10
 msgid "iSymphonyV3"
