@@ -494,8 +494,8 @@ function cxpanel_extension_configpageload() {
 
 	} else {
 		$addExtension = "1";
-		$addUser = "1";
-		$full = "1";
+		$addUser = "0";
+		$full = "0";
 		$autoAnswer = "0";
 		$password = "";
 		$initalPasswordDisplay = "";
