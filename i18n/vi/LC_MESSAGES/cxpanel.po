@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-07 14:41-0800\n"
-"PO-Revision-Date: 2017-06-14 09:49+0200\n"
+"PO-Revision-Date: 2017-06-15 17:09+0200\n"
 "Last-Translator: Peter Trinh <ftek@ymail.com>\n"
 "Language-Team: Vietnamese "
 "<http://weblate.freepbx.org/projects/freepbx/cxpanel/vi/>\n"
@@ -82,7 +82,7 @@ msgstr ""
 
 #: views/userman_hook.php:18
 msgid "Inherit"
-msgstr ""
+msgstr "Kế thừa"
 
 #: functions.inc.php:530
 #, php-format
