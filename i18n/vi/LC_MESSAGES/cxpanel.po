@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-07 14:41-0800\n"
-"PO-Revision-Date: 2017-06-20 15:59+0200\n"
+"PO-Revision-Date: 2017-06-20 21:15+0200\n"
 "Last-Translator: PETER <ftek@ymail.com>\n"
 "Language-Team: Vietnamese "
 "<http://weblate.freepbx.org/projects/freepbx/cxpanel/vi/>\n"
@@ -24,22 +24,22 @@ msgstr ""
 #: Cxpanel.class.php:306
 #, php-format
 msgid "%s Login: %s"
-msgstr ""
+msgstr "%s Đăng nhập: %s"
 
 #: functions.inc.php:379 functions.inc.php:514
 #, php-format
 msgid "%s Settings"
-msgstr ""
+msgstr "Các cài đặt %s"
 
 #: views/userman_hook.php:7
 #, php-format
 msgid "Add To %s"
-msgstr ""
+msgstr "Thêm vào %s"
 
 #: functions.inc.php:383 functions.inc.php:521
 #, php-format
 msgid "Add to %s"
-msgstr ""
+msgstr "Thêm vào %s"
 
 #: cxpanel.i18n.php:6
 msgid "Admin"
@@ -47,38 +47,40 @@ msgstr "Quản trị viên"
 
 #: functions.inc.php:549
 msgid "Alt. Phone Numbers"
-msgstr ""
+msgstr "Các số điện thoại lựa chọn"
 
 #: functions.inc.php:522
 msgid "Auto Answer"
-msgstr ""
+msgstr "Tự động trả lời"
 
 #: functions.inc.php:529
 msgid "Create User"
-msgstr ""
+msgstr "Tạo người dùng"
 
 #: functions.inc.php:529
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
-msgstr ""
+msgstr "Tạo một đăng nhập %s người dùng được liên kết với máy nhánh này."
 
 #: functions.inc.php:563
 msgid "Email Inital Password"
-msgstr ""
+msgstr "Mật khẩu ban đầu của Email"
 
 #: functions.inc.php:531
 msgid "Email Password"
-msgstr ""
+msgstr "Mật khẩu Email"
 
 #: functions.inc.php:530
 msgid "Full User"
-msgstr ""
+msgstr "Người dùng đã đầy"
 
 #: functions.inc.php:497
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
 msgstr ""
+"Nếu bạn không biết mật khẩu của người dùng này bạn có thể thay đổi nó trong "
+"trường Mật khẩu người dùng ở trên"
 
 #: views/userman_hook.php:18
 msgid "Inherit"
@@ -93,6 +95,12 @@ msgid ""
 "user and there are no more user licenes available the user will remain a "
 "lite user."
 msgstr ""
+"Tạo cho máy nhánh này người dùng đầy đủ trong% s. Những người dùng có quyền "
+"truy cập vào tất cả các chức năng trong % s mà giấy phép hiện hành cho phép. "
+"Số lượng người dùng đầy đủ được phép trong% s bị hạn chế thông qua giấy "
+"phép. Nếu bạn đánh dấu người dùng này như là một người dùng đầy đủ và không "
+"có giấy phép người dùng có sẵn thì người dùng sẽ vẫn là một người dùng có "
+"đầy đủ chức năng thu gọn."
 
 #: functions.inc.php:522
 #, php-format
@@ -101,11 +109,14 @@ msgid ""
 "system when performing an origination within %s. Only works with Aastra, "
 "Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
+"Tạo máy nhánh này tự động trả lời cuộc gọi ban đầu nhận được từ hệ thống khi "
+"thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
+"Aastra, Grandstream, Linksys, Polycom, and Snom."
 
 #: functions.inc.php:521
 #, php-format
 msgid "Makes this extension available in %s"
-msgstr ""
+msgstr "Tạo cho máy nhánh này khả dụng trong %s"
 
 #: functions.inc.php:383
 #, php-format
