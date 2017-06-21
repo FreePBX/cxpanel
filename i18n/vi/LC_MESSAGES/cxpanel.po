@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-07 14:41-0800\n"
-"PO-Revision-Date: 2017-06-20 21:15+0200\n"
+"PO-Revision-Date: 2017-06-21 08:16+0200\n"
 "Last-Translator: PETER <ftek@ymail.com>\n"
 "Language-Team: Vietnamese "
 "<http://weblate.freepbx.org/projects/freepbx/cxpanel/vi/>\n"
@@ -121,12 +121,12 @@ msgstr "Tạo cho máy nhánh này khả dụng trong %s"
 #: functions.inc.php:383
 #, php-format
 msgid "Makes this user available in %s"
-msgstr ""
+msgstr "Làm cho người dùng này khả dụng trong %s"
 
 #: functions.inc.php:549
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
-msgstr ""
+msgstr "Quản lý các số điện thoại lựa chọn cho %s người dùng này."
 
 #: views/userman_hook.php:15
 msgid "No"
@@ -138,39 +138,45 @@ msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
 "\"%s User Settings\""
 msgstr ""
+"Vui lòng xác định một mật khẩu cho người dùng %s này hoặc không kiểm tra \""
+"Create User\" ( Tạo người dùng) theo \" %s User Settings\""
 
 #: functions.inc.php:532
 #, php-format
 msgid "Specifies the password to be used for the %s User"
-msgstr ""
+msgstr "Xác định mật khẩu được sử dụng cho người dùng %s"
 
 #: functions.inc.php:545
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
 msgstr ""
+"Xác định các máy nhánh sẽ được gắn với người dùng  $cxpanelBrandName đã tạo "
+"cho máy nhánh này. \"Self\" để chỉ máy nhánh này"
 
 #: functions.inc.php:495
 msgid "The inital password for this user is set to"
-msgstr ""
+msgstr "Mật khẩu ban đầu cho người dùng này được cài đặt là"
 
 #: functions.inc.php:497
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
+"Mật khẩu ban đầu cho người dùng này đã chưa bao giờ được tạo hoặc đã bị thay "
+"đổi"
 
 #: cxpanel.i18n.php:8
 msgid ""
 "This module automatically configures the operator panel to reflect the PBX "
 "configuration."
-msgstr ""
+msgstr "Mô đun này sẽ tự động cấu hình bảng thao tác để phản ánh cấu hình PBX."
 
 #: functions.inc.php:546
 msgid "User Extensions"
-msgstr ""
+msgstr "Các máy nhánh người dùng"
 
 #: functions.inc.php:532
 msgid "User Password"
-msgstr ""
+msgstr "Mật khẩu người dùng"
 
 #: functions.inc.php:531
 msgid ""
@@ -178,6 +184,9 @@ msgid ""
 "in the voicemail settings. No email will be sent if no email address is "
 "specified or the password is not changing."
 msgstr ""
+"Khi được kiểm tra, mật khẩu mới xác định sẽ được gửi tới email đã được cấu "
+"hình trong các cài đặt hộp thư thoại. Không có email nào được gửi nếu không "
+"có địa chỉ email xác định hay mật khẩu không thay đổi."
 
 #: views/userman_hook.php:13
 msgid "Yes"
@@ -185,8 +194,8 @@ msgstr "Có"
 
 #: cxpanel.i18n.php:4 cxpanel.i18n.php:10
 msgid "iSymphonyV3"
-msgstr ""
+msgstr "Phần mềm iSymphonyV3"
 
 #: cxpanel.i18n.php:12
 msgid "iSymphonyV3 Panel"
-msgstr ""
+msgstr "Bảng iSymphonyV3"
