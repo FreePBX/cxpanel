@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-07 14:41-0800\n"
-"PO-Revision-Date: 2017-06-21 08:27+0200\n"
+"PO-Revision-Date: 2017-06-21 08:46+0200\n"
 "Last-Translator: PETER <ftek@ymail.com>\n"
 "Language-Team: Vietnamese "
 "<http://weblate.freepbx.org/projects/freepbx/cxpanel/vi/>\n"
@@ -72,7 +72,7 @@ msgstr "Mật khẩu Email"
 
 #: functions.inc.php:530
 msgid "Full User"
-msgstr "Người dùng đã đầy"
+msgstr "Người dùng toàn quyền"
 
 #: functions.inc.php:497
 msgid ""
@@ -109,14 +109,14 @@ msgid ""
 "system when performing an origination within %s. Only works with Aastra, "
 "Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
-"Tạo máy nhánh này tự động trả lời cuộc gọi ban đầu nhận được từ hệ thống khi "
-"thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
+"Tạo cho máy nhánh này tự động trả lời cuộc gọi ban đầu nhận được từ hệ thống "
+"khi thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
 "Aastra, Grandstream, Linksys, Polycom, and Snom."
 
 #: functions.inc.php:521
 #, php-format
 msgid "Makes this extension available in %s"
-msgstr "Tạo cho máy nhánh này khả dụng trong %s"
+msgstr "Làm cho máy nhánh này khả dụng trong %s"
 
 #: functions.inc.php:383
 #, php-format
@@ -138,8 +138,8 @@ msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
 "\"%s User Settings\""
 msgstr ""
-"Vui lòng xác định một mật khẩu cho người dùng %s này hoặc không kiểm tra \""
-"Create User\" ( Tạo người dùng) theo \" %s User Settings\""
+"Vui lòng xác định một mật khẩu cho người dùng %s này hoặc bỏ chọn \"Create "
+"User\" ( Tạo người dùng) tại \" %s User Settings\""
 
 #: functions.inc.php:532
 #, php-format
@@ -151,8 +151,8 @@ msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
 msgstr ""
-"Xác định các máy nhánh sẽ được gắn với người dùng  $cxpanelBrandName đã tạo "
-"cho máy nhánh này. \"Self\" để chỉ máy nhánh này"
+"Xác định các máy nhánh sẽ liên kết với người dùng  $cxpanelBrandName đã tạo "
+"đối với máy nhánh này. \"Self\" để chỉ máy nhánh này"
 
 #: functions.inc.php:495
 msgid "The inital password for this user is set to"
