@@ -38,10 +38,6 @@ if(function_exists("sipsettings_edit") && function_exists("sipsettings_get")) {
 
 //Create symlink that points to the module directory in order to run the client redirect script
 outn("Creating client symlink....");
-if(file_exists($amp_conf['AMPWEBROOT'] . '/cxpanel')) {
-	unlink($amp_conf['AMPWEBROOT'] . '/cxpanel');
-}
-symlink($amp_conf['AMPWEBROOT'] .'/admin/modules/cxpanel/', $amp_conf['AMPWEBROOT'] . '/cxpanel');
 
 if(file_exists($amp_conf['AMPWEBROOT'] . '/admin/cxpanel')) {
 	unlink($amp_conf['AMPWEBROOT'] . '/admin/cxpanel');
@@ -49,6 +45,10 @@ if(file_exists($amp_conf['AMPWEBROOT'] . '/admin/cxpanel')) {
 symlink($amp_conf['AMPWEBROOT'] .'/admin/modules/cxpanel/', $amp_conf['AMPWEBROOT'] . '/admin/cxpanel');
 
 out("Done");
+
+if(file_exists($amp_conf['AMPWEBROOT'] . '/cxpanel') && is_link($amp_conf['AMPWEBROOT'] . '/cxpanel')) {
+	unlink($amp_conf['AMPWEBROOT'] . '/cxpanel');
+}
 
 //Turn on voicemail polling if not already on
 if(function_exists("voicemail_get_settings")) {
