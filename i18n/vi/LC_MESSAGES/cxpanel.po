@@ -1,0 +1,201 @@
+# This file is part of FreePBX.
+#
+# For licensing information, please see the file named LICENSE located in the module directory
+#
+# FreePBX language template for cxpanel
+# Copyright (C) 2008-2017 Sangoma Technologies, Inc.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-07 14:41-0800\n"
+"PO-Revision-Date: 2017-06-21 08:46+0200\n"
+"Last-Translator: PETER <ftek@ymail.com>\n"
+"Language-Team: Vietnamese "
+"<http://weblate.freepbx.org/projects/freepbx/cxpanel/vi/>\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 2.4\n"
+
+#: Cxpanel.class.php:306
+#, php-format
+msgid "%s Login: %s"
+msgstr "%s Đăng nhập: %s"
+
+#: functions.inc.php:379 functions.inc.php:514
+#, php-format
+msgid "%s Settings"
+msgstr "Các cài đặt %s"
+
+#: views/userman_hook.php:7
+#, php-format
+msgid "Add To %s"
+msgstr "Thêm vào %s"
+
+#: functions.inc.php:383 functions.inc.php:521
+#, php-format
+msgid "Add to %s"
+msgstr "Thêm vào %s"
+
+#: cxpanel.i18n.php:6
+msgid "Admin"
+msgstr "Quản trị viên"
+
+#: functions.inc.php:549
+msgid "Alt. Phone Numbers"
+msgstr "Các số điện thoại lựa chọn"
+
+#: functions.inc.php:522
+msgid "Auto Answer"
+msgstr "Tự động trả lời"
+
+#: functions.inc.php:529
+msgid "Create User"
+msgstr "Tạo người dùng"
+
+#: functions.inc.php:529
+#, php-format
+msgid "Creates an %s user login which is associated with this extension."
+msgstr "Tạo một đăng nhập %s người dùng được liên kết với máy nhánh này."
+
+#: functions.inc.php:563
+msgid "Email Inital Password"
+msgstr "Mật khẩu ban đầu của Email"
+
+#: functions.inc.php:531
+msgid "Email Password"
+msgstr "Mật khẩu Email"
+
+#: functions.inc.php:530
+msgid "Full User"
+msgstr "Người dùng toàn quyền"
+
+#: functions.inc.php:497
+msgid ""
+"If you do not know the password for this user you can change it in the User "
+"Password field above"
+msgstr ""
+"Nếu bạn không biết mật khẩu của người dùng này bạn có thể thay đổi nó trong "
+"trường Mật khẩu người dùng ở trên"
+
+#: views/userman_hook.php:18
+msgid "Inherit"
+msgstr "Kế thừa"
+
+#: functions.inc.php:530
+#, php-format
+msgid ""
+"Makes this extension a full user in %s. Full users have access to all the "
+"fuctionality in %s that the current license allows. The amount of full users "
+"allowed in %s is restricted via the license. If you mark this user as a full "
+"user and there are no more user licenes available the user will remain a "
+"lite user."
+msgstr ""
+"Tạo cho máy nhánh này một người dùng đầy đủ trong %s. Những người dùng toàn "
+"quyền sẽ có thể truy cập tất cả các tính năng trong %s đã được giấy phép "
+"hiện hành cho phép. Số lượng người dùng toàn quyền trong %s được giới hạn "
+"thông qua giấy phép. Nếu bạn đánh dầu người dùng này như một người dùng toàn "
+"quyền nhưng không có các giấy phép thì người dùng này được duy trì như một "
+"người dùng không toàn quyền ( lite user)."
+
+#: functions.inc.php:522
+#, php-format
+msgid ""
+"Makes this extension automatically answer the initial call received from the "
+"system when performing an origination within %s. Only works with Aastra, "
+"Grandstream, Linksys, Polycom, and Snom phones."
+msgstr ""
+"Tạo cho máy nhánh này tự động trả lời cuộc gọi ban đầu nhận được từ hệ thống "
+"khi thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
+"Aastra, Grandstream, Linksys, Polycom, and Snom."
+
+#: functions.inc.php:521
+#, php-format
+msgid "Makes this extension available in %s"
+msgstr "Làm cho máy nhánh này khả dụng trong %s"
+
+#: functions.inc.php:383
+#, php-format
+msgid "Makes this user available in %s"
+msgstr "Làm cho người dùng này khả dụng trong %s"
+
+#: functions.inc.php:549
+#, php-format
+msgid "Manages alternative phone numbers for this %s user."
+msgstr "Quản lý các số điện thoại lựa chọn cho %s người dùng này."
+
+#: views/userman_hook.php:15
+msgid "No"
+msgstr "Không"
+
+#: functions.inc.php:570
+#, php-format
+msgid ""
+"Please specify a password for the %s user or uncheck \"Create User\" under "
+"\"%s User Settings\""
+msgstr ""
+"Vui lòng xác định một mật khẩu cho người dùng %s này hoặc bỏ chọn \"Create "
+"User\" ( Tạo người dùng) tại \" %s User Settings\""
+
+#: functions.inc.php:532
+#, php-format
+msgid "Specifies the password to be used for the %s User"
+msgstr "Xác định mật khẩu được sử dụng cho người dùng %s"
+
+#: functions.inc.php:545
+msgid ""
+"Specifies which extensions will be bound to the $cxpanelBrandName user "
+"created for this extension. \"Self\" refers to this extension"
+msgstr ""
+"Xác định các máy nhánh sẽ liên kết với người dùng  $cxpanelBrandName đã tạo "
+"đối với máy nhánh này. \"Self\" để chỉ máy nhánh này"
+
+#: functions.inc.php:495
+msgid "The inital password for this user is set to"
+msgstr "Mật khẩu ban đầu cho người dùng này được cài đặt là"
+
+#: functions.inc.php:497
+msgid "The inital password for this user was never created or has been changed"
+msgstr ""
+"Mật khẩu ban đầu cho người dùng này đã chưa bao giờ được tạo hoặc đã bị thay "
+"đổi"
+
+#: cxpanel.i18n.php:8
+msgid ""
+"This module automatically configures the operator panel to reflect the PBX "
+"configuration."
+msgstr "Mô đun này sẽ tự động cấu hình bảng thao tác để phản ánh cấu hình PBX."
+
+#: functions.inc.php:546
+msgid "User Extensions"
+msgstr "Các máy nhánh người dùng"
+
+#: functions.inc.php:532
+msgid "User Password"
+msgstr "Mật khẩu người dùng"
+
+#: functions.inc.php:531
+msgid ""
+"When checked the new specified password will be sent to the email cofigured "
+"in the voicemail settings. No email will be sent if no email address is "
+"specified or the password is not changing."
+msgstr ""
+"Khi được kiểm tra, mật khẩu mới xác định sẽ được gửi tới email đã được cấu "
+"hình trong các cài đặt hộp thư thoại. Không có email nào được gửi nếu không "
+"có địa chỉ email xác định hay mật khẩu không thay đổi."
+
+#: views/userman_hook.php:13
+msgid "Yes"
+msgstr "Có"
+
+#: cxpanel.i18n.php:4 cxpanel.i18n.php:10
+msgid "iSymphonyV3"
+msgstr "Phần mềm iSymphonyV3"
+
+#: cxpanel.i18n.php:12
+msgid "iSymphonyV3 Panel"
+msgstr "Bảng iSymphonyV3"
