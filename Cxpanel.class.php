@@ -78,7 +78,7 @@ class Cxpanel implements \BMO {
 				switch($_REQUEST['action']) {
 					case 'showgroup':
 						$mode = "group";
-						$addUser = $this->freepbx->Userman->getModuleSettingByID($_REQUEST['group'], 'cxpanel', 'add');
+						$addUser = $this->freepbx->Userman->getModuleSettingByGID($_REQUEST['group'], 'cxpanel', 'add');
 					break;
 					case 'showuser':
 						$mode = "user";
