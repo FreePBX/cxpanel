@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.4.2</version>
+	<version>13.0.4.3</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -17,6 +17,7 @@
 		<version>13.0.121</version>
 	</depends>
 	<changelog>
+		*13.0.4.3* FREEPBX-15196 Fix group settings call
 		*13.0.4.2* FREEPBX-15308
 		*13.0.4.1* FREEPBX-12573 PBXact error on adding new extension
 		*13.0.4* FREEPBX-12550 Allow userman to create iSymphony Administrators as well as users
