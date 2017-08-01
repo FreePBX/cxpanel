@@ -42,8 +42,17 @@ if(!file_exists($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log")) {
 	touch($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
 	chmod($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", 0775);
 }
-chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
-chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
+
+//Set the group/owner of the logger if necessary
+$asterisk_user = posix_getpwnam($amp_conf['AMPASTERISKUSER']);
+$asterisk_group = posix_getgrnam($amp_conf['AMPASTERISKGROUP']);
+if (fileowner($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log") != $asterisk_user['uid']){
+	chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
+}
+if (filegroup($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log") != $asterisk_group['gid']){
+	chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
+}
+
 
 //Create the global password mask
 $cxpanelUserPasswordMask = "********";
