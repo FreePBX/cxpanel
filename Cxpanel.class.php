@@ -53,6 +53,77 @@ class Cxpanel implements \BMO {
 	public function genConfig() {
 	}
 
+	public function ajaxRequest($req, &$setting) {
+		switch ($req) {
+			case 'getUser':
+			case 'checkAuth':
+				//TODO: You need to check for a valid token or other method to use here!!!!
+				if(!empty($_SERVER['HTTP_X_AUTH_TOKEN']) && $_SERVER['HTTP_X_AUTH_TOKEN'] == "1268d6d4-c222-4deb-b04f-587bed5e589e") {
+					$setting['authenticate'] = false;
+					$setting['allowremote'] = true;
+					return true;
+				} else {
+					return false;
+				}
+			break;
+		}
+		return false;
+	}
+	public function ajaxHandler(){
+		switch ($_REQUEST['command']) {
+			case 'getUser':
+				// GET admin/ajax.php?module=cxpanel&command=getUser&username=username
+				/**
+				 * @return
+				 * {
+				 *    "status": true,
+				 *    "user": {
+				 *        "id": "340",
+				 *        "auth": "1",
+				 *        "authid": "freepbx",
+				 *        "username": "username",
+				 *        "description": "test",
+				 *        "password": "6be444686d6cb8a9b60fa788d3111af4e3e4807e",
+				 *        "default_extension": "2002",
+				 *        "primary_group": null,
+				 *        "permissions": null,
+				 *        "fname": "",
+				 *        "lname": "",
+				 *        "displayname": "",
+				 *        "title": "",
+				 *        "company": "",
+				 *        "department": "",
+				 *        "email": "email@domain.tld",
+				 *        "cell": "",
+				 *        "work": "",
+				 *        "home": "",
+				 *        "fax": ""
+				 *    }
+				 * }
+				 */
+				$user = $this->freepbx->Userman->getUserByUsername($_GET['username']);
+				return !empty($user) ? array("status" => true, "user" => $user) : array("status" => false);
+			break;
+			case 'checkAuth':
+				// POST admin/ajax.php?module=cxpanel&command=checkAuth
+				/**
+				 * {
+				 *	"username": "username",
+				 *	"password": "thepassword"
+				 * }
+				 * @return
+				 * {
+				 *    "status": true
+				 * }
+				 */
+				$data = json_decode(file_get_contents("php://input"),true);
+				$user = $this->freepbx->Userman->checkCredentials($data['username'], $data['password']);
+				return !empty($user) ? array("status" => true) : array("status" => false);
+			break;
+		}
+		return false;
+	}
+
 	public static function myGuiHooks() {
 		return array("INTERCEPT" => "modules/core/page.ampusers.php");
 	}
