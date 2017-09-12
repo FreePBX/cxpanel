@@ -53,22 +53,29 @@ class Cxpanel implements \BMO {
 	public function genConfig() {
 	}
 
-	public function ajaxRequest($req, &$setting) {
-		switch ($req) {
-			case 'getUser':
-			case 'checkAuth':
-				//TODO: You need to check for a valid token or other method to use here!!!!
-				if(!empty($_SERVER['HTTP_X_AUTH_TOKEN']) && $_SERVER['HTTP_X_AUTH_TOKEN'] == "1268d6d4-c222-4deb-b04f-587bed5e589e") {
-					$setting['authenticate'] = false;
-					$setting['allowremote'] = true;
-					return true;
-				} else {
-					return false;
-				}
-			break;
-		}
-		return false;
-	}
+    public function ajaxRequest($req, &$setting) {
+        if(!function_exists('cxpanel_server_get')) {
+            include(__DIR__.'/functions.inc.php');
+        }
+
+        switch ($req) {
+            case 'getUser':
+            case 'checkAuth':
+            case 'checkAuthAdmin':
+                $serverSettings = cxpanel_server_get();
+
+                if(gethostbyname($serverSettings['api_host']) == $_SERVER['REMOTE_ADDR']) {
+                    $setting['authenticate'] = false;
+                    $setting['allowremote'] = true;
+                    return true;
+                } else {
+                    return false;
+                }
+                break;
+        }
+        return false;
+    }
+
 	public function ajaxHandler(){
 		switch ($_REQUEST['command']) {
 			case 'getUser':
@@ -120,6 +127,22 @@ class Cxpanel implements \BMO {
 				$user = $this->freepbx->Userman->checkCredentials($data['username'], $data['password']);
 				return !empty($user) ? array("status" => true) : array("status" => false);
 			break;
+            case 'checkAuthAdmin':
+                $data = json_decode(file_get_contents("php://input"),true);
+
+                //get the FreePBX administrators
+                $administrators = cxpanel_get_administrators();
+                foreach($administrators as $admin) {
+                    //find the admin that matches provided username, if it exists
+                    if($admin['username'] == $data['username']) {
+                        //verify the admin has * or cxpanel role
+                        if(strpos($admin["sections"],"*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
+                            //admin with correct roles was found, check credentials and return result
+                            $user = $this->freepbx->Userman->checkCredentials($data['username'], $data['password']);
+                            return !empty($user) ? array("status" => true) : array("status" => false);
+                        }
+                    }
+                }
 		}
 		return false;
 	}
