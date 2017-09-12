@@ -130,8 +130,21 @@ class Cxpanel implements \BMO {
             case 'checkAuthAdmin':
                 $data = json_decode(file_get_contents("php://input"),true);
 
-                //get the FreePBX administrators
-                $administrators = cxpanel_get_administrators();
+                //get the amp administrators
+                $amp_administrators = cxpanel_get_core_ampusers_list();
+                foreach($amp_administrators as $admin) {
+                    //find the admin that matches provided username, if it exists
+                    if($admin['username'] == $data['username']) {
+                        //verify the admin has * or cxpanel role
+                        if (strpos($admin["sections"], "*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
+                            //admin with correct role was found, check sha1 of input password against the admin password
+                            return $admin['password_sha1'] == sha1($data['password']) ? array("status" => true) : array("status" => false);
+                        }
+                    }
+                }
+
+                //get the userman FreePBX administrators
+                $administrators = cxpanel_get_userman_administrators();
                 foreach($administrators as $admin) {
                     //find the admin that matches provided username, if it exists
                     if($admin['username'] == $data['username']) {

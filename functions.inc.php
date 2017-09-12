@@ -1944,13 +1944,11 @@ function cxpanel_get_core_ampusers_list() {
 }
 
 /**
- * Finds and returns an array of administrators defined in ampusers and userman.
+ * Returns an array of administrators defined in userman
  * @return array of administrators
  */
-function cxpanel_get_administrators() {
-    $administrators = cxpanel_get_core_ampusers_list();
-
-    $loc = "/var/www/html/admin/cxpanel/tmp.log";
+function cxpanel_get_userman_administrators() {
+    $administrators = array();
     if(function_exists('setup_userman')) {
         $userman = setup_userman();
 
@@ -1985,6 +1983,15 @@ function cxpanel_get_administrators() {
             }
         }
     }
-
     return $administrators;
+}
+
+
+
+/**
+ * Returns an array of administrators defined in ampusers and userman.
+ * @return array of administrators
+ */
+function cxpanel_get_combined_administrators() {
+    return array_merge(cxpanel_get_core_ampusers_list(), cxpanel_get_userman_administrators());
 }

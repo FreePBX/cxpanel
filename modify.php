@@ -513,7 +513,7 @@ function sync_administrators() {
 		}
 
 		//Grab the administrators
-        $administrators = cxpanel_get_administrators();
+        $administrators = cxpanel_get_combined_administrators();
 
 
 		//Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
