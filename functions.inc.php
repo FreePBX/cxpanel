@@ -366,6 +366,11 @@ function cxpanel_hook_userman() {
 	$serverSettings = cxpanel_server_get();
 	if($serverSettings['sync_with_userman'] == '1') {
 
+
+
+
+
+
 		//Setup userman
 		$userman = setup_userman();
 
@@ -1929,4 +1934,73 @@ function cxpanel_send_password_email($userId, $pass = "", $email = "") {
 
 	//Send the email
 	$phpMailer->send();
+}
+
+/**
+ *
+ * Gets the list of amp users
+ *
+ */
+function cxpanel_get_core_ampusers_list() {
+    global $db;
+    $query = "SELECT * FROM ampusers";
+    $results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
+    if((DB::IsError($results)) || (empty($results))) {
+        return array();
+    } else {
+        return $results;
+    }
+}
+
+/**
+ * Returns an array of administrators defined in userman
+ * @return array of administrators
+ */
+function cxpanel_get_userman_administrators() {
+    $administrators = array();
+    if(function_exists('setup_userman')) {
+        $userman = setup_userman();
+
+        foreach($userman->getAllUsers() as $user) {
+            //if pbx_admin set, create admin
+            if($userman->getGlobalSettingByID($user['id'],'pbx_admin')) {
+                $admin = array(
+                    "username" => $user['username'],
+                    "password_sha1" => $user['password'],
+                    "extension_low" => "",
+                    "extension_high" => "",
+                    "deptname" => $user['department'],
+                    "sections" => "*"
+                );
+
+                $administrators[] = $admin;
+                //if pbx_login set, check sections - will only add if * or cxpanel has been set
+            } else if ($userman->getGlobalSettingByID($user['id'],'pbx_login')) {
+                $sections = $userman->getGlobalSettingByID($user['id'],'pbx_modules');
+                $sections = empty($sections) ? array() : $sections;
+
+                $admin = array(
+                    "username" => $user['username'],
+                    "password_sha1" => $user['password'],
+                    "extension_low" => "",
+                    "extension_high" => "",
+                    "deptname" => $user['department'],
+                    "sections" => implode(";",$sections)
+                );
+
+                $administrators[] = $admin;
+            }
+        }
+    }
+    return $administrators;
+}
+
+
+
+/**
+ * Returns an array of administrators defined in ampusers and userman.
+ * @return array of administrators
+ */
+function cxpanel_get_combined_administrators() {
+    return array_merge(cxpanel_get_core_ampusers_list(), cxpanel_get_userman_administrators());
 }

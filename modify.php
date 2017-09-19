@@ -513,47 +513,10 @@ function sync_administrators() {
 		}
 
 		//Grab the administrators
-		$administrators = cxpanel_get_core_ampusers_list();
+        $administrators = cxpanel_get_combined_administrators();
 
-		//Sync userman administrators if available
-		if(function_exists('setup_userman')) {
-			$logger->debug("Syncing Userman Administrators");
-
-			$userman = setup_userman();
-
-			foreach($userman->getAllUsers() as $user) {
-				//if pbx_admin set, create admin
-				if($userman->getGlobalSettingByID($user['id'],'pbx_admin')) {
-					$admin = array(
-						"username" => $user['username'],
-						"password_sha1" => $user['password'],
-						"extension_low" => "",
-						"extension_high" => "",
-						"deptname" => $user['department'],
-						"sections" => "*"
-					);
-
-					$administrators[] = $admin;
-					//if pbx_login set, check sections - will only add if * or cxpanel has been set
-				} else if ($userman->getGlobalSettingByID($user['id'],'pbx_login')) {
-					$sections = $userman->getGlobalSettingByID($user['id'],'pbx_modules');
-
-					$admin = array(
-						"username" => $user['username'],
-						"password_sha1" => $user['password'],
-						"extension_low" => "",
-						"extension_high" => "",
-						"deptname" => $user['department'],
-						"sections" => implode(";",$sections)
-					);
-
-					$administrators[] = $admin;
-				}
-			}
-		}
 
 		//Filter list to exclude administrators that do not have access to the cxpanel module while creating an associative array for quick indexing
-		$administratorsAccoc = array();
 		foreach($administrators as $admin) {
 			if(strpos($admin["sections"],"*") !== false || strpos($admin["sections"], "cxpanel") !== false) {
 				$administratorsAccoc[$admin['username']] = $admin;
@@ -1877,22 +1840,6 @@ function get_agent_login_interface($user) {
 			return "hint:" . $user["user_id"] . "@ext-local";
 		case "none";
 			return "";
-	}
-}
-
-/**
- *
- * Gets the list of amp users
- *
- */
-function cxpanel_get_core_ampusers_list() {
-	global $db;
-	$query = "SELECT * FROM ampusers";
-	$results = sql($query, "getAll", DB_FETCHMODE_ASSOC);
-	if((DB::IsError($results)) || (empty($results))) {
-		return array();
-	} else {
-		return $results;
 	}
 }
 
