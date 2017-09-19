@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-07 14:41-0800\n"
+"POT-Creation-Date: 2017-09-18 21:41-0400\n"
 "PO-Revision-Date: 2017-07-20 10:57+0200\n"
 "Last-Translator: PETER <ftek@ymail.com>\n"
 "Language-Team: Vietnamese <http://weblate.freepbx.org/projects/freepbx/"
@@ -21,12 +21,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 2.4\n"
 
-#: Cxpanel.class.php:306
+#: Cxpanel.class.php:413
 #, php-format
 msgid "%s Login: %s"
 msgstr "%s Đăng nhập: %s"
 
-#: functions.inc.php:379 functions.inc.php:514
+#: functions.inc.php:393 functions.inc.php:528
 #, php-format
 msgid "%s Settings"
 msgstr "Các cài đặt %s"
@@ -36,7 +36,7 @@ msgstr "Các cài đặt %s"
 msgid "Add To %s"
 msgstr "Thêm vào %s"
 
-#: functions.inc.php:383 functions.inc.php:521
+#: functions.inc.php:397 functions.inc.php:535
 #, php-format
 msgid "Add to %s"
 msgstr "Thêm vào %s"
@@ -45,36 +45,36 @@ msgstr "Thêm vào %s"
 msgid "Admin"
 msgstr "Quản trị viên"
 
-#: functions.inc.php:549
+#: functions.inc.php:563
 msgid "Alt. Phone Numbers"
 msgstr "Các số điện thoại lựa chọn"
 
-#: functions.inc.php:522
+#: functions.inc.php:536
 msgid "Auto Answer"
 msgstr "Tự động trả lời"
 
-#: functions.inc.php:529
+#: functions.inc.php:543
 msgid "Create User"
 msgstr "Tạo người dùng"
 
-#: functions.inc.php:529
+#: functions.inc.php:543
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr "Tạo một đăng nhập %s người dùng được liên kết với máy nhánh này."
 
-#: functions.inc.php:563
+#: functions.inc.php:577
 msgid "Email Inital Password"
 msgstr "Mật khẩu ban đầu của Email"
 
-#: functions.inc.php:531
+#: functions.inc.php:545
 msgid "Email Password"
 msgstr "Mật khẩu Email"
 
-#: functions.inc.php:530
+#: functions.inc.php:544
 msgid "Full User"
 msgstr "Người dùng toàn quyền"
 
-#: functions.inc.php:497
+#: functions.inc.php:511
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Inherit"
 msgstr "Kế thừa"
 
-#: functions.inc.php:530
+#: functions.inc.php:544
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -102,7 +102,7 @@ msgstr ""
 "quyền nhưng không có các giấy phép thì người dùng này được duy trì như một "
 "người dùng không toàn quyền ( lite user)."
 
-#: functions.inc.php:522
+#: functions.inc.php:536
 #, php-format
 msgid ""
 "Makes this extension automatically answer the initial call received from the "
@@ -113,17 +113,17 @@ msgstr ""
 "khi thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
 "Aastra, Grandstream, Linksys, Polycom, and Snom."
 
-#: functions.inc.php:521
+#: functions.inc.php:535
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr "Làm cho máy nhánh này khả dụng trong %s"
 
-#: functions.inc.php:383
+#: functions.inc.php:397
 #, php-format
 msgid "Makes this user available in %s"
 msgstr "Làm cho người dùng này khả dụng trong %s"
 
-#: functions.inc.php:549
+#: functions.inc.php:563
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
 msgstr "Quản lý các số điện thoại lựa chọn cho %s người dùng này."
@@ -132,7 +132,7 @@ msgstr "Quản lý các số điện thoại lựa chọn cho %s người dùng 
 msgid "No"
 msgstr "Không"
 
-#: functions.inc.php:570
+#: functions.inc.php:584
 #, php-format
 msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
@@ -141,12 +141,12 @@ msgstr ""
 "Vui lòng xác định một mật khẩu cho người dùng %s này hoặc không đánh dấu "
 "check tại \"Create User\" ( Tạo người dùng) tại \" %s User Settings\""
 
-#: functions.inc.php:532
+#: functions.inc.php:546
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr "Xác định mật khẩu được sử dụng cho người dùng %s"
 
-#: functions.inc.php:545
+#: functions.inc.php:559
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
@@ -154,11 +154,11 @@ msgstr ""
 "Xác định các máy nhánh sẽ liên kết với người dùng  $cxpanelBrandName đã tạo "
 "đối với máy nhánh này. \"Self\" để chỉ máy nhánh này"
 
-#: functions.inc.php:495
+#: functions.inc.php:509
 msgid "The inital password for this user is set to"
 msgstr "Mật khẩu ban đầu cho người dùng này được cài đặt là"
 
-#: functions.inc.php:497
+#: functions.inc.php:511
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 "Mật khẩu ban đầu cho người dùng này đã chưa bao giờ được tạo hoặc đã bị thay "
@@ -170,15 +170,15 @@ msgid ""
 "configuration."
 msgstr "Mô đun này sẽ tự động cấu hình bảng thao tác để phản ánh cấu hình PBX."
 
-#: functions.inc.php:546
+#: functions.inc.php:560
 msgid "User Extensions"
 msgstr "Các máy nhánh người dùng"
 
-#: functions.inc.php:532
+#: functions.inc.php:546
 msgid "User Password"
 msgstr "Mật khẩu người dùng"
 
-#: functions.inc.php:531
+#: functions.inc.php:545
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "

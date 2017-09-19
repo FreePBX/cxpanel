@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-07 14:41-0800\n"
+"POT-Creation-Date: 2017-09-18 21:41-0400\n"
 "PO-Revision-Date: 2017-05-04 03:22+0200\n"
 "Last-Translator: Evgeniy <yen81@mail.ru>\n"
 "Language-Team: Russian <http://weblate.freepbx.org/projects/freepbx/cxpanel/"
@@ -22,12 +22,12 @@ msgstr ""
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.4\n"
 
-#: Cxpanel.class.php:306
+#: Cxpanel.class.php:413
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
 
-#: functions.inc.php:379 functions.inc.php:514
+#: functions.inc.php:393 functions.inc.php:528
 #, php-format
 msgid "%s Settings"
 msgstr "Настройки %s"
@@ -37,7 +37,7 @@ msgstr "Настройки %s"
 msgid "Add To %s"
 msgstr "Добавить в %s"
 
-#: functions.inc.php:383 functions.inc.php:521
+#: functions.inc.php:397 functions.inc.php:535
 #, php-format
 msgid "Add to %s"
 msgstr "Добавить в %s"
@@ -46,36 +46,36 @@ msgstr "Добавить в %s"
 msgid "Admin"
 msgstr "Администратор"
 
-#: functions.inc.php:549
+#: functions.inc.php:563
 msgid "Alt. Phone Numbers"
 msgstr "Дополнительные телефонные номера"
 
-#: functions.inc.php:522
+#: functions.inc.php:536
 msgid "Auto Answer"
 msgstr "Автоответ"
 
-#: functions.inc.php:529
+#: functions.inc.php:543
 msgid "Create User"
 msgstr "Создать пользователя"
 
-#: functions.inc.php:529
+#: functions.inc.php:543
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr ""
 
-#: functions.inc.php:563
+#: functions.inc.php:577
 msgid "Email Inital Password"
 msgstr "Отправить первоначальный пароль по почте"
 
-#: functions.inc.php:531
+#: functions.inc.php:545
 msgid "Email Password"
 msgstr "Отправить пароль по почте"
 
-#: functions.inc.php:530
+#: functions.inc.php:544
 msgid "Full User"
 msgstr ""
 
-#: functions.inc.php:497
+#: functions.inc.php:511
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
@@ -87,7 +87,7 @@ msgstr ""
 msgid "Inherit"
 msgstr "Наследовать"
 
-#: functions.inc.php:530
+#: functions.inc.php:544
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -97,7 +97,7 @@ msgid ""
 "lite user."
 msgstr ""
 
-#: functions.inc.php:522
+#: functions.inc.php:536
 #, php-format
 msgid ""
 "Makes this extension automatically answer the initial call received from the "
@@ -105,17 +105,17 @@ msgid ""
 "Grandstream, Linksys, Polycom, and Snom phones."
 msgstr ""
 
-#: functions.inc.php:521
+#: functions.inc.php:535
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr ""
 
-#: functions.inc.php:383
+#: functions.inc.php:397
 #, php-format
 msgid "Makes this user available in %s"
 msgstr ""
 
-#: functions.inc.php:549
+#: functions.inc.php:563
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
 msgstr "Управление дополнительными телефонными номерами для пользователя %s."
@@ -124,7 +124,7 @@ msgstr "Управление дополнительными телефонным
 msgid "No"
 msgstr "Нет"
 
-#: functions.inc.php:570
+#: functions.inc.php:584
 #, php-format
 msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
@@ -133,22 +133,22 @@ msgstr ""
 "Пожалуйста, укажите пароль для пользователя %s или снимите галочку \"создать "
 "пользователя\" под \"настройки пользователя %s\""
 
-#: functions.inc.php:532
+#: functions.inc.php:546
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr "Задает пароль для пользователя %s"
 
-#: functions.inc.php:545
+#: functions.inc.php:559
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
 msgstr ""
 
-#: functions.inc.php:495
+#: functions.inc.php:509
 msgid "The inital password for this user is set to"
 msgstr "Начальный пароль для этого пользователя -"
 
-#: functions.inc.php:497
+#: functions.inc.php:511
 msgid "The inital password for this user was never created or has been changed"
 msgstr "Начальный пароль этого пользователя не создавался или был изменен"
 
@@ -158,15 +158,15 @@ msgid ""
 "configuration."
 msgstr ""
 
-#: functions.inc.php:546
+#: functions.inc.php:560
 msgid "User Extensions"
 msgstr "Телефонные номера пользователя"
 
-#: functions.inc.php:532
+#: functions.inc.php:546
 msgid "User Password"
 msgstr "Пароль пользователя"
 
-#: functions.inc.php:531
+#: functions.inc.php:545
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "
