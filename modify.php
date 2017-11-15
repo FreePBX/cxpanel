@@ -580,7 +580,7 @@ function sync_administrators() {
 				cxpanel_managed_item_update('admin', $admin['username'], $serverAdmin->id);
 
 				//Update the administrator if needed
-				if($serverAdmin->password != strtolower($admin['password_sha1'])) {
+				if(!empty($admin['password_sha1']) && $serverAdmin->password != strtolower($admin['password_sha1'])) {
 
 					$logger->debug("Updating administrator: " . $admin['username']);
 
@@ -824,8 +824,7 @@ function sync_users() {
 
 				//Check if the user password needs updating
 				$passwordUpdated = false;
-				if(	$serverUser->password != strtolower($user['hashed_password']) &&
-					$user["password_dirty"] == "1") {
+				if(!empty($user['hashed_password']) && $serverUser->password != strtolower($user['hashed_password']) && $user["password_dirty"] == "1") {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
@@ -987,8 +986,7 @@ function sync_users_userman() {
 
 				//Check if the user password needs updating
 				$passwordUpdated = false;
-				if(	$serverUser->password != strtolower($user['hashed_password']) &&
-				$user["password_dirty"] == "1") {
+				if(!empty($user['hashed_password']) && $serverUser->password != strtolower($user['hashed_password']) && $user["password_dirty"] == "1") {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
