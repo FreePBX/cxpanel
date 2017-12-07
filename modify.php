@@ -548,7 +548,6 @@ function sync_administrators() {
 
 		//Add admins that are missing on the server and update ones that are not up to date
 		foreach($administratorsAccoc as $admin) {
-
 			//Add administrator
 			if(!array_key_exists($admin['username'], $serverAdminAssoc)) {
 
@@ -556,6 +555,12 @@ function sync_administrators() {
 
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('admin', $admin['username']);
+
+				if (empty($admin['password_sha1'])) {
+					//Generate a password for the user
+					$password = cxpanel_generate_password(10);
+					$admin['password_sha1'] = $password;
+				}
 
 				//Add object from server
 				try {
@@ -575,7 +580,7 @@ function sync_administrators() {
 				cxpanel_managed_item_update('admin', $admin['username'], $serverAdmin->id);
 
 				//Update the administrator if needed
-				if($serverAdmin->password != strtolower($admin['password_sha1'])) {
+				if(!empty($admin['password_sha1']) && $serverAdmin->password != strtolower($admin['password_sha1'])) {
 
 					$logger->debug("Updating administrator: " . $admin['username']);
 
@@ -795,6 +800,12 @@ function sync_users() {
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('user', $user['user_id']);
 
+				if (empty($user['hashed_password'])) {
+					//Generate a password for the user
+					$password = cxpanel_generate_password(10);
+					$user['hashed_password'] = $password;
+				}
+
 				//Add the user to the server
 				try {
 					$serverUser = new cxpanel_user(false, $user['user_id'], $user['hashed_password'], true, $full);
@@ -813,8 +824,7 @@ function sync_users() {
 
 				//Check if the user password needs updating
 				$passwordUpdated = false;
-				if(	$serverUser->password != strtolower($user['hashed_password']) &&
-					$user["password_dirty"] == "1") {
+				if(!empty($user['hashed_password']) && $serverUser->password != strtolower($user['hashed_password']) && $user["password_dirty"] == "1") {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
@@ -952,6 +962,12 @@ function sync_users_userman() {
 				//Generate uuid and a managed item entry
 				$uuid = cxpanel_gen_managed_uuid('user', $user['username']);
 
+				if (empty($user['hashed_password'])) {
+					//Generate a password for the user
+					$password = cxpanel_generate_password(10);
+					$user['hashed_password'] = $password;
+				}
+
 				//Add user to the server
 				try {
 					$serverUser = new cxpanel_user(false, $user['username'], $user['hashed_password'], true, $full);
@@ -970,8 +986,7 @@ function sync_users_userman() {
 
 				//Check if the user password needs updating
 				$passwordUpdated = false;
-				if(	$serverUser->password != strtolower($user['hashed_password']) &&
-				$user["password_dirty"] == "1") {
+				if(!empty($user['hashed_password']) && $serverUser->password != strtolower($user['hashed_password']) && $user["password_dirty"] == "1") {
 					$serverUser->password = $user['hashed_password'];
 					$passwordUpdated = true;
 				}
