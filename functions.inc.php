@@ -532,18 +532,18 @@ function cxpanel_extension_configpageload() {
 										array("text" => "no", "value" => "0", "onclick" => "document.getElementById('cxpanel_extensions').disabled = true; document.getElementById('cxpanel_password').disabled = true;"));
 
 		//Build the extension properties
-		$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_add_extension", $yesNoValueArray, $addExtension, sprintf(_("Add to %s"),$cxpanelBrandName), sprintf(_("Makes this extension available in %s"),$cxpanelBrandName)));
-		$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_auto_answer", $yesNoValueArray, $autoAnswer, _("Auto Answer"), sprintf(_("Makes this extension automatically answer the initial call received from the system when performing an origination within %s. Only works with Aastra, Grandstream, Linksys, Polycom, and Snom phones."),$cxpanelBrandName)));
+		$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_add_extension", $yesNoValueArray, $addExtension, sprintf(_("Add to %s"),$cxpanelBrandName), sprintf(_("Makes this extension available in %s"),$cxpanelBrandName)), 5, null, "other", "advanced");
+		$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_auto_answer", $yesNoValueArray, $autoAnswer, _("Auto Answer"), sprintf(_("Makes this extension automatically answer the initial call received from the system when performing an origination within %s. Only works with Aastra, Grandstream, Linksys, Polycom, and Snom phones."),$cxpanelBrandName)), 5, null, "other", "advanced");
 
 		//If sync_with_userman is not enabled show the user settings
 		$serverSettings = cxpanel_server_get();
 		if($serverSettings['sync_with_userman'] != '1' || !function_exists('setup_userman')) {
 
 			//Build the user properties
-			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_add_user", $yesNoAddUserValueArray, $addUser, _("Create User"), sprintf(_("Creates an %s user login which is associated with this extension."),$cxpanelBrandName)));
-			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_full_user", $yesNoValueArray, $full, _("Full User"), sprintf(_("Makes this extension a full user in %s. Full users have access to all the fuctionality in %s that the current license allows. The amount of full users allowed in %s is restricted via the license. If you mark this user as a full user and there are no more user licenes available the user will remain a lite user."),$cxpanelBrandName,$cxpanelBrandName,$cxpanelBrandName)));
-			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_email_new_pass", $yesNoValueArray, "0", _("Email Password"), _("When checked the new specified password will be sent to the email cofigured in the voicemail settings. No email will be sent if no email address is specified or the password is not changing.")));
-			$currentcomponent->addguielem($section, new gui_password("cxpanel_password", $password, _("User Password"), sprintf(_("Specifies the password to be used for the %s User"),$cxpanelBrandName), "", "", true, "100", !$addUser));
+			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_add_user", $yesNoAddUserValueArray, $addUser, _("Create User"), sprintf(_("Creates an %s user login which is associated with this extension."),$cxpanelBrandName)), 5, null, "other", "advanced");
+			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_full_user", $yesNoValueArray, $full, _("Full User"), sprintf(_("Makes this extension a full user in %s. Full users have access to all the fuctionality in %s that the current license allows. The amount of full users allowed in %s is restricted via the license. If you mark this user as a full user and there are no more user licenes available the user will remain a lite user."),$cxpanelBrandName,$cxpanelBrandName,$cxpanelBrandName)), 5, null, "other", "advanced");
+			$currentcomponent->addguielem($section,	new cxpanel_radio("cxpanel_email_new_pass", $yesNoValueArray, "0", _("Email Password"), _("When checked the new specified password will be sent to the email cofigured in the voicemail settings. No email will be sent if no email address is specified or the password is not changing.")), 5, null, "other", "advanced");
+			$currentcomponent->addguielem($section, new gui_password("cxpanel_password", $password, _("User Password"), sprintf(_("Specifies the password to be used for the %s User"),$cxpanelBrandName), "", "", true, "100", !$addUser), 5, null, "other", "advanced");
 
 			//Build extension select
 			$extensionListValues = cxpanel_user_list();
@@ -557,10 +557,10 @@ function cxpanel_extension_configpageload() {
 			array_unshift($sortedExtensionList, array("text" => "Self", "value" => "self"));
 
 			$extensionListToolTip = _('Specifies which extensions will be bound to the $cxpanelBrandName user created for this extension. "Self" refers to this extension');
-			$currentcomponent->addguielem($section, new cxpanel_multi_selectbox("cxpanel_extensions", $sortedExtensionList, "10", $boundExtensionList, _("User Extensions"), $extensionListToolTip, false, "", !$addUser));
+			$currentcomponent->addguielem($section, new cxpanel_multi_selectbox("cxpanel_extensions", $sortedExtensionList, "10", $boundExtensionList, _("User Extensions"), $extensionListToolTip, false, "", !$addUser), 5, null, "other", "advanced");
 
 			//Add list of phone numbers for the user
-			$currentcomponent->addguielem($section, new cxpanel_phone_number_list("cxpanel_phone_numbers", $phoneNumberList, _("Alt. Phone Numbers"), sprintf(_("Manages alternative phone numbers for this %s user."),$cxpanelBrandName)));
+			$currentcomponent->addguielem($section, new cxpanel_phone_number_list("cxpanel_phone_numbers", $phoneNumberList, _("Alt. Phone Numbers"), sprintf(_("Manages alternative phone numbers for this %s user."),$cxpanelBrandName)), 5, null, "other", "advanced");
 
 			//If the user has an inital password set display the inital password and if it is still valid or not
 			if($initalPasswordDisplay != "") {
