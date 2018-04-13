@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.5.1</version>
+	<version>14.0.1</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -14,11 +14,13 @@
 	<depends>
 		<module>manager</module>
 		<module>userman</module>
+		<module>framework ge 14.0.2.16</module>
 		<version>13.0.121</version>
 	</depends>
     <changelog>
+    		*14.0.1*   FREEPBX-16357 - Display 'cxpanel' section only for 'advanced mode'
 		*13.0.5.1* FREEPBX-12679 - if a password doesn't exist, generate one for the 
-        *13.0.5.0* Added http/https authentication support
+		*13.0.5.0* Added http/https authentication support
 		*13.0.4.3* FREEPBX-15196 Fix group settings call
 		*13.0.4.2* FREEPBX-15308
 		*13.0.4.1* FREEPBX-12573 PBXact error on adding new extension
@@ -35,7 +37,7 @@
 	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
-		<version>13.0</version>
+		<version>14.0</version>
 	</supported>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">
