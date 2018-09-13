@@ -19,6 +19,9 @@ class cxpanel_logger {
 	var $file;
 	var $fd;
 	var $echoLog = false;
+
+	public function __construct() {
+	}
 	
 	/**
 	 * 

@@ -20,6 +20,8 @@ class ext_cxpanel_parkandannounce {
 	var $dial;
 	var $return_context;
 	
+	public function __construct() {
+	}
 	function ext_cxpanel_parkandannounce($template, $timeout, $dial, $return_context) {
 		$this->template = $template;
 		$this->timeout = $timeout;
@@ -47,6 +49,8 @@ class ext_cxpanel_controlplayback {
 	var $pause;
 	var $restart;
 		
+	public function __construct() {
+	}
 	function ext_cxpanel_controlplayback($fileName, $skipMinutes, $ff, $rew, $stop, $pause, $restart) {
 		$this->fileName = $fileName;
 		$this->skipMinutes = $skipMinutes;
@@ -72,6 +76,8 @@ class ext_cxpanel_chanspy {
 	var $prefix;
 	var $options;
 	
+	public function __construct() {
+	}
 	function ext_cxpanel_chanspy($prefix, $options) {
 		$this->prefix = $prefix;
 		$this->options = $options;

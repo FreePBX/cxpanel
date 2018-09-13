@@ -310,6 +310,9 @@ class CXPest_UnknownResponse extends CXPest_Exception { }
 //i9 Technologies modification
 /* 307 */ class CXPest_TemporaryRedirect extends CXPest_ClientError {
 	var $redirectUri;	
+
+	public function __construct() {
+	}
 	
 	function CXPest_TemporaryRedirect($redirectUri) {
 		$this->redirectUri = $redirectUri;
@@ -319,6 +322,9 @@ class CXPest_UnknownResponse extends CXPest_Exception { }
 //i9 Technologies modification
 /* 302 */class CXPest_Found extends CXPest_ClientError {
 	var $redirectUri;
+
+	public function __construct() {
+	}
 
 	function CXPest_Found($redirectUri) {
 		$this->redirectUri = $redirectUri;

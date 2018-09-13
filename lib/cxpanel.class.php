@@ -20,6 +20,8 @@ class cxpanel_core_server {
 	var $brokerHost;
 	var $brokerPort;
 	
+	public function __construct() {
+	}
 	function cxpanel_core_server($slug, $name, $brokerHost, $brokerPort) {
 		$this->slug = $slug;
 		$this->name = $name;
@@ -40,6 +42,8 @@ class cxpanel_voicemail_agent {
 	var $resourceHost;
 	var $resourceExtension;
 
+	public function __construct() {
+	}
 	function cxpanel_voicemail_agent($identifier, $rootPath, $resourceHost, $resourceExtension) {
 		$this->identifier = $identifier;
 		$this->rootPath = $rootPath;
@@ -61,6 +65,8 @@ class cxpanel_recording_agent {
 	var $resourceExtension;
 	var $fileNameMask;
 
+	public function __construct() {
+	}
 	function cxpanel_recording_agent($identifier, $rootPath, $resourceHost, $resourceExtension, $fileNameMask) {
 		$this->identifier = $identifier;
 		$this->rootPath = $rootPath;
@@ -89,6 +95,8 @@ class cxpanel_pbx_server {
 	var $cdrPassword;
 	var $recordingAgentIdentifier;
 	
+	public function __construct() {
+	}
 	function cxpanel_pbx_server($displayName, $host, $port, $username,
 								$password, $cdrHost, $cdrPort,
 								$cdrUsername, $cdrPassword, $enabled, $recordingAgentIdentifier) {
@@ -118,6 +126,8 @@ class cxpanel_administrator {
 	var $password;
 	var $superUser;
 	
+	public function __construct() {
+	}
 	function cxpanel_administrator($userName, $password, $superUser) {
 		$this->userName = $userName;
 		$this->password = $password;
@@ -150,6 +160,8 @@ class cxpanel_extension {
 	var $voiceMailContext;
 	var $voiceMailBox;
 	
+	public function __construct() {
+	}
 	function cxpanel_extension(	$restricted, $extension, $displayName, $autoAnswer,
 								$peer, $altOriginationMethod, $agentName,
 								$agentLocation, $agentInterface, $agentPenalty,
@@ -189,6 +201,8 @@ class cxpanel_user {
 	var $enabled;
 	var $full;
 	
+	public function __construct() {
+	}
 	function cxpanel_user($restricted, $username, $password, $enabled, $full) {
 		$this->restricted = $restricted;
 		$this->username = $username;
@@ -213,6 +227,8 @@ class cxpanel_queue {
 	var $destinationContext;
 	var $enabled;
 	
+	public function __construct() {
+	}
 	function cxpanel_queue($restricted, $displayName, $identifier, $destinationExtension, $destinationContext, $enabled) {
 		$this->restricted = $restricted;
 		$this->displayName = $displayName;
@@ -236,6 +252,8 @@ class cxpanel_conference_room {
 	var $identifier;
 	var $destinationExtension;
 	var $destinationContext;
+	public function __construct() {
+	}
 
 	function cxpanel_conference_room($restricted, $name, $identifier, $destinationExtension, $destinationContext) {
 		$this->restricted = $restricted;
@@ -259,6 +277,8 @@ class cxpanel_parking_lot {
 	var $identifier;
 	var $destinationExtension;
 	var $destinationContext;
+	public function __construct() {
+	}
 
 	function cxpanel_parking_lot($restricted, $name, $identifier, $destinationExtension, $destinationContext) {
 		$this->restricted = $restricted;
@@ -280,6 +300,8 @@ class cxpanel_user_contact {
 	var $firstName;
 	var $lastName;
 	
+	public function __construct() {
+	}
 	function cxpanel_user_contact($firstName, $lastName) {
 		$this->firstName = $firstName;
 		$this->lastName = $lastName;
@@ -297,6 +319,8 @@ class cxpanel_user_contact_email_address {
 	var $type;
 	var $address;
 	
+	public function __construct() {
+	}
 	function cxpanel_user_contact_email_address($type, $address) {
 		$this->type = $type;
 		$this->address = $address;
@@ -313,6 +337,8 @@ class cxpanel_user_contact_phone_number {
 
 	var $type;
 	var $number;
+	public function __construct() {
+	}
 
 	function cxpanel_user_contact_phone_number($type, $number) {
 		$this->type = $type;
@@ -330,6 +356,8 @@ class cxpanel_bind_request {
 	var $cancel;
 	var $licensedTo;
 	var $email;
+	public function __construct() {
+	}
 
 	function cxpanel_bind_request($cancel, $licensedTo, $email) {
 		$this->cancel = $cancel;

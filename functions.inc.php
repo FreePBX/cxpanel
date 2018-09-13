@@ -86,6 +86,9 @@ if(!function_exists('manager_add')){
  *
  */
 class cxpanel_radio extends guiinput {
+	public function __construct() {
+	}
+
 	function cxpanel_radio($elemname, $valarray, $currentvalue = '', $prompttext = '', $helptext = '', $disable=false) {
 		if (!is_array($valarray)) {
 			trigger_error('$valarray must be a valid array in gui_radio');
@@ -130,6 +133,8 @@ class cxpanel_radio extends guiinput {
  *
  */
 class cxpanel_multi_selectbox extends guiinput {
+	public function __construct() {
+	}
 	function cxpanel_multi_selectbox($elemname, $valarray, $size = '5', $currentvaluearray = array(), $prompttext = '', $helptext = '', $canbeempty = true, $onchange = '', $disable=false) {
 		if (!is_array($valarray)) {
 			trigger_error('$valarray must be a valid array in gui_selectbox');
@@ -182,6 +187,8 @@ class cxpanel_multi_selectbox extends guiinput {
  *
  */
 class cxpanel_phone_number_list extends guiinput {
+	public function __construct() {
+	}
 	function cxpanel_phone_number_list($elemname, $currentvaluearray = array(), $prompttext = '', $helptext = '') {
 
 		// currently no validation fucntions availble for select boxes
@@ -291,6 +298,8 @@ class cxpanel_phone_number_list extends guiinput {
  */
 if(!class_exists("gui_checkbox")) {
 	class gui_checkbox extends guiinput {
+		public function __construct() {
+		}
 		function gui_checkbox($elemname, $checked=false, $prompttext='', $helptext='', $value='on', $post_text = '', $jsonclick = '', $disable=false) {
 			$parent_class = get_parent_class($this);
 			if (is_callable('parent::$parent_class')) {
