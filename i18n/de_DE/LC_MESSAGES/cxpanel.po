@@ -10,16 +10,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-18 21:41-0400\n"
-"PO-Revision-Date: 2018-02-16 19:24+0200\n"
-"Last-Translator: Nils <Nils@heckenkamp.info>\n"
-"Language-Team: German "
-"<http://weblate.freepbx.org/projects/freepbx/cxpanel/de_DE/>\n"
+"PO-Revision-Date: 2018-09-15 02:47+0000\n"
+"Last-Translator: Bastian Mertgen <b.mertgen@bastian-mertgen.de>\n"
+"Language-Team: German <http://*/projects/freepbx/cxpanel/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.4\n"
+"X-Generator: Weblate 3.0.1\n"
 
 #: Cxpanel.class.php:413
 #, php-format
@@ -29,17 +28,17 @@ msgstr ""
 #: functions.inc.php:393 functions.inc.php:528
 #, php-format
 msgid "%s Settings"
-msgstr ""
+msgstr "%s-Einstellungen"
 
 #: views/userman_hook.php:7
 #, php-format
 msgid "Add To %s"
-msgstr ""
+msgstr "Zu %s hinzufügen"
 
 #: functions.inc.php:397 functions.inc.php:535
 #, php-format
 msgid "Add to %s"
-msgstr ""
+msgstr "Zu %s hinzufügen"
 
 #: cxpanel.i18n.php:6
 msgid "Admin"
@@ -47,20 +46,21 @@ msgstr "Administrator"
 
 #: functions.inc.php:563
 msgid "Alt. Phone Numbers"
-msgstr ""
+msgstr "Alternative Telefonnummern"
 
 #: functions.inc.php:536
 msgid "Auto Answer"
-msgstr ""
+msgstr "Automatische Antwort"
 
 #: functions.inc.php:543
 msgid "Create User"
-msgstr ""
+msgstr "Benutzer anlegen"
 
 #: functions.inc.php:543
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr ""
+"Erzeugt eine %s-Benutzeranmeldung, die dieser Nebenstelle zugeordnet ist."
 
 #: functions.inc.php:577
 msgid "Email Inital Password"
@@ -82,7 +82,7 @@ msgstr ""
 
 #: views/userman_hook.php:18
 msgid "Inherit"
-msgstr "Übernehmen"
+msgstr "Erben"
 
 #: functions.inc.php:544
 #, php-format
@@ -174,7 +174,7 @@ msgstr "Ja"
 
 #: cxpanel.i18n.php:4 cxpanel.i18n.php:10
 msgid "iSymphonyV3"
-msgstr ""
+msgstr "iSymphonyV3"
 
 #: cxpanel.i18n.php:12
 msgid "iSymphonyV3 Panel"
