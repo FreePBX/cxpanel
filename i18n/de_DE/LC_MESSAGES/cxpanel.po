@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-18 21:41-0400\n"
-"PO-Revision-Date: 2018-09-15 02:47+0000\n"
+"PO-Revision-Date: 2018-09-19 16:00+0000\n"
 "Last-Translator: Bastian Mertgen <b.mertgen@bastian-mertgen.de>\n"
 "Language-Team: German <http://*/projects/freepbx/cxpanel/de/>\n"
 "Language: de_DE\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: Cxpanel.class.php:413
 #, php-format
 msgid "%s Login: %s"
-msgstr ""
+msgstr "%s-Anmeldung: %s"
 
 #: functions.inc.php:393 functions.inc.php:528
 #, php-format
@@ -64,21 +64,23 @@ msgstr ""
 
 #: functions.inc.php:577
 msgid "Email Inital Password"
-msgstr ""
+msgstr "Initialkennwort per E-Mail senden"
 
 #: functions.inc.php:545
 msgid "Email Password"
-msgstr ""
+msgstr "Kennwort per E-Mail senden"
 
 #: functions.inc.php:544
 msgid "Full User"
-msgstr ""
+msgstr "Vollständiger Benutzer"
 
 #: functions.inc.php:511
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
 msgstr ""
+"Falls Sie das Benutzerkennwort nicht kennen, können Sie es im Felde "
+"Benutzerkennwort oben ändern"
 
 #: views/userman_hook.php:18
 msgid "Inherit"
@@ -93,6 +95,12 @@ msgid ""
 "user and there are no more user licenes available the user will remain a "
 "lite user."
 msgstr ""
+"Mach aus dieser Nebenstelle in %s einen vollständigen Benutzer. Vollständige "
+"Benutzer haben in %s Zugriff auf alle Funktionen, die momentan lizenziert "
+"sind. Die Zahl der zulässigen Benutzer für %s wird durch die Lizenz "
+"bestimmt. Wenn Sie diesen Benutzer als vollständigen benutzer markieren und "
+"keine Benutzerlizenzen mehr verfügbar sind, bleibt der Benutzer ein einfache "
+"Benutzer."
 
 #: functions.inc.php:536
 #, php-format
@@ -105,17 +113,17 @@ msgstr ""
 #: functions.inc.php:535
 #, php-format
 msgid "Makes this extension available in %s"
-msgstr ""
+msgstr "Macht diese Nebenstelle in %s verfügbar"
 
 #: functions.inc.php:397
 #, php-format
 msgid "Makes this user available in %s"
-msgstr ""
+msgstr "Macht diesen Benutzer in %s verfügbar"
 
 #: functions.inc.php:563
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
-msgstr ""
+msgstr "Verwaltet alternative Telefonnummern für diesen %s-Benutzer."
 
 #: views/userman_hook.php:15
 msgid "No"
@@ -127,39 +135,47 @@ msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
 "\"%s User Settings\""
 msgstr ""
+"Bitte geben Sie ein Kennwort für den %s-Benutzer an oder wählen Sie die "
+"Option 'Benutzer anlegen' unter '%s-Benutzereinstellungen' ab"
 
 #: functions.inc.php:546
 #, php-format
 msgid "Specifies the password to be used for the %s User"
-msgstr ""
+msgstr "Legt das Kennwort fest, das für den %s-Benutzer verwendet werden soll"
 
 #: functions.inc.php:559
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
 msgstr ""
+"Legt fest, welche Nebenstellen mit dem $cxpanelBrandName-Benutzer, der für "
+"diese Nebenstelle angelegt wurde, verknüpft werden. \"Selbst\" bezieht sich "
+"auf diese Nebenstelle"
 
 #: functions.inc.php:509
 msgid "The inital password for this user is set to"
-msgstr ""
+msgstr "Das Initialkennwort diese Benutzers lautet"
 
 #: functions.inc.php:511
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
+"Das Initialkennwort für diesen Benutzer wurde weder erzeugt noch geändert"
 
 #: cxpanel.i18n.php:8
 msgid ""
 "This module automatically configures the operator panel to reflect the PBX "
 "configuration."
 msgstr ""
+"Dieses Modul  konfiguriert das Bedienfeld automatisch so, dass es der TK-"
+"Anlage-Konfiguration entspricht."
 
 #: functions.inc.php:560
 msgid "User Extensions"
-msgstr ""
+msgstr "Benutzernebenstellen"
 
 #: functions.inc.php:546
 msgid "User Password"
-msgstr ""
+msgstr "Benutzerkennwort"
 
 #: functions.inc.php:545
 msgid ""
@@ -167,6 +183,10 @@ msgid ""
 "in the voicemail settings. No email will be sent if no email address is "
 "specified or the password is not changing."
 msgstr ""
+"Ist dies ausgewählt, wird das neu angegebene Kennwort an die E-Mail-Adresse "
+"gesendet, die in den Voicemail-Einstellungen hinterlegt ist. Es wird keine E-"
+"Mail gesendet, wenn keine E-Mail-Adresse hinterlegt ist oder das Kennwort "
+"sich nicht ändert."
 
 #: views/userman_hook.php:13
 msgid "Yes"
@@ -178,4 +198,4 @@ msgstr "iSymphonyV3"
 
 #: cxpanel.i18n.php:12
 msgid "iSymphonyV3 Panel"
-msgstr ""
+msgstr "iSymphonyV3-Bedienfeld"
