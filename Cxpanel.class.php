@@ -51,30 +51,65 @@ class Cxpanel implements \BMO {
 
 	}
 	public function genConfig() {
+		global $active_modules;
+		$conf = null;
+		$files = array('/opt/isymphony3/server/jvm.args', '/opt/xactview/server/jvm.args');
+		foreach($files as $file) {
+			if(file_exists($file)) {
+				$filename = $file;
+			}
+		}
+		if(!empty($filename)) {
+			if(isset($active_modules['sysadmin'])) {
+				$ports = \FreePBX::Sysadmin()->getPorts();
+				$portnum = !empty($ports['acp']) ? $ports['acp'] : $ports['sslacp'];
+			}
+			$contents = file_get_contents($filename);
+			$lines = parse_ini_string($contents, INI_SCANNER_RAW);
+			if(isset($lines['-Dcom.xmlnamespace.panel.freepbx.auth.port'])) {
+				$unset_value = "-Dcom.xmlnamespace.panel.freepbx.auth.port=".$lines['-Dcom.xmlnamespace.panel.freepbx.auth.port'];
+			}
+			$line_value = explode(PHP_EOL, $contents);
+			$key = array_search($unset_value, $line_value);
+			if(!empty($key)) {
+				unset($line_value[$key]);
+			}
+			file_put_contents($filename, '');
+			if(!empty($portnum)) {
+				$add_value =  array('-Dcom.xmlnamespace.panel.freepbx.auth.port='.$portnum);
+				$line_value = array_merge($line_value, $add_value);
+			}
+			$line_value = array_filter($line_value);
+			$conf[$filename][] = $line_value;
+		}
+		return $conf;
+	}
+	public function writeConfig($conf) {
+		$this->freepbx->WriteConfig()->writeCustomFile($conf);
 	}
 
-    public function ajaxRequest($req, &$setting) {
-        if(!function_exists('cxpanel_server_get')) {
-            include(__DIR__.'/functions.inc.php');
-        }
+	public function ajaxRequest($req, &$setting) {
+		if(!function_exists('cxpanel_server_get')) {
+			include(__DIR__.'/functions.inc.php');
+		}
 
-        switch ($req) {
-            case 'getUser':
-            case 'checkAuth':
-            case 'checkAuthAdmin':
-                $serverSettings = cxpanel_server_get();
+		switch ($req) {
+			case 'getUser':
+			case 'checkAuth':
+			case 'checkAuthAdmin':
+			$serverSettings = cxpanel_server_get();
 
-                if(gethostbyname($serverSettings['api_host']) == $_SERVER['REMOTE_ADDR']) {
-                    $setting['authenticate'] = false;
-                    $setting['allowremote'] = true;
-                    return true;
-                } else {
-                    return false;
-                }
-                break;
-        }
-        return false;
-    }
+			if(gethostbyname($serverSettings['api_host']) == $_SERVER['REMOTE_ADDR']) {
+				$setting['authenticate'] = false;
+				$setting['allowremote'] = true;
+				return true;
+			} else {
+				return false;
+			}
+		break;
+		}
+	return false;
+	}
 
 	public function ajaxHandler(){
 		switch ($_REQUEST['command']) {
