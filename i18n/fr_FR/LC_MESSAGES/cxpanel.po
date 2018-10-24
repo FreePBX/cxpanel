@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-07 17:26-0500\n"
+"POT-Creation-Date: 2018-10-24 17:21+0530\n"
 "PO-Revision-Date: 2017-03-12 18:35+0200\n"
 "Last-Translator: Nicolas <freepbx@riendeau.org>\n"
 "Language-Team: French <http://weblate.freepbx.org/projects/freepbx/cxpanel/"
@@ -21,7 +21,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 2.4\n"
 
-#: Cxpanel.class.php:413
+#: Cxpanel.class.php:448
 #, php-format
 msgid "%s Login: %s"
 msgstr ""

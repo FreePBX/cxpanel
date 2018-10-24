@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-07 17:26-0500\n"
+"POT-Creation-Date: 2018-10-24 17:21+0530\n"
 "PO-Revision-Date: 2017-05-04 03:22+0200\n"
 "Last-Translator: Evgeniy <yen81@mail.ru>\n"
 "Language-Team: Russian <http://weblate.freepbx.org/projects/freepbx/cxpanel/"
@@ -22,7 +22,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 2.4\n"
 
-#: Cxpanel.class.php:413
+#: Cxpanel.class.php:448
 #, php-format
 msgid "%s Login: %s"
 msgstr ""
