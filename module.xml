@@ -14,7 +14,7 @@
 	<depends>
 		<module>manager</module>
 		<module>userman</module>
-		<module>framework ge 14.0.2.16</module>
+		<module>framework ge 14.0.4.2</module>
 		<version>13.0.121</version>
 	</depends>
     <changelog>
