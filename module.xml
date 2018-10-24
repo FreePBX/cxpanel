@@ -37,7 +37,7 @@
 	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
-		<version>14.0</version>
+		<version>15.0</version>
 	</supported>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">
