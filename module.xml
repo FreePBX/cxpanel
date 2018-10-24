@@ -12,9 +12,9 @@
 		<cxpanel_menu category="Reports" requires_auth="false" target="_blank" access="all">iSymphonyV3 Panel</cxpanel_menu>
 	</menuitems>
 	<depends>
+		<module>framework ge 15.0.1.21</module>
 		<module>manager</module>
 		<module>userman</module>
-		<module>framework ge 14.0.2.16</module>
 		<version>13.0.121</version>
 	</depends>
     <changelog>
