@@ -16,16 +16,14 @@
  */
 class cxpanel_column {
 
-	var $name = "";
-	var $type = "";
-	var $defaultValue = "";
-	var $freePBXKey = "";
-	var $isUnique = false;
-	var $isNotNull = false;
-	public function __construct() {
-	}
+	public $name = "";
+	public $type = "";
+	public $defaultValue = "";
+	public $freePBXKey = "";
+	public $isUnique = false;
+	public $isNotNull = false;
 
-	function cxpanel_column($nameVal, $typeVal, $defaultValueVal, $freePBXKeyVal, $isUniqueVal, $isNotNullVal) {
+	function __construct($nameVal, $typeVal, $defaultValueVal, $freePBXKeyVal, $isUniqueVal, $isNotNullVal) {
 		$this->name = $nameVal;
 		$this->type = $typeVal;
 		$this->defaultValue = $defaultValueVal;
@@ -43,13 +41,10 @@ class cxpanel_column {
  */
 class cxpanel_table {
 
-	var $name = "";
-	var $columns = array();
+	public $name = "";
+	public $columns = array();
 
-	public function __construct() {
-	}
-
-	function cxpanel_table($nameVal, $columnsVal) {
+	function __construct($nameVal, $columnsVal) {
 		$this->name = $nameVal;
 		$this->columns = $columnsVal;
 	}
@@ -66,12 +61,9 @@ class cxpanel_table {
  */
 class cxpanel_table_builder {
 
-	var $table = null;
+	public $table = null;
 
-	public function __construct() {
-	}
-
-	function cxpanel_table_builder($tableVal) {
+	function __construct($tableVal) {
 		$this->table = $tableVal;
 	}
 

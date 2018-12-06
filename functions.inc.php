@@ -86,10 +86,7 @@ if(!function_exists('manager_add')){
  *
  */
 class cxpanel_radio extends guiinput {
-	public function __construct() {
-	}
-
-	function cxpanel_radio($elemname, $valarray, $currentvalue = '', $prompttext = '', $helptext = '', $disable=false) {
+	function __construct($elemname, $valarray, $currentvalue = '', $prompttext = '', $helptext = '', $disable=false) {
 		if (!is_array($valarray)) {
 			trigger_error('$valarray must be a valid array in gui_radio');
 			return;
