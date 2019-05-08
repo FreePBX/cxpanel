@@ -363,6 +363,7 @@ $cols = array (
   'auto_answer' =>
   array (
     'type' => 'integer',
+    'default' => 1,
   ),
   'parent_user_id' =>
   array (
@@ -372,6 +373,7 @@ $cols = array (
   'password_dirty' =>
   array (
     'type' => 'integer',
+    'default' => 0,
   ),
 );
 
