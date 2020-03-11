@@ -21,7 +21,28 @@ if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed');}
 $executionTimeoutMultiplier = 3;
 
 //Create the logger
-$logger = new cxpanel_logger(dirname(__FILE__) . "/modify.log");
+$asterisk_user = posix_getpwnam($amp_conf['AMPASTERISKUSER']);
+$asterisk_group = posix_getgrnam($amp_conf['AMPASTERISKGROUP']);
+if(file_exists($amp_conf['ASTSPOOLDIR']."/cxpanel")){
+	if(!file_exists($amp_conf['ASTSPOOLDIR']."/cxpanel/modify.log")){
+		touch($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log");
+	}
+	$logger = new cxpanel_logger($amp_conf['ASTSPOOLDIR']."/cxpanel/modify.log");
+	
+}
+else{
+	mkdir($amp_conf['ASTSPOOLDIR']. "/cxpanel, 0755");
+	touch($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log");
+	$logger = new cxpanel_logger($amp_conf['ASTSPOOLDIR']. "/cxpanel/modify.log");
+}
+
+if (fileowner($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log") != $asterisk_user['uid']){
+	chown($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log", $amp_conf['AMPASTERISKUSER']);
+}
+if (filegroup($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log") != $asterisk_group['gid']){
+	chgrp($amp_conf['ASTSPOOLDIR'] . "/cxpanel/modify.log", $amp_conf['AMPASTERISKGROUP']);
+}
+
 //$logger->echoLog = true;
 $logger->open();
 
@@ -32,7 +53,7 @@ $logger->open();
 set_time_limit(6000);
 
 //Attempt to acquire script lock and block until we have it. This prevents multiple instances of this script from running at the same time.
-$lock = fopen(dirname(__FILE__) . "/lock", "w");
+$lock = fopen($amp_conf['ASTSPOOLDIR'] . "/cxpanel/lock", "w");
 if(!flock($lock, LOCK_EX)) {
 	$logger->error("Failed to acquire script lock.");
 	cleanup();
