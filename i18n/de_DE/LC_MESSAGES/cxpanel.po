@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 17:09+0530\n"
+"POT-Creation-Date: 2020-03-11 14:48+0530\n"
 "PO-Revision-Date: 2019-04-10 07:59+0000\n"
 "Last-Translator: florian alberts <alberts@ar-systems.de>\n"
 "Language-Team: German <http://*/projects/freepbx/cxpanel/de/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "%s Login: %s"
 msgstr "%s-Anmeldung: %s"
 
-#: functions.inc.php:393 functions.inc.php:528
+#: functions.inc.php:397 functions.inc.php:532
 #, php-format
 msgid "%s Settings"
 msgstr "%s-Einstellungen"
@@ -35,7 +35,7 @@ msgstr "%s-Einstellungen"
 msgid "Add To %s"
 msgstr "Zu %s hinzufügen"
 
-#: functions.inc.php:397 functions.inc.php:535
+#: functions.inc.php:401 functions.inc.php:539
 #, php-format
 msgid "Add to %s"
 msgstr "Zu %s hinzufügen"
@@ -44,37 +44,37 @@ msgstr "Zu %s hinzufügen"
 msgid "Admin"
 msgstr "Administrator"
 
-#: functions.inc.php:563
+#: functions.inc.php:567
 msgid "Alt. Phone Numbers"
 msgstr "Alternative Telefonnummern"
 
-#: functions.inc.php:536
+#: functions.inc.php:540
 msgid "Auto Answer"
 msgstr "Automatische Antwort"
 
-#: functions.inc.php:543
+#: functions.inc.php:547
 msgid "Create User"
 msgstr "Benutzer anlegen"
 
-#: functions.inc.php:543
+#: functions.inc.php:547
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr ""
 "Erzeugt eine %s-Benutzeranmeldung, die dieser Nebenstelle zugeordnet ist."
 
-#: functions.inc.php:577
+#: functions.inc.php:581
 msgid "Email Inital Password"
 msgstr "Initialkennwort per E-Mail senden"
 
-#: functions.inc.php:545
+#: functions.inc.php:549
 msgid "Email Password"
 msgstr "Kennwort per E-Mail senden"
 
-#: functions.inc.php:544
+#: functions.inc.php:548
 msgid "Full User"
 msgstr "Vollständiger Benutzer"
 
-#: functions.inc.php:511
+#: functions.inc.php:515
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Inherit"
 msgstr "Erben"
 
-#: functions.inc.php:544
+#: functions.inc.php:548
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -102,7 +102,7 @@ msgstr ""
 "keine Benutzerlizenzen mehr verfügbar sind, bleibt der Benutzer ein einfache "
 "Benutzer."
 
-#: functions.inc.php:536
+#: functions.inc.php:540
 #, php-format
 msgid ""
 "Makes this extension automatically answer the initial call received from the "
@@ -113,17 +113,17 @@ msgstr ""
 "jener in%s initiiert wurde. Funktioniert ausschließlich mit Aastra, "
 "Grandstream, Linksys, Polycom und Snom Telefonen."
 
-#: functions.inc.php:535
+#: functions.inc.php:539
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr "Macht diese Nebenstelle in %s verfügbar"
 
-#: functions.inc.php:397
+#: functions.inc.php:401
 #, php-format
 msgid "Makes this user available in %s"
 msgstr "Macht diesen Benutzer in %s verfügbar"
 
-#: functions.inc.php:563
+#: functions.inc.php:567
 #, php-format
 msgid "Manages alternative phone numbers for this %s user."
 msgstr "Verwaltet alternative Telefonnummern für diesen %s-Benutzer."
@@ -132,7 +132,7 @@ msgstr "Verwaltet alternative Telefonnummern für diesen %s-Benutzer."
 msgid "No"
 msgstr "Nein"
 
-#: functions.inc.php:584
+#: functions.inc.php:588
 #, php-format
 msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
@@ -141,12 +141,12 @@ msgstr ""
 "Bitte geben Sie ein Kennwort für den %s-Benutzer an oder wählen Sie die "
 "Option 'Benutzer anlegen' unter '%s-Benutzereinstellungen' ab"
 
-#: functions.inc.php:546
+#: functions.inc.php:550
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr "Legt das Kennwort fest, das für den %s-Benutzer verwendet werden soll"
 
-#: functions.inc.php:559
+#: functions.inc.php:563
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
@@ -155,11 +155,11 @@ msgstr ""
 "diese Nebenstelle angelegt wurde, verknüpft werden. \"Selbst\" bezieht sich "
 "auf diese Nebenstelle"
 
-#: functions.inc.php:509
+#: functions.inc.php:513
 msgid "The inital password for this user is set to"
 msgstr "Das Initialkennwort diese Benutzers lautet"
 
-#: functions.inc.php:511
+#: functions.inc.php:515
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 "Das Initialkennwort für diesen Benutzer wurde weder erzeugt noch geändert"
@@ -172,15 +172,15 @@ msgstr ""
 "Dieses Modul  konfiguriert das Bedienfeld automatisch so, dass es der TK-"
 "Anlage-Konfiguration entspricht."
 
-#: functions.inc.php:560
+#: functions.inc.php:564
 msgid "User Extensions"
 msgstr "Benutzernebenstellen"
 
-#: functions.inc.php:546
+#: functions.inc.php:550
 msgid "User Password"
 msgstr "Benutzerkennwort"
 
-#: functions.inc.php:545
+#: functions.inc.php:549
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "
