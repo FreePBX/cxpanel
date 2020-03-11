@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>13.0.5.4</version>
+	<version>13.0.5.5</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -18,6 +18,7 @@
 		<version>13.0.121</version>
 	</depends>
     <changelog>
+		*13.0.5.5* FREEI-979 fwconsole validate: frequent complaint about cxpanel/main.log 
 		*13.0.5.4* FREEPBX-19539 Add defaults on mysql creation 
 		*13.0.5.3* FREEPBX-18262 cxpanel server options 
 		*13.0.5.2* FREEPBX-18262 cxpanel server options 
