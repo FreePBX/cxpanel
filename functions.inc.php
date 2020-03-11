@@ -36,21 +36,25 @@ if(!class_exists("PHPMailer")) {
 	require_once(dirname(__FILE__)."/lib/PHPMailer/class.phpmailer.php");
 }
 global $amp_conf;
+
+if(!file_exists($amp_conf['ASTSPOOLDIR']."/cxpanel")){
+	mkdir($amp_conf['ASTSPOOLDIR']. "/cxpanel", 0755);
+}
+
 //Create the logger
-$cxPanelLogger = new cxpanel_logger($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
-if(!file_exists($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log")) {
-	touch($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log");
-	chmod($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", 0775);
+$cxPanelLogger = new cxpanel_logger($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log");
+if(!file_exists($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log")) {
+	touch($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log");
 }
 
 //Set the group/owner of the logger if necessary
 $asterisk_user = posix_getpwnam($amp_conf['AMPASTERISKUSER']);
 $asterisk_group = posix_getgrnam($amp_conf['AMPASTERISKGROUP']);
-if (fileowner($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log") != $asterisk_user['uid']){
-	chown($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
+if (fileowner($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log") != $asterisk_user['uid']){
+	chown($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log", $amp_conf['AMPASTERISKUSER']);
 }
-if (filegroup($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log") != $asterisk_group['gid']){
-	chgrp($amp_conf['AMPWEBROOT'] . "/admin/modules/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
+if (filegroup($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log") != $asterisk_group['gid']){
+	chgrp($amp_conf['ASTSPOOLDIR'] . "/cxpanel/main.log", $amp_conf['AMPASTERISKGROUP']);
 }
 
 

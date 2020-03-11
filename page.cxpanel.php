@@ -62,13 +62,11 @@ if(isset($_REQUEST["cxpanel_debug"])) {
 	$debugAddition = "	<tr><td colspan=\"2\"><h5>Debug<hr></h5></td></tr>
 						<tr><td colspan=\"2\"><b>Main Log</b></td></tr>
 						<tr><td colspan=\"2\"><textarea rows=\"10\" cols=\"90\">" . 
-						htmlspecialchars(cxpanel_read_file($amp_conf['AMPWEBROOT'] . 
-						"/admin/modules/cxpanel/main.log")) . 
+						htmlspecialchars(cxpanel_read_file($amp_conf['ASTSPOOLDIR']."/cxpanel/main.log")) . 
 						"</textarea></td></tr>
 						<tr><td colspan=\"2\"><b>Modify Log</b></td></tr>
 						<tr><td colspan=\"2\"><textarea rows=\"10\" cols=\"90\">" . 
-						htmlspecialchars(cxpanel_read_file($amp_conf['AMPWEBROOT'] . 
-						"/admin/modules/cxpanel/modify.log")) . 
+						htmlspecialchars(cxpanel_read_file($amp_conf['ASTSPOOLDIR']."/cxpanel/modify.log")) . 
 						"</textarea></td></tr>";
 	
 	//Add the printout of the database tables
