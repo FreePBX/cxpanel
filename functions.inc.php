@@ -31,10 +31,9 @@ require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
 require_once(dirname(__FILE__)."/lib/logger.class.php");
 require_once(dirname(__FILE__)."/lib/util.php");
 require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
+require_once(dirname(__FILE__)."/vendor/autoload.php");
+use PHPMailer\PHPMailer\PHPMailer;
 
-if(!class_exists("PHPMailer")) {
-	require_once(dirname(__FILE__)."/lib/PHPMailer/class.phpmailer.php");
-}
 global $amp_conf;
 
 if(!file_exists($amp_conf['ASTSPOOLDIR']."/cxpanel")){
