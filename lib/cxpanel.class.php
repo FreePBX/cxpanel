@@ -8,6 +8,9 @@
  *Purpose      : Defines classes used to communicate with the rest service via JSON
  */
 
+namespace FreePBX\modules\Cxpanel;
+if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed'); }
+
 /**
  *
  * Describes a core server
