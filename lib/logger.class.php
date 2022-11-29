@@ -47,6 +47,19 @@ class cxpanel_logger {
 		}
 	}
 
+
+	/**
+	 *
+	 * Check if file is open.
+	 *
+	 */
+	function isOpen() {
+		if(isset($this->fd) && !is_null($this->fd)) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 *
 	 * Close the logger
