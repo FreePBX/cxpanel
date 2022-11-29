@@ -28,7 +28,6 @@
 namespace FreePBX\modules;
 
 require_once(dirname(__FILE__)."/vendor/autoload.php");
-require_once(dirname(__FILE__)."/lib/logger.class.php");
 require_once(dirname(__FILE__)."/lib/dialplan.class.php");
 require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
 require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
@@ -988,7 +987,26 @@ class Cxpanel implements \BMO
 			chgrp($path_log, $asterisk_group['name']);
 		}
 
-		$log = new \FreePBX\modules\Cxpanel\Log\cxpanel_logger($path_log);
+		$log 		= null;
+		$class_log 	= '\\'.__NAMESPACE__.'\\Cxpanel\\Log\\cxpanel_logger';
+		if (! class_exists($class_log))
+		{
+			include_once(dirname(__FILE__)."/lib/logger.class.php");
+		}
+		if (class_exists($class_log))
+		{
+			// Add "Try" to handle the exception when installing the module, since just after 
+			// downloading the module a "fwconsole chown" is executed, and it calls the "chownFreepbx" 
+			// method, generating an exception since the "cxpanel_logger" class does not exist.
+			try
+			{
+				$log = new $class_log($path_log);
+			}
+			catch (\Exception $e)
+			{
+				dbug(_("Exception Create Log: %s"), $e->getMessage());
+			}
+		}
 		return $log;
 	}
 
@@ -1020,29 +1038,29 @@ class Cxpanel implements \BMO
 		$runningTimeStart = microtime(true);
 
 		//Open the logger
-		$this->log->open();
-		$this->log->debug(_("Starting CXPanel module"));
+		$this->openLog();
+		$this->debug(_("Starting CXPanel module"));
 
 		//Create the manager entry if it does not exist
 		$this->create_manager();
 
 		//Get the agent login context
 		$agentLoginContext = $this->get_agent_login_context();
-		$this->log->debug(sprintf(_("Agent login context: %s"), $agentLoginContext));
+		$this->debug(sprintf(_("Agent login context: %s"), $agentLoginContext));
 
 		//Get the agent interface type
 		$agentInterfaceType = $this->get_agent_interface_type();
-		$this->log->debug(sprintf(_("Agent interface type: %s"), $agentInterfaceType));
+		$this->debug(sprintf(_("Agent interface type: %s"), $agentInterfaceType));
 
 		//Query the parking timeout
 		$parkingTimeout = $this->get_parking_timeout();
-		$this->log->debug(sprintf(_("Parking lot timeout: %s"), $parkingTimeout));
+		$this->debug(sprintf(_("Parking lot timeout: %s"), $parkingTimeout));
 
 		//Generate the custom contexts
 		$this->add_contexts("c-x-3-operator-panel", "XMLNamespace", $parkingTimeout);
 
 		//Execute modify script and continue on without waiting for return
-		$this->log->debug(_("Executing modify.php"));
+		$this->debug(_("Executing modify.php"));
 		// exec("php " . $this->getPath("modify") . " > /dev/null 2>/dev/null &");
 
 		exec("php " . $this->getPath("modify") , $output, $retval);
@@ -1052,10 +1070,10 @@ class Cxpanel implements \BMO
 		}
 		
 		$runningTimeStop = microtime(true);
-		$this->log->debug(sprintf(_("Total Running Time: %s."), ($runningTimeStop - $runningTimeStart)));
+		$this->debug(sprintf(_("Total Running Time: %s."), ($runningTimeStop - $runningTimeStart)));
 
 		//Close the logger
-		$this->log->close();
+		$this->closeLog();
 	}
 		
 	/**
@@ -2428,7 +2446,7 @@ class Cxpanel implements \BMO
 	 */
 	public function create_manager()
 	{
-		$this->log->debug(_("Checking manager connection"));
+		$this->debug(_("Checking manager connection"));
 
 		//Check if a manager profile exists for cxpanel if not create it.
 		$managerFound = false;
@@ -2448,7 +2466,7 @@ class Cxpanel implements \BMO
 		//If not found create a manager profile for cxpanel
 		if((function_exists("manager_add")) && (!$managerFound))
 		{
-			$this->log->debug(_("Creating manager connection"));
+			$this->debug(_("Creating manager connection"));
 			manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", $this->amiPermissions, $this->amiPermissions);
 
 			if(function_exists("manager_gen_conf"))
@@ -2534,7 +2552,7 @@ class Cxpanel implements \BMO
 	{
 		global $ext;
 
-		$this->log->debug("Creating contexts ContextPrefix:" . $contextPrefix . " VariablePrefix:" . $variablePrefix);
+		$this->debug("Creating contexts ContextPrefix:" . $contextPrefix . " VariablePrefix:" . $variablePrefix);
 
 		$id = $contextPrefix . "-hold";
 		$c = '432111';
@@ -2854,4 +2872,34 @@ class Cxpanel implements \BMO
 		return array_merge($this->get_core_ampusers_list(), $this->get_userman_administrators());
 	}
 
+
+	public function debug($message = "")
+	{
+		if ($this->isLogInit() && ! empty($message))
+		{
+			$this->log->debug($message);
+		}
+	}
+
+	public function isLogInit()
+	{
+		return (!is_null($this->log));
+	}
+
+	public function openLog()
+	{
+		//Open the logger
+		if ($this->isLogInit() && !$this->log->isOpen())
+		{
+			$this->log->open();
+		}
+	}
+
+	public function closeLog() {
+		//Close the logger
+		if ($this->isLogInit() && $this->log->isOpen())
+		{
+			$this->log->close();
+		}
+	}
 }
