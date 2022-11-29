@@ -7,83 +7,227 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-11 14:49+0530\n"
-"PO-Revision-Date: 2018-07-18 19:18+0000\n"
-"Last-Translator: Elvita Crespo <ecrespo@sangoma.com>\n"
+"POT-Creation-Date: 2022-11-02 20:05+0100\n"
+"PO-Revision-Date: 2022-11-02 20:07+0100\n"
+"Last-Translator: Javier Pastor <jpastor@cerebelum.net>\n"
 "Language-Team: Spanish <http://*/projects/freepbx/cxpanel/es/>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.19.1\n"
+"X-Generator: Poedit 3.2\n"
+
+#: Cxpanel.class.php:75
+msgid "Hello,"
+msgstr "Hola,"
+
+#: Cxpanel.class.php:77
+#, php-format
+msgid "This email is to inform you of your %%brandName%% login credentials:"
+msgstr ""
+"Este correo electrónico es para informarle de sus credenciales de acceso a "
+"%%brandName%%:"
+
+#: Cxpanel.class.php:79 views/page.cxpanel.php:647
+msgid "Username:"
+msgstr "Nombre de Usuario:"
+
+#: Cxpanel.class.php:81 views/page.cxpanel.php:655
+msgid "Password:"
+msgstr "Contraseña:"
+
+#: Cxpanel.class.php:83
+msgid "Click Here To Login"
+msgstr "Haga clic aquí para iniciar sesión"
+
+#: Cxpanel.class.php:175
+msgid "Setting operator panel web root and enabling dev state...."
+msgstr ""
+
+#: Cxpanel.class.php:179 Cxpanel.class.php:191 Cxpanel.class.php:210
+#: Cxpanel.class.php:223 Cxpanel.class.php:246 Cxpanel.class.php:274
+#: Cxpanel.class.php:329 Cxpanel.class.php:378 Cxpanel.class.php:406
+#: Cxpanel.class.php:436 Cxpanel.class.php:455 lib/table.class.php:94
+msgid "Done"
+msgstr "Hecho"
+
+#: Cxpanel.class.php:187
+msgid "Setting callevents = yes...."
+msgstr ""
+
+#: Cxpanel.class.php:197
+msgid "Creating client symlink...."
+msgstr ""
+
+#: Cxpanel.class.php:219
+msgid "Enabling voicemail box polling..."
+msgstr ""
+
+#: Cxpanel.class.php:232
+msgid "New installed detected, adding default server..."
+msgstr ""
+
+#: Cxpanel.class.php:251
+msgid "Upgrade detected, checking userman mode..."
+msgstr ""
+
+#: Cxpanel.class.php:265
+msgid "Needs to sync with userman..."
+msgstr ""
+
+#: Cxpanel.class.php:272
+msgid "Leaving userman mode unchanged..."
+msgstr ""
+
+#: Cxpanel.class.php:279
+msgid "voicemail agent"
+msgstr ""
+
+#: Cxpanel.class.php:289
+msgid "recording agent"
+msgstr ""
+
+#: Cxpanel.class.php:300
+msgid "email"
+msgstr ""
+
+#: Cxpanel.class.php:303
+#, php-format
+msgid "%s user login password"
+msgstr ""
+
+#: Cxpanel.class.php:320
+#, php-format
+msgid "Build %s table..."
+msgstr ""
+
+#: Cxpanel.class.php:333
+msgid "Build users items table..."
+msgstr ""
+
+#: Cxpanel.class.php:381
+msgid "Build queues table..."
+msgstr ""
+
+#: Cxpanel.class.php:409
+msgid "Build conference rooms table..."
+msgstr ""
+
+#: Cxpanel.class.php:444
+msgid "Removing manager entry...."
+msgstr ""
 
 #: Cxpanel.class.php:448
+msgid "ERROR: could not remove manager entry."
+msgstr ""
+
+#: Cxpanel.class.php:451
+msgid "Remove Setting operator panel web root and enabling dev state...."
+msgstr ""
+
+#: Cxpanel.class.php:714
+#, php-format
+msgid "Page Not Found (%s)!!!!"
+msgstr ""
+
+#: Cxpanel.class.php:952
 #, php-format
 msgid "%s Login: %s"
-msgstr "Inicio de sesión"
+msgstr "%s Inicio de sesión: %s"
 
-#: functions.inc.php:403 functions.inc.php:538
+#: Cxpanel.class.php:1024
+msgid "Starting CXPanel module"
+msgstr ""
+
+#: Cxpanel.class.php:1031 modify.php:65
+#, php-format
+msgid "Agent login context: %s"
+msgstr ""
+
+#: Cxpanel.class.php:1035 modify.php:61
+#, php-format
+msgid "Agent interface type: %s"
+msgstr ""
+
+#: Cxpanel.class.php:1039
+#, php-format
+msgid "Parking lot timeout: %s"
+msgstr ""
+
+#: Cxpanel.class.php:1045
+msgid "Executing modify.php"
+msgstr ""
+
+#: Cxpanel.class.php:1055
+#, php-format
+msgid "Total Running Time: %s."
+msgstr ""
+
+#: Cxpanel.class.php:1093 Cxpanel.class.php:1260
 #, php-format
 msgid "%s Settings"
-msgstr ""
+msgstr "%s Ajustes"
 
-#: views/userman_hook.php:7
-#, php-format
-msgid "Add To %s"
-msgstr ""
-
-#: functions.inc.php:407 functions.inc.php:545
+#: Cxpanel.class.php:1110 Cxpanel.class.php:1289 Cxpanel.class.php:1555
+#: Cxpanel.class.php:1630
 #, php-format
 msgid "Add to %s"
 msgstr ""
 
-#: cxpanel.i18n.php:6
-msgid "Admin"
-msgstr "Admin"
-
-#: functions.inc.php:573
-msgid "Alt. Phone Numbers"
-msgstr ""
-
-#: functions.inc.php:546
-msgid "Auto Answer"
-msgstr ""
-
-#: functions.inc.php:553
-msgid "Create User"
-msgstr ""
-
-#: functions.inc.php:553
+#: Cxpanel.class.php:1111 views/userman_hook.php:28
 #, php-format
-msgid "Creates an %s user login which is associated with this extension."
+msgid "Makes this user available in %s"
 msgstr ""
 
-#: functions.inc.php:587
-msgid "Email Inital Password"
+#: Cxpanel.class.php:1237
+#, php-format
+msgid "The inital password for this user is set to <b>%s</b>"
 msgstr ""
 
-#: functions.inc.php:555
-msgid "Email Password"
+#: Cxpanel.class.php:1241
+msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 
-#: functions.inc.php:554
-msgid "Full User"
-msgstr ""
-
-#: functions.inc.php:521
+#: Cxpanel.class.php:1241
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
 msgstr ""
 
-#: views/userman_hook.php:18
-msgid "Inherit"
+#: Cxpanel.class.php:1290
+#, php-format
+msgid "Makes this extension available in %s"
 msgstr ""
 
-#: functions.inc.php:554
+#: Cxpanel.class.php:1296
+msgid "Auto Answer"
+msgstr ""
+
+#: Cxpanel.class.php:1297
+#, php-format
+msgid ""
+"Makes this extension automatically answer the initial call received from the "
+"system when performing an origination within %s. Only works with Aastra, "
+"Grandstream, Linksys, Polycom, and Snom phones."
+msgstr ""
+
+#: Cxpanel.class.php:1309
+msgid "Create User"
+msgstr ""
+
+#: Cxpanel.class.php:1310
+#, php-format
+msgid "Creates an %s user login which is associated with this extension."
+msgstr ""
+
+#: Cxpanel.class.php:1316
+msgid "Full User"
+msgstr ""
+
+#: Cxpanel.class.php:1317
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -93,93 +237,1144 @@ msgid ""
 "lite user."
 msgstr ""
 
-#: functions.inc.php:546
-#, php-format
-msgid ""
-"Makes this extension automatically answer the initial call received from the "
-"system when performing an origination within %s. Only works with Aastra, "
-"Grandstream, Linksys, Polycom, and Snom phones."
+#: Cxpanel.class.php:1323
+msgid "Email Password"
 msgstr ""
 
-#: functions.inc.php:545
-#, php-format
-msgid "Makes this extension available in %s"
-msgstr ""
-
-#: functions.inc.php:407
-#, php-format
-msgid "Makes this user available in %s"
-msgstr ""
-
-#: functions.inc.php:573
-#, php-format
-msgid "Manages alternative phone numbers for this %s user."
-msgstr ""
-
-#: views/userman_hook.php:15
-msgid "No"
-msgstr ""
-
-#: functions.inc.php:594
-#, php-format
-msgid ""
-"Please specify a password for the %s user or uncheck \"Create User\" under "
-"\"%s User Settings\""
-msgstr ""
-
-#: functions.inc.php:556
-#, php-format
-msgid "Specifies the password to be used for the %s User"
-msgstr ""
-
-#: functions.inc.php:569
-msgid ""
-"Specifies which extensions will be bound to the $cxpanelBrandName user "
-"created for this extension. \"Self\" refers to this extension"
-msgstr ""
-
-#: functions.inc.php:519
-msgid "The inital password for this user is set to"
-msgstr ""
-
-#: functions.inc.php:521
-msgid "The inital password for this user was never created or has been changed"
-msgstr ""
-
-#: cxpanel.i18n.php:8
-msgid ""
-"This module automatically configures the operator panel to reflect the PBX "
-"configuration."
-msgstr ""
-"En este módulo configura automáticamente el panel del operador para reflejar "
-"la configuración de PBX."
-
-#: functions.inc.php:570
-msgid "User Extensions"
-msgstr ""
-
-#: functions.inc.php:556
-msgid "User Password"
-msgstr ""
-
-#: functions.inc.php:555
+#: Cxpanel.class.php:1324
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "
 "specified or the password is not changing."
 msgstr ""
 
-#: views/userman_hook.php:13
-msgid "Yes"
+#: Cxpanel.class.php:1329
+msgid "User Password"
 msgstr ""
 
-#: cxpanel.i18n.php:4 cxpanel.i18n.php:10
-msgid "iSymphonyV3"
-msgstr "\"iSymphonyV3\""
+#: Cxpanel.class.php:1330
+#, php-format
+msgid "Specifies the password to be used for the %s User"
+msgstr "Especifica la contraseña que se utilizará para el usuario %s"
 
-#: cxpanel.i18n.php:12
-msgid "iSymphonyV3 Panel"
-msgstr "Panel iSymphonyV3"
+#: Cxpanel.class.php:1351
+msgid ""
+"Specifies which extensions will be bound to the $cxpanelBrandName user "
+"created for this extension. \"Self\" refers to this extension"
+msgstr ""
+
+#: Cxpanel.class.php:1357
+msgid "User Extensions"
+msgstr "Extensiones de Usuario"
+
+#: Cxpanel.class.php:1387
+msgid "Email Inital Password"
+msgstr ""
+
+#: Cxpanel.class.php:1394
+#, php-format
+msgid ""
+"Please specify a password for the %s user or uncheck \"Create User\" under "
+"\"%s User Settings\""
+msgstr ""
+
+#: Cxpanel.class.php:1555
+#, php-format
+msgid "Makes this queue available in %s"
+msgstr ""
+
+#: Cxpanel.class.php:1630
+#, php-format
+msgid "Makes this conference room available in %s"
+msgstr ""
+
+#: Cxpanel.class.php:2431
+msgid "Checking manager connection"
+msgstr ""
+
+#: Cxpanel.class.php:2451
+msgid "Creating manager connection"
+msgstr ""
+
+#: Cxpanel.class.php:2755
+#, php-format
+msgid "ERROR: Message could not be sent. Mailer Error -> %s"
+msgstr ""
+
+#: index.php:15
+msgid "Module not installed"
+msgstr ""
+
+#: lib/table.class.php:75
+#, php-format
+msgid "Creating \"%s\" Table..."
+msgstr ""
+
+#: lib/table.class.php:78
+#, php-format
+msgid "Populating(New) \"%s\"..."
+msgstr ""
+
+#: lib/table.class.php:86
+#, php-format
+msgid "Upgrading \"%s\"..."
+msgstr ""
+
+#: lib/table.class.php:90
+#, php-format
+msgid "Populating(Upgrade) \"%s\"..."
+msgstr ""
+
+#: modify.php:40
+msgid "Failed to acquire script lock."
+msgstr ""
+
+#: modify.php:54
+msgid "Starting modify script"
+msgstr ""
+
+#: modify.php:69
+#, php-format
+msgid "Failed to query server information: %s"
+msgstr ""
+
+#: modify.php:75
+#, php-format
+msgid "Failed to query voicemail agent information: %s"
+msgstr ""
+
+#: modify.php:81
+#, php-format
+msgid "Failed to query recording agent information: %s"
+msgstr ""
+
+#: modify.php:87
+#, php-format
+msgid "Failed to query user information: %s"
+msgstr ""
+
+#: modify.php:93
+#, php-format
+msgid "Failed to query queue information: %s"
+msgstr ""
+
+#: modify.php:99
+#, php-format
+msgid "Failed to query conference room information: %s"
+msgstr ""
+
+#: modify.php:109
+#, php-format
+msgid "Starting REST connection to %s"
+msgstr ""
+
+#: modify.php:181
+#, php-format
+msgid "Total Running Time: %ss"
+msgstr ""
+
+#: modify.php:197
+msgid "Synchronizing database"
+msgstr ""
+
+#: modify.php:221
+#, php-format
+msgid "Adding missing user to database %s"
+msgstr ""
+
+#: modify.php:232
+#, php-format
+msgid "Removing non existent user from database %s"
+msgstr ""
+
+#: modify.php:250
+#, php-format
+msgid "Adding missing queue to database %s"
+msgstr ""
+
+#: modify.php:261
+#, php-format
+msgid "Removing non existent queue from database %s"
+msgstr ""
+
+#: modify.php:282
+#, php-format
+msgid "Adding missing conference room to database %s"
+msgstr ""
+
+#: modify.php:293
+#, php-format
+msgid "Removing non existent conference room from database %s"
+msgstr ""
+
+#: modify.php:309
+#, php-format
+msgid "Looking up core server id for slug %s"
+msgstr ""
+
+#: modify.php:313
+#, php-format
+msgid "Core server id: %s"
+msgstr ""
+
+#: modify.php:318
+msgid "Failed to lookup core server id"
+msgstr ""
+
+#: modify.php:332
+#, php-format
+msgid "Checking core server %s"
+msgstr ""
+
+#: modify.php:340
+msgid "Core server not found. Creating"
+msgstr ""
+
+#: modify.php:348
+msgid "Failed to create core server"
+msgstr ""
+
+#: modify.php:353
+msgid "Failed to check for core server"
+msgstr ""
+
+#: modify.php:365
+msgid "Syncing core server"
+msgstr ""
+
+#: modify.php:381
+msgid "Failed to sync core server"
+msgstr ""
+
+#: modify.php:393
+msgid "Syncing voicemail agent"
+msgstr ""
+
+#: modify.php:424
+#, php-format
+msgid "Removing voicemail agent identifier: %s"
+msgstr ""
+
+#: modify.php:430
+#, php-format
+msgid "Adding voicemail agent identifier: %s"
+msgstr ""
+
+#: modify.php:437
+msgid "Failed to sync voicemail agent"
+msgstr ""
+
+#: modify.php:449
+msgid "Syncing recording agent"
+msgstr ""
+
+#: modify.php:467
+msgid "Failed to sync recording agent"
+msgstr ""
+
+#: modify.php:483
+msgid "Checking PBX server connection"
+msgstr ""
+
+#: modify.php:497
+#, php-format
+msgid "Found matching PBX server connection with id: %s"
+msgstr ""
+
+#: modify.php:502
+#, php-format
+msgid "Removing PBX server connection with id: %s"
+msgstr ""
+
+#: modify.php:515
+msgid "No matching PBX server connection found. Creating"
+msgstr ""
+
+#: modify.php:521
+msgid "PBX server info does not match. Updating"
+msgstr ""
+
+#: modify.php:533
+msgid "Failed to check for PBX server connection"
+msgstr ""
+
+#: modify.php:545
+msgid "Syncing administrators"
+msgstr ""
+
+#: modify.php:577
+#, php-format
+msgid "Removing administrator: %s"
+msgstr ""
+
+#: modify.php:590
+#, php-format
+msgid "Failed to remove administrator: %s"
+msgstr ""
+
+#: modify.php:601
+#, php-format
+msgid "Adding administrator: %s"
+msgstr ""
+
+#: modify.php:622
+#, php-format
+msgid "Failed to add administrator: %s"
+msgstr ""
+
+#: modify.php:637
+#, php-format
+msgid "Updating administrator: %s"
+msgstr ""
+
+#: modify.php:645
+#, php-format
+msgid "Failed to update administrator: %s"
+msgstr ""
+
+#: modify.php:653
+msgid "Failed to sync administrators"
+msgstr ""
+
+#: modify.php:665
+msgid "Syncing extensions"
+msgstr ""
+
+#: modify.php:695
+#, php-format
+msgid "Removing extension: %s"
+msgstr ""
+
+#: modify.php:708
+#, php-format
+msgid "Failed to remove extension: %s"
+msgstr ""
+
+#: modify.php:735
+#, php-format
+msgid "Adding extension: %s"
+msgstr ""
+
+#: modify.php:749
+#, php-format
+msgid "Failed to add extension: %s"
+msgstr ""
+
+#: modify.php:774
+#, php-format
+msgid "Updating extension: %s"
+msgstr ""
+
+#: modify.php:789
+#, php-format
+msgid "Failed to update extension: %s"
+msgstr ""
+
+#: modify.php:797
+msgid "Failed to sync extensions"
+msgstr ""
+
+#: modify.php:809
+msgid "Syncing users"
+msgstr ""
+
+#: modify.php:842 modify.php:1023
+#, php-format
+msgid "Removing user: %s"
+msgstr ""
+
+#: modify.php:855 modify.php:1035
+#, php-format
+msgid "Failed to remove user: %s"
+msgstr ""
+
+#: modify.php:869 modify.php:1049
+#, php-format
+msgid "Adding user: %s"
+msgstr ""
+
+#: modify.php:890 modify.php:1070
+#, php-format
+msgid "Failed to add user: %s"
+msgstr ""
+
+#: modify.php:915 modify.php:1095
+#, php-format
+msgid "Updating user: %s"
+msgstr ""
+
+#: modify.php:921 modify.php:1102
+#, php-format
+msgid "Failed to update user: %s"
+msgstr ""
+
+#: modify.php:932 modify.php:1113
+msgid "Failed to sync users"
+msgstr ""
+
+#: modify.php:945
+msgid "Syncing users (userman)"
+msgstr ""
+
+#: modify.php:1125
+msgid "Syncing user contact information"
+msgstr ""
+
+#: modify.php:1188 modify.php:1351
+#, php-format
+msgid "Updating user contact information: %s"
+msgstr ""
+
+#: modify.php:1196 modify.php:1359
+#, php-format
+msgid "Failed to update user contact information: %s"
+msgstr ""
+
+#: modify.php:1220 modify.php:1387
+#, php-format
+msgid "Adding user contact email address: %s"
+msgstr ""
+
+#: modify.php:1227 modify.php:1394
+#, php-format
+msgid "Failed to update user contact email address information: %s"
+msgstr ""
+
+#: modify.php:1248 modify.php:1438
+#, php-format
+msgid "Adding user contact phone number: %s (%s) to user: %s"
+msgstr ""
+
+#: modify.php:1259 modify.php:1449
+#, php-format
+msgid "Removing user contact phone number: %s (%s) from user: %s"
+msgstr ""
+
+#: modify.php:1267 modify.php:1457
+msgid "Failed to sync user contact information"
+msgstr ""
+
+#: modify.php:1279
+msgid "Syncing user contact information (userman)"
+msgstr ""
+
+#: modify.php:1469
+msgid "Syncing extension users"
+msgstr ""
+
+#: modify.php:1539 modify.php:1675
+#, php-format
+msgid "Failed to unsync extension user for extension: %s"
+msgstr ""
+
+#: modify.php:1575 modify.php:1725
+#, php-format
+msgid "Failed to sync extension user for extension: %s"
+msgstr ""
+
+#: modify.php:1583 modify.php:1733
+#, php-format
+msgid "Setting extension user on extension: %s to user: %s"
+msgstr ""
+
+#: modify.php:1588 modify.php:1665 modify.php:1738
+#, php-format
+msgid "Failed to set user on extension: %s"
+msgstr ""
+
+#: modify.php:1598 modify.php:1748
+msgid "Failed to sync extension users"
+msgstr ""
+
+#: modify.php:1610
+msgid "Syncing extension users (userman)"
+msgstr ""
+
+#: modify.php:1659
+#, php-format
+msgid "Unsetting extension user: %s from extension: %s"
+msgstr ""
+
+#: modify.php:1760
+msgid "Syncing queues"
+msgstr ""
+
+#: modify.php:1787
+#, php-format
+msgid "Removing queue: %s"
+msgstr ""
+
+#: modify.php:1800
+#, php-format
+msgid "Failed to remove queue: %s"
+msgstr ""
+
+#: modify.php:1811
+#, php-format
+msgid "Adding queue: %s"
+msgstr ""
+
+#: modify.php:1825
+#, php-format
+msgid "Failed to add queue: %s"
+msgstr ""
+
+#: modify.php:1841
+#, php-format
+msgid "Updating queue: %s"
+msgstr ""
+
+#: modify.php:1850
+#, php-format
+msgid "Failed to update queue: %s"
+msgstr ""
+
+#: modify.php:1858
+msgid "Failed to sync queues"
+msgstr ""
+
+#: modify.php:1870
+msgid "Syncing conference rooms"
+msgstr ""
+
+#: modify.php:1898
+#, php-format
+msgid "Removing conference room: %s"
+msgstr ""
+
+#: modify.php:1911
+#, php-format
+msgid "Failed to remove conference room: %s"
+msgstr ""
+
+#: modify.php:1922
+#, php-format
+msgid "Adding conference room: %s"
+msgstr ""
+
+#: modify.php:1936
+#, php-format
+msgid "Failed to add conference room: %s"
+msgstr ""
+
+#: modify.php:1953
+#, php-format
+msgid "Updating conference room: %s"
+msgstr ""
+
+#: modify.php:1961
+#, php-format
+msgid "Failed to update conference room: %s"
+msgstr ""
+
+#: modify.php:1969
+msgid "Failed to sync conference rooms"
+msgstr ""
+
+#: modify.php:1981
+msgid "Syncing parking lot"
+msgstr ""
+
+#: modify.php:2030
+#, php-format
+msgid "Removing parking lot: %s"
+msgstr ""
+
+#: modify.php:2041
+msgid "Adding parking lot: default"
+msgstr ""
+
+#: modify.php:2050
+msgid "Updating parking lot: default"
+msgstr ""
+
+#: modify.php:2061
+msgid "Failed to sync parking lot"
+msgstr ""
+
+#: views/page.cxpanel.php:93
+msgid "unlimited"
+msgstr ""
+
+#: views/page.cxpanel.php:129
+msgid "Maintenance has expired."
+msgstr ""
+
+#: views/page.cxpanel.php:139
+#, php-format
+msgid ""
+"Maintenance will expire in <span style=\"font-weight: bold\">%s day(s)</"
+"span>."
+msgstr ""
+
+#: views/page.cxpanel.php:160
+msgid "Expiration Date"
+msgstr ""
+
+#: views/page.cxpanel.php:161
+msgid "Displays the expiration date of the trial license."
+msgstr ""
+
+#: views/page.cxpanel.php:170
+msgid "Maint. Expiration Date"
+msgstr ""
+
+#: views/page.cxpanel.php:171
+msgid "Displays the expiration date of the license maintenance period."
+msgstr ""
+
+#: views/page.cxpanel.php:180
+msgid "Clients"
+msgstr ""
+
+#: views/page.cxpanel.php:181
+msgid "Displays the number of licensed client connections."
+msgstr ""
+
+#: views/page.cxpanel.php:190 views/page.cxpanel.php:429
+msgid "Users"
+msgstr ""
+
+#: views/page.cxpanel.php:191
+msgid "Displays the total number of users that can be enabled."
+msgstr ""
+
+#: views/page.cxpanel.php:215
+msgid "ATTENTION"
+msgstr ""
+
+#: views/page.cxpanel.php:215
+msgid ""
+"This license is being bound for the first time or is moving servers.</"
+"br>Please fill out the information below in order to complete the activation "
+"or you can cancel the activation."
+msgstr ""
+
+#: views/page.cxpanel.php:218 views/page.cxpanel.php:566
+msgid "Licensed To:"
+msgstr ""
+
+#: views/page.cxpanel.php:219
+msgid "Enter the name of the person or company this server is licensed to."
+msgstr ""
+
+#: views/page.cxpanel.php:226
+msgid "Email:"
+msgstr ""
+
+#: views/page.cxpanel.php:227
+msgid ""
+"Enter the email address of the person or company this server is licensed to."
+msgstr ""
+
+#: views/page.cxpanel.php:239
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: views/page.cxpanel.php:239 views/page.cxpanel.php:269
+msgid "Activate"
+msgstr ""
+
+#: views/page.cxpanel.php:261
+msgid "Activate:"
+msgstr ""
+
+#: views/page.cxpanel.php:262
+msgid "Activates a license with a given serial key."
+msgstr ""
+
+#: views/page.cxpanel.php:275
+msgid ""
+"The specified core server has not been created yet.</br>If this is the first "
+"installation run \"Apply Config\" in order to create the core server.</br>If "
+"you believe this is an error verify your \"Server Name\" below."
+msgstr ""
+
+#: views/page.cxpanel.php:279
+#, php-format
+msgid ""
+"This server is not allowed to access the %1$s server.</br>Modify the %1$s "
+"server's security.xml file to include this server's IP address in the "
+"whitelist of the communication_mananger servlet security settings.</br>You "
+"will have to restart your %1$s server once the change has been made."
+msgstr ""
+
+#: views/page.cxpanel.php:283
+#, php-format
+msgid ""
+"Failed to authenticate with the %1$s server.</br>Verify that the \"Server "
+"API Username\" and \"Server API Password\" below are correct.</br>Also "
+"verify that you have a proper realm auth user defined in the %1$s server's "
+"security.xml file for the communication_manager servlet security settings."
+msgstr ""
+
+#: views/page.cxpanel.php:287
+#, php-format
+msgid ""
+"Failed to contact the %1$s server.</br>Verify that your %1$s server is "
+"installed and running and that the server API host and port are correct in "
+"the fields below.<br/>If you have SSL enabled below and are using the SSL "
+"port for the API connection you need to enable SSL in the %1$s server's "
+"security.xml file for the communication_manager servlet."
+msgstr ""
+
+#: views/page.cxpanel.php:291
+#, php-format
+msgid ""
+"Failed to connect to the %1$s server.<br/>The %1$s server is secured via SSL."
+"<br/> Set the API port below to the SSL port of the %1$s server and check "
+"\"Use SSL\".<br/>The server's SSL port can be found in the main.xml file. "
+"Default is 55050."
+msgstr ""
+
+#: views/page.cxpanel.php:295
+#, php-format
+msgid ""
+"An unexpected error occurred while trying to connect to the %s server.</br>%s"
+msgstr ""
+
+#: views/page.cxpanel.php:311
+msgid ""
+"Send initially generated passwords for extensions that have a voicemail "
+"email configured. Will not send password if it has been changed from the "
+"initially generated one."
+msgstr ""
+
+#: views/page.cxpanel.php:311
+msgid "Email Initial Passwords"
+msgstr ""
+
+#: views/page.cxpanel.php:319
+msgid "View Initial User Passwords"
+msgstr ""
+
+#: views/page.cxpanel.php:345
+msgid "Initial User Passwords"
+msgstr ""
+
+#: views/page.cxpanel.php:358
+msgid "Download as CSV"
+msgstr ""
+
+#: views/page.cxpanel.php:369
+msgid "View Debug"
+msgstr ""
+
+#: views/page.cxpanel.php:377
+msgid "Debug"
+msgstr "Depurar"
+
+#: views/page.cxpanel.php:381
+msgid "Main Log"
+msgstr ""
+
+#: views/page.cxpanel.php:389
+msgid "Modify Log"
+msgstr ""
+
+#: views/page.cxpanel.php:399 views/page.cxpanel.php:547
+msgid "Server"
+msgstr ""
+
+#: views/page.cxpanel.php:404
+msgid "Queues"
+msgstr ""
+
+#: views/page.cxpanel.php:409
+msgid "Conference Rooms"
+msgstr ""
+
+#: views/page.cxpanel.php:414
+msgid "Managed Items"
+msgstr ""
+
+#: views/page.cxpanel.php:419
+msgid "Voicemail Agent"
+msgstr ""
+
+#: views/page.cxpanel.php:424
+msgid "Recording Agent"
+msgstr ""
+
+#: views/page.cxpanel.php:434
+msgid "Email"
+msgstr ""
+
+#: views/page.cxpanel.php:440
+msgid "Phone Numbers"
+msgstr "Números de teléfono"
+
+#: views/page.cxpanel.php:451
+msgid "Sync With User Managment:"
+msgstr ""
+
+#: views/page.cxpanel.php:452
+#, php-format
+msgid ""
+"If checked  %1$s users will be created based on the users that are "
+"configured in User Managment.<br />If unchecked  %1$s users will be created "
+"based on the  %1$s settings in the Extensions page."
+msgstr ""
+
+#: views/page.cxpanel.php:466
+msgid "The following is a list of users that were not sent password emails"
+msgstr ""
+
+#: views/page.cxpanel.php:469
+msgid "User"
+msgstr "Usuario"
+
+#: views/page.cxpanel.php:469
+msgid "Reason"
+msgstr ""
+
+#: views/page.cxpanel.php:486
+msgid "No email set on extension page"
+msgstr ""
+
+#: views/page.cxpanel.php:492
+msgid "Initial password no longer valid"
+msgstr ""
+
+#: views/page.cxpanel.php:498
+msgid "Extension not set to add user"
+msgstr ""
+
+#: views/page.cxpanel.php:550
+msgid "Connected:"
+msgstr "Conectado:"
+
+#: views/page.cxpanel.php:551
+#, php-format
+msgid ""
+"Displays if the module can connect to the %s server. If not the server may "
+"not be running or the connection information below may be incorrect."
+msgstr ""
+
+#: views/page.cxpanel.php:552
+msgid "NO"
+msgstr "NO"
+
+#: views/page.cxpanel.php:552
+msgid "YES"
+msgstr "SÍ"
+
+#: views/page.cxpanel.php:556
+msgid "Version:"
+msgstr "Versión:"
+
+#: views/page.cxpanel.php:557
+msgid "Displays the version of the server."
+msgstr ""
+
+#: views/page.cxpanel.php:558 views/page.cxpanel.php:568
+#: views/page.cxpanel.php:573 views/page.cxpanel.php:578
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: views/page.cxpanel.php:563
+msgid "License"
+msgstr ""
+
+#: views/page.cxpanel.php:567
+msgid "Displays the name of the person or company this server is licensed to."
+msgstr ""
+
+#: views/page.cxpanel.php:571
+msgid "Serial Key:"
+msgstr ""
+
+#: views/page.cxpanel.php:572
+msgid "Displays the serial key of the installed license."
+msgstr ""
+
+#: views/page.cxpanel.php:576
+msgid "Type:"
+msgstr "Tipo:"
+
+#: views/page.cxpanel.php:577
+msgid "The license type."
+msgstr ""
+
+#: views/page.cxpanel.php:601
+msgid "General Settings"
+msgstr "Configuración General"
+
+#: views/page.cxpanel.php:605
+msgid "Clean Unknown Items:"
+msgstr ""
+
+#: views/page.cxpanel.php:606
+#, php-format
+msgid ""
+"If selected, all items on the %1$s server that are not configured in FreePBX "
+"will be removed.<br/><br/>If not selected, only items created by this "
+"instance of the module will be removed if they are no longer configured in "
+"FreePBX.<br/><br/>For example, you should disable this option if utilizing a "
+"single %1$s core server managing multiple PBXs, as this instance of the "
+"module should not remove items that were created by other instances of the "
+"module on the other PBXs."
+msgstr ""
+
+#: views/page.cxpanel.php:616
+msgid "Server API Connection Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:619
+msgid "Server Name:"
+msgstr ""
+
+#: views/page.cxpanel.php:620
+msgid "Unique id of the core server instance to manage."
+msgstr ""
+
+#: views/page.cxpanel.php:627
+msgid "Host:"
+msgstr "Host:"
+
+#: views/page.cxpanel.php:628
+#, php-format
+msgid ""
+"IP Address or host name of the %s server API. Set to \"localhost\" if the "
+"server is installed on the same machine."
+msgstr ""
+
+#: views/page.cxpanel.php:635
+msgid "Port:"
+msgstr ""
+
+#: views/page.cxpanel.php:636
+#, php-format
+msgid ""
+"Port of the %1$s server API.<br/><br/>Default Port: 58080<br/>Default SSL "
+"Port: 55050 (SSL is disalbed by default on the %1$s server. See the %1$s "
+"server security.xml file.)"
+msgstr ""
+
+#: views/page.cxpanel.php:648
+#, php-format
+msgid ""
+"Username used to authenticate with the server API. The realm auth user "
+"credentials can be found in the security.xml file in the %s server config "
+"directory under the communication_manager servlet security settings."
+msgstr ""
+
+#: views/page.cxpanel.php:656
+#, php-format
+msgid ""
+"Password used to authenticate with the server API. The realm auth user "
+"credentials can be found in the security.xml file in the %s server config "
+"directory under the communication_manager servlet security settings."
+msgstr ""
+
+#: views/page.cxpanel.php:663 views/page.cxpanel.php:711
+msgid "Use SSL:"
+msgstr "Utiliza SSL:"
+
+#: views/page.cxpanel.php:664
+#, php-format
+msgid ""
+"Check this option, if you have endabled SSL on the %1$s server API.<br/><br/"
+">NOTE: If checked your %1$s server must have an SSL keystore configured and "
+"the communication_manager servlet security context must have SSL enabled in "
+"the security.xml file.</br>You will also need to specify the SSL port number "
+"in the API port field above."
+msgstr ""
+
+#: views/page.cxpanel.php:674
+msgid "Asterisk Connection Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:677
+msgid "Asterisk Server Host:"
+msgstr ""
+
+#: views/page.cxpanel.php:678
+#, php-format
+msgid ""
+"The ip or hostname of the Asterisk server. This is used to tell the %1$s "
+"server how to connect to Asterisk. If the %1$s server and Asterisk are on "
+"the same machine this field should be set to \"localhost\"."
+msgstr ""
+
+#: views/page.cxpanel.php:688
+msgid "Module Client Link Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:691
+msgid "Client Host:"
+msgstr ""
+
+#: views/page.cxpanel.php:692
+#, php-format
+msgid ""
+"IP Address or host name of the %1$s client. This setting is used when "
+"accessing the %1$s client via the links in this GUI and for client links in "
+"password emails. If not set the ip or host name from the current URL will be "
+"utilized. Normally this should remain blank unless you have a remote %1$s "
+"Server install."
+msgstr ""
+
+#: views/page.cxpanel.php:699
+msgid "Client Port:"
+msgstr ""
+
+#: views/page.cxpanel.php:700
+#, php-format
+msgid "Web port of the %s client."
+msgstr ""
+
+#: views/page.cxpanel.php:712
+#, php-format
+msgid ""
+"Check this option, if you have enabled SSL on the %1$s client interface.<br/"
+"><br/>NOTE: If checked your %1$s server must have an SSL keystore configured "
+"and the client servlet security context must have SSL enabled in the "
+"security.xml file.</br>You will also need to specify the SSL port number in "
+"the Client Port field above."
+msgstr ""
+
+#: views/page.cxpanel.php:721
+msgid "Voicemail Agent Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:724 views/page.cxpanel.php:762
+msgid "Identifier:"
+msgstr ""
+
+#: views/page.cxpanel.php:725
+msgid "Identifier of the voicemail agent to bind and configure."
+msgstr ""
+
+#: views/page.cxpanel.php:732 views/page.cxpanel.php:770
+msgid "Directory:"
+msgstr ""
+
+#: views/page.cxpanel.php:733
+msgid "Path to the root voicemail directory."
+msgstr ""
+
+#: views/page.cxpanel.php:740 views/page.cxpanel.php:778
+msgid "Resource Host:"
+msgstr ""
+
+#: views/page.cxpanel.php:741
+msgid "Hostname or IP used to build voicemail playback URLs."
+msgstr ""
+
+#: views/page.cxpanel.php:748 views/page.cxpanel.php:786
+msgid "Resource Extension:"
+msgstr ""
+
+#: views/page.cxpanel.php:749
+msgid "File extension used to build voicemail playback URLs."
+msgstr ""
+
+#: views/page.cxpanel.php:759
+msgid "Recording Agent Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:763
+msgid "Identifier of the recording agent to bind and configure."
+msgstr ""
+
+#: views/page.cxpanel.php:771
+msgid "Path to the root recording directory."
+msgstr ""
+
+#: views/page.cxpanel.php:779
+msgid "Hostname or IP used to build recording playback URLs."
+msgstr ""
+
+#: views/page.cxpanel.php:787
+msgid ""
+"File extension used to build recording playback URLs. Also used as the file "
+"type when on demand recordings are made in the panel."
+msgstr ""
+
+#: views/page.cxpanel.php:794
+msgid "File Mask:"
+msgstr ""
+
+#: views/page.cxpanel.php:795
+msgid ""
+"File name mask used to parse recording file names and create recording files "
+"when on demand recordings are made in the panel."
+msgstr ""
+
+#: views/page.cxpanel.php:805
+msgid "Password Email Settings"
+msgstr ""
+
+#: views/page.cxpanel.php:808
+msgid "Subject:"
+msgstr "Asunto:"
+
+#: views/page.cxpanel.php:809
+#, php-format
+msgid ""
+"The subject text of the email. You can specify the following variables in "
+"the email:<br/><br/>%%userId%% = The the username that the password belongs "
+"to.<br/>%%password%% = The password value.<br/>%%clientURL%% = The URL used "
+"to log into the client. Built using the Client Host and Client Port fields "
+"above."
+msgstr ""
+
+#: views/page.cxpanel.php:816
+msgid "Body:"
+msgstr "Cuerpo:"
+
+#: views/page.cxpanel.php:817
+#, php-format
+msgid ""
+"The body text of the email. If HTML is selected as the type you can include "
+"HTML tags. You can specify the following variables in the email:<br/><br/>"
+"%%userId%% = The the username that the password belongs to.<br/>%%password%% "
+"= The password value.<br/>%%clientURL%% = The URL used to log into the "
+"client. Built using the Client Host and Client Port fields above.<br/>%%logo"
+"%% = The %s logo image."
+msgstr ""
+
+#: views/page.cxpanel.php:828
+msgid "Submit Changes"
+msgstr ""
+
+#: views/userman_hook.php:7
+#, php-format
+msgid "Add To %s"
+msgstr "Añadir a %s"
+
+#: views/userman_hook.php:13
+msgid "Yes"
+msgstr "Si"
+
+#: views/userman_hook.php:15
+msgid "No"
+msgstr "No"
+
+#: views/userman_hook.php:18
+msgid "Inherit"
+msgstr "Heredar"
+
+#, php-format
+#~ msgid "Manages alternative phone numbers for this %s user."
+#~ msgstr "Gestiona números de teléfono alternativos para este usuario %s."
+
+#~ msgid "Admin"
+#~ msgstr "Admin"
+
+#~ msgid ""
+#~ "This module automatically configures the operator panel to reflect the "
+#~ "PBX configuration."
+#~ msgstr ""
+#~ "En este módulo configura automáticamente el panel del operador para "
+#~ "reflejar la configuración de PBX."
+
+#~ msgid "iSymphonyV3"
+#~ msgstr "\"iSymphonyV3\""
+
+#~ msgid "iSymphonyV3 Panel"
+#~ msgstr "Panel iSymphonyV3"
 
 #~ msgid "reports"
 #~ msgstr "reportes"

@@ -43,13 +43,19 @@ function cxpanel_generate_password ($length = 8) {
  * @param String $file path to file that needs to be read
  * 
  */
-function cxpanel_read_file($file) {
+function cxpanel_read_file($file)
+{
 	$contents = "";
-	if(($contentFile = fopen($file, 'r')) !== false) {
-		while (!feof($contentFile)) {
-			$contents .= fgets($contentFile, 4096);
+	if (file_exists($file))
+	{
+		if(($contentFile = fopen($file, 'r')) !== false)
+		{
+			while (!feof($contentFile))
+			{
+				$contents .= fgets($contentFile, 4096);
+			}
+			fclose($contentFile);
 		}
-		fclose($contentFile);
 	}
 	return $contents;
 }

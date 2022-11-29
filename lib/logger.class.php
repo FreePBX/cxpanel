@@ -8,6 +8,9 @@
  *Purpose      : Provides a class used to log into a specified file.
  */
 
+namespace FreePBX\modules\Cxpanel\Log;
+if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed'); }
+
 /**
  *
  * Logs messages to a file

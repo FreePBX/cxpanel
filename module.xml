@@ -28,6 +28,85 @@
 	<supported>
 		<version>16.0</version>
 	</supported>
+	<database>
+		<table name="cxpanel_server">
+			<field name="name" type="string" length="1000"/>
+			<field name="asterisk_host" type="string" length="1000"/>
+			<field name="client_host" type="string" length="1000"/>
+			<field name="client_port" type="integer"/>
+			<field name="client_use_ssl" type="integer"/>
+			<field name="api_host" type="string" length="1000"/>
+			<field name="api_port" type="integer"/>
+			<field name="api_username" type="string" length="1000"/>
+			<field name="api_password" type="string" length="1000"/>
+			<field name="api_use_ssl" type="integer"/>
+			<field name="sync_with_userman" type="integer"/>
+			<field name="clean_unknown_items" type="integer"/>
+		</table>
+		<table name="cxpanel_voicemail_agent">
+			<field name="identifier" type="string" length="1000"/>
+			<field name="directory" type="string" length="1000"/>
+			<field name="resource_host" type="string" length="1000"/>
+			<field name="resource_extension" type="string" length="1000"/>
+  		</table>
+		<table name="cxpanel_recording_agent">
+			<field name="identifier" type="string" length="1000"/>
+			<field name="directory" type="string" length="1000"/>
+			<field name="resource_host" type="string" length="1000"/>
+			<field name="resource_extension" type="string" length="1000"/>
+			<field name="file_name_mask" type="string" length="1000"/>
+  		</table>
+		<table name="cxpanel_email">
+    		<field name="subject" type="string" length="1000"/>
+    		<field name="body" type="string" length="1000"/>
+  		</table>
+		<table name="cxpanel_phone_number">
+    		<field name="cxpanel_phone_number_id" type="integer" primarykey="true" autoincrement="true"/>
+    		<field name="user_id" type="string" length="1000"/>
+    		<field name="phone_number" type="string" length="1000"/>
+    		<field name="type" type="string" length="1000"/>
+  		</table>
+		<table name="cxpanel_users">
+			<field name="cxpanel_user_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="user_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="peer" type="string" length="1000"/>
+			<field name="add_extension" type="integer"/>
+			<field name="full" type="integer"/>
+			<field name="add_user" type="integer"/>
+			<field name="hashed_password" type="string" length="1000"/>
+			<field name="initial_password" type="string" length="1000"/>
+			<field name="auto_answer" type="integer" default="1"/>
+			<field name="parent_user_id" type="string" length="1000"/>
+			<field name="password_dirty" type="integer" default="0"/>
+    		<key name="user_id" type="unique">
+      			<column name="user_id"/>
+    		</key>
+		</table>
+		<table name="cxpanel_queues">
+			<field name="cxpanel_queue_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="queue_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="add_queue" type="integer"/>
+			<key name="queue_id" type="unique">
+				<column name="queue_id"/>
+			</key>
+		</table>
+		<table name="cxpanel_conference_rooms">
+			<field name="cxpanel_conference_room_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="conference_room_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="add_conference_room" type="integer"/>
+			<key name="conference_room_id" type="unique">
+				<column name="conference_room_id"/>
+			</key>
+		</table>
+		<table name="cxpanel_managed_items">
+			<field name="cxpanel_id" type="string" length="1000"/>
+			<field name="fpbx_id" type="string" length="1000"/>
+			<field name="type" type="string" length="1000"/>
+		</table>
+	</database>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="addUser">usermanAddUser</method>
