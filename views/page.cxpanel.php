@@ -156,7 +156,7 @@ try
 	//Build the license additions
 	if(isset($licenseExpirationDate))
 	{
-		$licenseAdditions = array(
+		$licenseAdditions[] = array(
 			'title' 	  => _("Expiration Date"),
 			'help'  	  => _("Displays the expiration date of the trial license."),
 			'input_type'  => 'raw',
@@ -166,7 +166,7 @@ try
 	
 	if(isset($maintenanceExpirationDate) && !$isXactView)
 	{
-		$licenseAdditions = array(
+		$licenseAdditions[] = array(
 			'title' 	  => _("Maint. Expiration Date"),
 			'help'  	  => _("Displays the expiration date of the license maintenance period."),
 			'input_type'  => 'raw',
@@ -176,7 +176,7 @@ try
 	
 	if($license->clientConnections != -1)
 	{
-		$licenseAdditions = array(
+		$licenseAdditions[] = array(
 			'title' 	  => _("Clients"),
 			'help'  	  => _("Displays the number of licensed client connections."),
 			'input_type'  => 'raw',
@@ -186,7 +186,7 @@ try
 	
 	if($license->configuredUsers != -1)
 	{
-		$licenseAdditions = array(
+		$licenseAdditions[] = array(
 			'title' 	  => _("Users"),
 			'help'  	  => _("Displays the total number of users that can be enabled."),
 			'input_type'  => 'raw',
@@ -541,6 +541,7 @@ $table_lines = array(
 		'type' => 'list',
 		'list' => empty($passEmailResults) ? array() : $passEmailResults,
 	),
+	array('type' => 'br'),
 
 	array(
 		'colspan' => true,
@@ -557,6 +558,7 @@ $table_lines = array(
 		'help'  => _("Displays the version of the server."),
 		'value' => (empty($brand)) ? _("Unknown") : sprintf("%s build %s", $brand->version, $brand->build),
 	),
+	array('type' => 'br'),
 
 	array(
 		'colspan' => true,
@@ -583,9 +585,7 @@ $table_lines = array(
 	),
 	array(
 		'type' => "list",
-		'list' => array(
-			(empty($licenseActivateAddition)) ? array() : $licenseActivateAddition,
-		)
+		'list' => empty($licenseActivateAddition) ? array() : $licenseActivateAddition,
 	),
 	array(
 		'colspan' 	  => true,
@@ -594,7 +594,7 @@ $table_lines = array(
 	array(
 		'raw' => sprintf('<form name="cxpanel_settings_form" id="cxpanel_settings_form" action="config.php?type=setup&display=cxpanel%s" method="post" onsubmit="return checkForm();">', $urlAppend),
 	),
-
+	array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -609,7 +609,7 @@ $table_lines = array(
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['clean_unknown_items'] == '1'),
 	),
-
+	array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -667,7 +667,7 @@ $table_lines = array(
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['api_use_ssl'] == '1'),
 	),
-    
+    array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -681,7 +681,7 @@ $table_lines = array(
 		'input_size'  => "20",
 		'input_value' => htmlspecialchars($serverInformation['asterisk_host']),
 	),
-
+	array('type' => 'br'),
 	
 	array (
 		'colspan' => true,
@@ -715,6 +715,7 @@ $table_lines = array(
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['client_use_ssl'] == '1'),
 	),
+	array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -752,7 +753,7 @@ $table_lines = array(
 		'input_size'  => "20",
 		'input_value' => htmlspecialchars($voicemailAgentInformation['resource_extension']),
 	),
-
+	array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -798,7 +799,7 @@ $table_lines = array(
 		'input_size'  => "20",
 		'input_value' => htmlspecialchars($recordingAgentInformation['file_name_mask']),
 	),
-
+	array('type' => 'br'),
 
 	array (
 		'colspan' => true,
@@ -823,9 +824,11 @@ $table_lines = array(
 		),
 		'input_value' => htmlspecialchars($emailSettings['body']),
 	),
+	array('type' => 'br'),
+	
 	array(
 		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<input type="Submit" name="cxpanel_settings" value="%s">', _('Submit Changes')),
+		'colspan_raw' => sprintf('<h5><hr></h5><input type="Submit" name="cxpanel_settings" class="btn btn-block" value="%s">', _('Submit Changes')),
 	),
 	array(
 		'raw' => "</form>",
@@ -835,12 +838,18 @@ $table_lines = array(
 
 function lineParse($line)
 {
+	if (! is_array($line)) { return; }
+
 	$data_return = "";
 	if (! empty($line))
 	{
 		if (isset($line['raw']))
 		{
 			$data_return = $line['raw'];
+		}
+		else if (! empty($line['type']) && $line['type'] == "br")
+		{
+			$data_return  = '<tr><td colspan="2">&nbsp;</td></tr>';
 		}
 		else if (! empty($line['type']) && $line['type'] == "debug")
 		{
@@ -887,14 +896,14 @@ function lineParse($line)
 						break;
 
 					default:
-						dbug("??? > ". $line['input_type']);
+						dbug("Type not supported: Type > ". isset($line['input_type']) ? $line['input_type'] : "Is not definde!!");
 				}
 			}
 			elseif (isset($line['value']))
 			{
 				$val = $line['value'];
 			}
-			$data_return = sprintf('<tr><td><a href="#" class="info">%s<span>%s</span></a></td><td>%s</td></tr>', $line['title'], $line['help'], $val);
+			$data_return = sprintf('<tr><td class="col_title"><a href="#" class="info">%s<span>%s</span></a></td><td>%s</td></tr>', $line['title'], $line['help'], $val);
 		}
 	}
 	return $data_return;
@@ -1041,11 +1050,10 @@ function lineParse($line)
 	<?php 
 		echo $licenseActivationError; 
 	?>
-	<table style="width: 100%;">
+	<table id="cxpanel_table">
 		<?php
 		foreach ($table_lines as $line)
 		{
-
 			if (! empty($line['type']) && $line['type'] == 'list' && isset($line['list']) && is_array($line['list']))
 			{
 				foreach ($line['list'] as $subLine)
