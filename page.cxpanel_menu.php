@@ -1,4 +1,3 @@
 <?php
-$path = str_replace($amp_conf['AMPWEBROOT'], '', $amp_conf['FOPWEBROOT']);
-header('Location: ' . $path);
-
+	if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed'); }
+	echo \FreePBX::create()->Cxpanel->showPage("cxpanel.menu");

@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>16.0.2</version>
+	<version>16.0.3</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -29,37 +29,6 @@
 		<version>16.0</version>
 	</supported>
 	<database>
-		<table name="cxpanel_server">
-			<field name="name" type="string" length="1000"/>
-			<field name="asterisk_host" type="string" length="1000"/>
-			<field name="client_host" type="string" length="1000"/>
-			<field name="client_port" type="integer"/>
-			<field name="client_use_ssl" type="integer"/>
-			<field name="api_host" type="string" length="1000"/>
-			<field name="api_port" type="integer"/>
-			<field name="api_username" type="string" length="1000"/>
-			<field name="api_password" type="string" length="1000"/>
-			<field name="api_use_ssl" type="integer"/>
-			<field name="sync_with_userman" type="integer"/>
-			<field name="clean_unknown_items" type="integer"/>
-		</table>
-		<table name="cxpanel_voicemail_agent">
-			<field name="identifier" type="string" length="1000"/>
-			<field name="directory" type="string" length="1000"/>
-			<field name="resource_host" type="string" length="1000"/>
-			<field name="resource_extension" type="string" length="1000"/>
-  		</table>
-		<table name="cxpanel_recording_agent">
-			<field name="identifier" type="string" length="1000"/>
-			<field name="directory" type="string" length="1000"/>
-			<field name="resource_host" type="string" length="1000"/>
-			<field name="resource_extension" type="string" length="1000"/>
-			<field name="file_name_mask" type="string" length="1000"/>
-  		</table>
-		<table name="cxpanel_email">
-    		<field name="subject" type="string" length="1000"/>
-    		<field name="body" type="string" length="1000"/>
-  		</table>
 		<table name="cxpanel_phone_number">
     		<field name="cxpanel_phone_number_id" type="integer" primarykey="true" autoincrement="true"/>
     		<field name="user_id" type="string" length="1000"/>

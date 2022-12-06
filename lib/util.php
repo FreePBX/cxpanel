@@ -10,35 +10,6 @@
 
 /**
  * 
- * Generates a random password of the given length
- * @author http://www.laughing-buddha.net/php/password
- *
- */
-function cxpanel_generate_password ($length = 8) {
-
-	$password = "";
-	$possible = "2346789bcdfghjkmnpqrtvwxyzBCDFGHJKLMNPQRTVWXYZ";
-	$maxlength = strlen($possible);
-	
-	if ($length > $maxlength) {
-		$length = $maxlength;
-	}
-	
-	$i = 0; 
-	while ($i < $length) { 
-		$char = substr($possible, mt_rand(0, $maxlength-1), 1);
-	
-		if (!strstr($password, $char)) { 
-			$password .= $char;
-			$i++;
-		}
-	}
-	    
-	return $password;
-}
-
-/**
- * 
  * Reads the contents of a file and returns it as a string
  * @param String $file path to file that needs to be read
  * 

@@ -104,11 +104,7 @@ if(($conferenceRoomInformation = $cxpanel->conference_room_list()) === null) {
 set_time_limit(30 + (count($userInformation) * $executionTimeoutMultiplier));
 
 //Set up the REST connection
-$webProtocol = ($serverInformation['api_use_ssl'] == '1') ? 'https' : 'http';
-$baseApiUrl  = $webProtocol . '://' . $serverInformation['api_host'] . ':' . $serverInformation['api_port'] . '/communication_manager/api/resource/';
-$logger->debug(sprintf(_("Starting REST connection to %s"), $baseApiUrl));
-$pest = new \FreePBX\modules\Cxpanel\CXPestJSON($baseApiUrl);
-$pest->setupAuth($serverInformation['api_username'], $serverInformation['api_password']);
+$pest = $cxpanel->getApiREST($logger);
 
 //Check if sync_with_userman is enabled
 $syncWithUsermanEnabled = $serverInformation['sync_with_userman'] == '1' && function_exists('setup_userman');
@@ -215,7 +211,7 @@ function sync_database()
 					$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
 
 					//Generate a password for the user
-					$password = cxpanel_generate_password(10);
+					$password = $cxpanel->generate_password(10);
 
 					//Add user
 					$logger->debug(sprintf(_('Adding missing user to database %s'), $userId));
@@ -606,7 +602,7 @@ function sync_administrators()
 				if (empty($admin['password_sha1']))
 				{
 					//Generate a password for the user
-					$password = cxpanel_generate_password(10);
+					$password = $cxpanel->generate_password(10);
 					$admin['password_sha1'] = $password;
 				}
 
@@ -874,7 +870,7 @@ function sync_users()
 				if (empty($user['hashed_password']))
 				{
 					//Generate a password for the user
-					$password = cxpanel_generate_password(10);
+					$password = $cxpanel->generate_password(10);
 					$user['hashed_password'] = $password;
 				}
 
@@ -1054,7 +1050,7 @@ function sync_users_userman()
 				if (empty($user['hashed_password']))
 				{
 					//Generate a password for the user
-					$password = cxpanel_generate_password(10);
+					$password = $cxpanel->generate_password(10);
 					$user['hashed_password'] = $password;
 				}
 
