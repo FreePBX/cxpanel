@@ -1,27 +1,9 @@
 <?php
 
 $brandName = $cxpanel->brandName;
-$urlAppend = "";
-
-if(isset($_REQUEST["cxpanel_debug"]))
-{
-	//Add the debug flag to the url append
-	$urlAppend .= "&cxpanel_debug";
-}
-
-if(isset($_REQUEST["cxpanel_show_initial_passwords"]))
-{
-	$urlAppend .= "&cxpanel_show_initial_passwords";
-}
-
 
 //Set up the REST connection
-$webProtocol = ($serverInformation['api_use_ssl'] == '1') ? 'https' : 'http';
-$baseApiUrl  = $webProtocol . '://' . $serverInformation['api_host'] . ':' . $serverInformation['api_port'] . '/communication_manager/api/resource/';
-
-$pest = new \FreePBX\modules\Cxpanel\CXPestJSON($baseApiUrl);
-$pest->setupAuth($serverInformation['api_username'], $serverInformation['api_password']);
-
+$pest = $cxpanel->getApiREST();
 $licenseAdditions = array();
 
 //Grab the version and license information
@@ -40,7 +22,8 @@ try
 		 */
 		if(isset($_REQUEST["cxpanel_activate_license"]) && !isset($serverErrorMessage))
 		{
-			$pest->post('server/coreServers/' . $coreServer->id . '/license/activate', $_REQUEST["cxpanel_activate_serial_key"], array(CURLOPT_HEADER => TRUE));
+			$url = sprintf('server/coreServers/%s/license/activate',$coreServer->id);
+			$pest->post($url, $_REQUEST["cxpanel_activate_serial_key"], array(CURLOPT_HEADER => TRUE));
 			
 			//Flag FreePBX for reload
 			needreload();
@@ -75,6 +58,7 @@ try
 		$licenseActivationErrorMessage = $e->getMessage();
 	}
 
+
 	//Grab the license information
 	$license = $pest->get('server/coreServers/' . $coreServer->id . '/license');
 	$moduleLicenses = $pest->get('server/coreServers/' . $coreServer->id . '/license/moduleLicenses');
@@ -90,7 +74,7 @@ try
 			if($moduleLicenseProperty->display)
 			{
 				//If the value of the license property is '-1' show unlimited
-				$licensePropertyValue = ($moduleLicenseProperty->value == '-1') ? _('unlimited') : $moduleLicenseProperty->value;
+				$licensePropertyValue = ($moduleLicenseProperty->value == '-1') ? _('Unlimited') : $moduleLicenseProperty->value;
 				
 				//Add the property to the list
 				$licenseModuleAdditions[] = array(
@@ -104,7 +88,6 @@ try
 	}
 	
 	//Store the general license properties
-	
 	
 	$licenseExpirationDate 		= isset($license->expirationDate) ? date('m/d/Y', $license->expirationDate / 1000) : null;
 	$maintenanceExpirationDate 	= isset($license->maintenanceExpirationDate) ? ($license->maintenanceExpirationDate / 1000) : null;
@@ -124,8 +107,7 @@ try
 		$warningPeriod = 30 * 86400;
 		if(time() > $maintenanceExpirationDate)
 		{
-			//TODO: Pendiente migrar estilos a archivos CSS
-			$maintenanceExpirationDateStyle = 'padding: 0px 3px 0px 3px; background-color: rgb(235,15,12); border: 1px solid rgb(200,0,0); border-radius: 3px; color: white;';
+			$maintenanceExpirationDateStyle = 'cxpanel_license_maintenance_expired';
 			$maintenanceExpirationDateNote = _('Maintenance has expired.');
 		}
 		else if(time() > ($maintenanceExpirationDate - $warningPeriod))
@@ -134,9 +116,8 @@ try
 			$daysRemaining = ($maintenanceExpirationDate - time()) / 86400;
 			$daysRemaining = round($daysRemaining, 0, PHP_ROUND_HALF_DOWN);
 			
-			//TODO: Pendiente migrar estilos a archivos CSS
-			$maintenanceExpirationDateStyle = 'padding: 0px 3px 0px 3px; background-color: rgb(251,255,138); border: 1px solid rgb(200,200,0); border-radius: 3px; color: black;';
-			$maintenanceExpirationDateNote =  sprintf(_('Maintenance will expire in <span style="font-weight: bold">%s day(s)</span>.'), $daysRemaining);
+			$maintenanceExpirationDateStyle = 'cxpanel_license_warning_period';
+			$maintenanceExpirationDateNote =  sprintf(_('Maintenance will expire in <span class="cxpanel_license_days">%s day(s)</span>.'), $daysRemaining);
 		}
 		
 		//Format date
@@ -144,12 +125,11 @@ try
 		
 		if(isset($maintenanceExpirationDateNote))
 		{
-			$maintenanceExpirationDate = $maintenanceExpirationDate . ' ' . $maintenanceExpirationDateNote;
+			$maintenanceExpirationDate = sprintf("%s - %s", $maintenanceExpirationDate, $maintenanceExpirationDateNote);
 		}
-		
 		if(isset($maintenanceExpirationDateStyle))
 		{
-			$maintenanceExpirationDate = '<span style="' . $maintenanceExpirationDateStyle . '">' . $maintenanceExpirationDate . '</span>'; 
+			$maintenanceExpirationDate = sprintf('<span class="%s">%s</span>', $maintenanceExpirationDateStyle, $maintenanceExpirationDate);
 		}
 	}
 	
@@ -163,7 +143,6 @@ try
 			'input_value' => $licenseExpirationDate,
 		);
 	}
-	
 	if(isset($maintenanceExpirationDate) && !$isXactView)
 	{
 		$licenseAdditions[] = array(
@@ -173,7 +152,6 @@ try
 			'input_value' => $maintenanceExpirationDate,
 		);
 	}
-	
 	if($license->clientConnections != -1)
 	{
 		$licenseAdditions[] = array(
@@ -183,7 +161,6 @@ try
 			'input_value' => $license->clientConnections,
 		);
 	}
-	
 	if($license->configuredUsers != -1)
 	{
 		$licenseAdditions[] = array(
@@ -193,7 +170,6 @@ try
 			'input_value' => $license->configuredUsers,
 		);
 	}
-
 	if (! empty($licenseModuleAdditions))
 	{
 		$licenseAdditions = array_merge($licenseAdditions, $licenseModuleAdditions);
@@ -208,18 +184,30 @@ try
 	{
 		$licenseBindAddition = array(
 			array(
-				'raw' => sprintf('<form name="cxpanel_bind_license_form" id="cxpanel_bind_license_form" method="post" action="config.php?type=setup&display=cxpanel&s" onsubmit="return checkBindForm();">', $urlAppend),
+				'input_type' => 'form',
+				'input_name' => 'cxpanel_bind_license_form',
+				'method' 	 => 'post',
+				'action' 	 => 'config.php?type=setup&display=cxpanel',
+			),
+			array(
+				'input_type'  => 'hidden',
+				'input_name'  => 'cxpanel_bind_license',
+				'input_value' => 'cxpanel_bind_license',
+			),
+			array(
+				'input_type'  => 'hidden',
+				'input_name'  => 'cxpanel_bind_license_redirect_url',
+				'input_value' => $licenseBindRedirectURI,
 			),
 			array(
 				'colspan' 	  => true,
-				'colspan_raw' => sprintf('<span style="color: #FFCC00;"><b>%s</b></span>: %s', _("ATTENTION"), _("This license is being bound for the first time or is moving servers.</br>Please fill out the information below in order to complete the activation or you can cancel the activation.")),
+				'colspan_raw' => sprintf('<div class="alert alert-warning" role="alert"><b>%s</b>: %s</div>', _("ATTENTION"), _("This license is being bound for the first time or is moving servers.</br>Please fill out the information below in order to complete the activation or you can cancel the activation.")),
 			),
 			array(
 				'title' 	  => _("Licensed To:"),
 				'help'  	  => _("Enter the name of the person or company this server is licensed to."),
 				'input_type'  => 'text',
 				'input_name'  => "cxpanel_bind_license_to",
-				'input_size'  => "20",
 				'input_value' => "",
 			),
 			array(
@@ -227,30 +215,40 @@ try
 				'help'  	  => _("Enter the email address of the person or company this server is licensed to."),
 				'input_type'  => 'text',
 				'input_name'  => "cxpanel_bind_license_email",
-				'input_size'  => "20",
 				'input_value' => "",
+				'placeholder' => 'user@domain.tld',
 			),
 			array(
 				'colspan' 	  => true,
 				'colspan_raw' => sprintf('
-					<input type="hidden" name="cxpanel_bind_license_redirect_url" value="%s">
-					<input type="Button" name="cxpanel_bind_license_cancel" value="%s" onClick="document.getElementById(\'cxpanel_bind_license_cancel_form\').submit();">
-					<input type="Submit" name="cxpanel_bind_license" value="%s">
-				',$licenseBindRedirectURI, _("Cancel"), _("Activate")),
-			),
-			array(
-				'colspan' 	  => true,
-				'colspan_raw' => "<br>",
+					<div class="row">
+						<div class="form-group">
+							<div class="col-md-3"></div>
+							<div class="col-md-9">
+								<button type="Button" class="btn btn-danger btn-bind-license-cancel">%s</button>
+								<button type="Button" class="btn btn-success btn-bind-license">%s</button>
+							</div>
+						</div>
+					</div>
+				', _("Cancel"), _("Activate")),
 			),
 			array('raw' => '</form>'),
+			
 			array(
-				'raw' => sprintf('<form name="cxpanel_bind_license_cancel_form" id="cxpanel_bind_license_cancel_form" method="post" action="config.php?type=setup&display=cxpanel%s">', $urlAppend),
+				'input_type' => 'form',
+				'input_name' => 'cxpanel_bind_license_cancel_form',
+				'method' 	 => 'post',
+				'action' 	 => 'config.php?type=setup&display=cxpanel',
 			),
 			array(
-				'raw' => '<input type="hidden" name="cxpanel_bind_license_cancel_flag" value="true">',
+				'input_type'  => 'hidden',
+				'input_name'  => 'cxpanel_bind_license_cancel_flag',
+				'input_value' => 'true',
 			),
 			array(
-				'raw' => sprintf('<input type="hidden" name="cxpanel_bind_license_redirect_url" value="%s">', $licenseBindRedirectURI),
+				'input_type'  => 'hidden',
+				'input_name'  => 'cxpanel_bind_license_redirect_url',
+				'input_value' => $licenseBindRedirectURI,
 			),
 			array('raw' => '</form>'),
 		);
@@ -258,16 +256,33 @@ try
 	else
 	{
 		$licenseActivateAddition = array(
-			'title' 	  => _("Activate:"),
-			'help'  	  => _("Activates a license with a given serial key."),
-			'input_type'  => 'raw',
-			'input_value' => sprintf('
-				<form name="cxpanel_activate_license_form" id="cxpanel_activate_license_form" method="post" action="config.php?type=setup&display=cxpanel%s" onsubmit="return checkActivationForm();">
-					<input type="text" name="cxpanel_activate_serial_key" id="cxpanel_activate_serial_key">
-					<input type="Submit" name="cxpanel_activate_license" value="%s">
-				</form>
-			',$urlAppend, _("Activate")),
-		);												
+			array(
+				'input_type' => 'form',
+				'input_name' => 'cxpanel_activate_license_form',
+				'method' 	 => 'post',
+				'action' 	 => 'config.php?type=setup&display=cxpanel',
+			),
+			array(
+				'input_type'  => 'hidden',
+				'input_name'  => 'cxpanel_activate_license',
+				'input_value' => 'cxpanel_activate_license',
+			),
+		 	array(
+				'title' 	  => _("Activate:"),
+				'help'  	  => _("Activates a license with a given serial key."),
+				'input_type'  => 'raw',
+				'input_value' => sprintf('
+    				<div class="input-group">
+      					<input type="text" name="cxpanel_activate_serial_key" id="cxpanel_activate_serial_key" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" class="form-control">
+      					<span class="input-group-btn">
+        					<button class="btn btn-default btn-activate-license" type="button">%s <i class="fa fa-refresh" aria-hidden="true"></i></button>
+      					</span>
+    				</div>
+					', _("Activate")
+				),
+			),
+			array('raw' => '</form>'),
+		);
 	}
 }
 catch (\FreePBX\modules\Cxpanel\CXPest_NotFound $e)
@@ -296,154 +311,6 @@ catch (Exception $e)
 }
 
 
-//If sync_with_userman is enabled hide the view password and email password links
-if($serverInformation['sync_with_userman'] == "1")
-{
-	$passwordAddition = '';
-	$emailPasswordLink = '';
-}
-else
-{
-	//Create the email password link
-	$emailPasswordLink  = '<tr><td colspan="2">';
-	$emailPasswordLink .= sprintf('<form name="cxpanel_send_password_form" id="cxpanel_send_password_form" action="config.php?type=setup&display=cxpanel%s" method="post">', $urlAppend);
-	$emailPasswordLink .= '<input type="hidden" name="cxpanel_send_passwords" value="true">';
-	$emailPasswordLink .= sprintf('<a href="#" title="%s" onclick="emailPasswords();">%s</a>', _('Send initially generated passwords for extensions that have a voicemail email configured. Will not send password if it has been changed from the initially generated one.'), _('Email Initial Passwords'));
-	$emailPasswordLink .= '</form>';
-	$emailPasswordLink .= '</td></tr>';
-
-	//Check if the initial password list needs to be shown
-	$passwordAddition = array(
-		array(
-			'colspan' 	  => true,
-			'colspan_raw' => sprintf('<a href="config.php?type=setup&display=cxpanel&cxpanel_show_initial_passwords%s">%s</a>',$urlAppend, _("View Initial User Passwords")),
-		),
-	);
-	if(isset($_REQUEST["cxpanel_show_initial_passwords"]))
-	{
-		//Generate password list array
-		$passwordList = array();
-		$i = 0;
-		foreach($cxpanel->user_list() as $user)
-		{
-			if($user['initial_password'] != "")
-			{
-				if(sha1($user['initial_password']) == $user['hashed_password'])
-				{
-					$passwordList[] = array(
-						"user_id" 		   => $user['user_id'],
-						"initial_password" => $user['initial_password']
-					);
-				}
-			}
-		}
-
-		$passwordAddition = array(
-			//Add Password list addition
-			array(
-				'colspan' => true,
-				'title'   => _("Initial User Passwords"),
-			),
-			array(
-				'colspan' 	  => true,
-				'colspan_raw' => sprintf('These are the initail passwords that have been created for the %s users during the installation of the module.</br> Extensions that were created after installation of the module or have had their password changed from the inital value will not show up in the list.</br></br>', $brandName),
-			),
-			//Format the list
-			array(
-				'colspan' 	  => true,
-				'colspan_raw' => sprintf('<div style="height: 200px; overflow: auto;">%s</div>', cxpanel_array_to_table_2d($passwordList, 'style="width: 100%;"')),
-			),
-			array(
-				'colspan' 	  => true,
-				'colspan_raw' => sprintf('<a class="btn btn-default btn-export-password">%s</a>', _("Download as CSV")),
-			),
-		);
-	}
-}
-
-
-//Check if debug needs to be shown
-$debugAddition = array(
-	array(
-		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<a href="config.php?type=setup&display=cxpanel&cxpanel_debug">%s</a>', _("View Debug")),
-	),
-);
-if(isset($_REQUEST["cxpanel_debug"]))
-{
-	$debugAddition = array(
-		array(
-			'colspan' => true,
-			'title'   => _('Debug'),
-		),
-		array(
-			'colspan' 	  => true,
-			'colspan_raw' => sprintf('<b>%s</b>', _("Main Log")),
-		),
-		array(
-			'colspan' 	  => true,
-			'colspan_raw' => sprintf('<textarea rows="10" cols="90">%s</textarea>', htmlspecialchars(cxpanel_read_file($cxpanel->getPath("log")))),
-		),
-		array(
-			'colspan' 	  => true,
-			'colspan_raw' => sprintf('<b>%s</b>', _("Modify Log")),
-		),
-		array(
-			'colspan' 	  => true,
-			'colspan_raw' => sprintf('<textarea rows="10" cols="90">%s</textarea>', htmlspecialchars(cxpanel_read_file($cxpanel->getPath("log_modify")))),
-		),
-
-		//Add the printout of the database tables
-		array(
-			'type'  => 'debug',
-			'title' => _("Server"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->server_get()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Queues"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->queue_list()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Conference Rooms"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->conference_room_list()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Managed Items"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->managed_item_get_all()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Voicemail Agent"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->voicemail_agent_get()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Recording Agent"),
-			'value' => cxpanel_array_to_table_1d($cxpanel->recording_agent_get()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Users"),
-			'value' => cxpanel_array_to_table_2d($cxpanel->user_list()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Email"),
-			//TODO: Get value in textarea
-			'value' => cxpanel_array_to_table_1d($cxpanel->email_get()),
-		),
-		array(
-			'type'  => 'debug',
-			'title' => _("Phone Numbers"),
-			'value' => cxpanel_array_to_table_2d($cxpanel->phone_number_list_all()),
-		),
-	);
-}
-
-
 //If the userman module is installed show the general settings
 if(function_exists('setup_userman'))
 {
@@ -457,53 +324,6 @@ if(function_exists('setup_userman'))
 	);
 }
 
-//Check if a password batch send was requested
-if(isset($_REQUEST["cxpanel_send_passwords"]))
-{
-	$passEmailResults = array(
-		array (
-			'colspan' 	  => true,
-			'colspan_raw' => "<b>"._("The following is a list of users that were not sent password emails")."</b>",
-		),
-		array (
-			'raw' => "<tr><td>"._("User")."</td><td>"._("Reason")."</td></tr>",
-		),
-		array (
-			'colspan' 	  => true,
-			'colspan_raw' => "<hr>",
-		),
-	);
-
-	//Send emails
-	foreach($cxpanel->user_list() as $user)
-	{
-		$voiceMailBox = $cxpanel->hook_voicemail_getMailBox($user['user_id']);
-		$valid 		  = (sha1($user['initial_password']) == $user['hashed_password']);
-		$new_row 	  = "<tr><td>%s</td><td>%s</td></tr>";
-		
-		if(	$voiceMailBox == null || empty($voiceMailBox['email']))
-		{
-			$passEmailResults[] = array('raw' => sprintf($new_row, $user['user_id'], _("No email set on extension page")));
-			continue;
-		}
-		
-		if(!$valid)
-		{
-			$passEmailResults[] = array('raw' => sprintf($new_row, $user['user_id'], _("Initial password no longer valid")));
-			continue;
-		}
-
-		if($user['add_user'] != "1")
-		{
-			$passEmailResults[] = array('raw' => sprintf($new_row, $user['user_id'], _("Extension not set to add user")));
-			continue;
-		}
-
-		//Send email
-		$cxpanel->send_password_email($user['user_id']);
-	}
-}
-
 //Grab the email settings information 
 $emailSettings = $cxpanel->email_get();
 
@@ -514,43 +334,39 @@ $voicemailAgentInformation = $cxpanel->voicemail_agent_get();
 $recordingAgentInformation = $cxpanel->recording_agent_get();
 
 $table_lines = array(
-	array (
-		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<h2 id="title">%s</h2>', $brandName),
+	array(
+		'raw' => empty($licenseActivationErrorMessage) ? '' : sprintf('<div class="alert alert-danger" role="alert">%s</div>', $licenseActivationErrorMessage),
+	),
+
+	array(
+		'name'  => 'activation',
+		'title' => _('Activation'),
 	),
 	array(
+		// Activate License
+		'type' => "list",
+		'list' => empty($licenseActivateAddition) ? array() : $licenseActivateAddition,
+	),
+	array(
+		// Bind License
 		'type' => 'list',
 		'list' => empty($licenseBindAddition) ? array() : $licenseBindAddition,
 	),
-	array(
-		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<span style="color: #FF0000;">%s</span>', $serverErrorMessage),
-	),
-	array(
-		'type' => 'list',
-		'list' => $debugAddition,
-	),
-	array(
-		'type' => 'list',
-		'list' => empty($passwordAddition) ? array() : $passwordAddition,
-	),
-	array(
-		'raw' => $emailPasswordLink,
-	),
-	array(
-		'type' => 'list',
-		'list' => empty($passEmailResults) ? array() : $passEmailResults,
-	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array(
-		'colspan' => true,
+		'name'  => 'server',
 		'title' => _('Server'),
+	),
+	array(
+		'colspan' 	  => true,
+		'colspan_raw' => empty($serverErrorMessage) ? '' : sprintf('<div class="alert alert-danger" role="alert">%s</div>', $serverErrorMessage),
 	),
 	array(
 		'title' => _("Connected:"),
 		'help'  => sprintf(_("Displays if the module can connect to the %s server. If not the server may not be running or the connection information below may be incorrect."), $brandName),
-		'value' => isset($serverErrorMessage) ? "<span style=\"color: #FF0000;\">"._("NO")."</span>" : "<span style=\"color: #00FF00;\">"._("YES")."</span>",
+		'value' => sprintf('<span class="cxpanel_connection_%s">%s</span>',  (isset($serverErrorMessage) ? "no" : "yes"), (isset($serverErrorMessage) ? _("NO") : _("YES"))),
 		//If an error occurred in the server query show disconnected else show connected
 	),
 	array(
@@ -558,10 +374,11 @@ $table_lines = array(
 		'help'  => _("Displays the version of the server."),
 		'value' => (empty($brand)) ? _("Unknown") : sprintf("%s build %s", $brand->version, $brand->build),
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array(
-		'colspan' => true,
+		'name'  => 'license',
 		'title' => _('License'),
 	),
 	array(
@@ -580,25 +397,27 @@ $table_lines = array(
 		'value' => (empty($license)) ? _("Unknown") : $license->type,
 	),
 	array(
+		// Info License
 		'type' => "list",
-		'list' => (empty($licenseAdditions)) ? array() : $licenseAdditions,
+		'list' => empty($licenseAdditions) ? array() : $licenseAdditions,
 	),
-	array(
-		'type' => "list",
-		'list' => empty($licenseActivateAddition) ? array() : $licenseActivateAddition,
-	),
-	array(
-		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<span style="color: #FF0000;">%s</span>', $licenseActivationErrorMessage),
-	),
-	array(
-		'raw' => sprintf('<form name="cxpanel_settings_form" id="cxpanel_settings_form" action="config.php?type=setup&display=cxpanel%s" method="post" onsubmit="return checkForm();">', $urlAppend),
-	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('General Settings'),
+		'name'  => 'settings',
+		'title' => _('General Settings'),
+	),
+	array(
+		'input_type' => 'form',
+		'input_name' => 'cxpanel_settings_form',
+		'method' 	 => 'post',
+		'action' 	 => 'config.php?type=setup&display=cxpanel',
+	),
+	array(
+		'input_type'  => 'hidden',
+		'input_name'  => 'cxpanel_settings',
+		'input_value' => 'cxpanel_settings',
 	),
 	$syncWithUsermanAddition,
 	array(
@@ -609,103 +428,124 @@ $table_lines = array(
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['clean_unknown_items'] == '1'),
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('Server API Connection Settings'),
+		'name'  => 'settings_api',
+		'title' => _('Server API Connection Settings'),
 	),
 	array(
 		'title' 	  => _("Server Name:"),
 		'help'  	  => _("Unique id of the core server instance to manage."),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_name",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['name']),
+		'placeholder' => $cxpanel->defaultVal['api']['name'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Host:"),
 		'help'        => sprintf(_('IP Address or host name of the %s server API. Set to "localhost" if the server is installed on the same machine.'), $brandName),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_api_host",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['api_host']),
+		'placeholder' => $cxpanel->defaultVal['api']['host'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	 => _("Port:"),
 		'help'  	 => sprintf(_('Port of the %1$s server API.<br/><br/>Default Port: 58080<br/>Default SSL Port: 55050 (SSL is disalbed by default on the %1$s server. See the %1$s server security.xml file.)'), $brandName),
 		'input_type' => 'number',
 		'input_name' => "cxpanel_api_port",
-		'input_size' => "20",
+		'input_size' => "5",
 		'input_limit'=> array(
 			"min" => "1",
 			"max" => "65535",
 		),
 		'input_value' => htmlspecialchars($serverInformation['api_port']),
+		'placeholder' => $cxpanel->defaultVal['api']['port'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Username:"),
 		'help'  	  => sprintf(_('Username used to authenticate with the server API. The realm auth user credentials can be found in the security.xml file in the %s server config directory under the communication_manager servlet security settings.'), $brandName),
+		'help_show'   => true,
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_api_username",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['api_username']),
+		'placeholder' => $cxpanel->defaultVal['api']['username'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Password:"),
 		'help'  	  => sprintf(_('Password used to authenticate with the server API. The realm auth user credentials can be found in the security.xml file in the %s server config directory under the communication_manager servlet security settings.'), $brandName),
+		'help_show'   => true,
 		'input_type'  => 'password',
 		'input_name'  => "cxpanel_api_password",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['api_password']),
+		// 'placeholder' => $cxpanel->defaultVal['api']['password'],
 	),
 	array(
 		'title' 		=> _("Use SSL:"),
 		'help'  		=> sprintf(_('Check this option, if you have endabled SSL on the %1$s server API.<br/><br/>NOTE: If checked your %1$s server must have an SSL keystore configured and the communication_manager servlet security context must have SSL enabled in the security.xml file.</br>You will also need to specify the SSL port number in the API port field above.'), $brandName),
+		'help_show'   	=> true,
 		'input_type' 	=> 'checkbox',
 		'input_name' 	=> "cxpanel_api_use_ssl",
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['api_use_ssl'] == '1'),
 	),
-    array('type' => 'br'),
+    array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('Asterisk Connection Settings'),
+		'name'  => 'settings_asterisk',
+		'title' => _('Asterisk Connection Settings'),
 	),
 	array(
 		'title' 	  => _("Asterisk Server Host:"),
 		'help'  	  => sprintf(_('The ip or hostname of the Asterisk server. This is used to tell the %1$s server how to connect to Asterisk. If the %1$s server and Asterisk are on the same machine this field should be set to "localhost".'), $brandName),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_asterisk_host",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['asterisk_host']),
+		'placeholder' => $cxpanel->defaultVal['asterisk']['host'],
+		'btn_reset'	  => true,
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
 	
+
 	array (
-		'colspan' => true,
-		'title'   => _('Module Client Link Settings'),
+		'name'  => 'module_cli',
+		'title' => _('Module Client Link Settings'),
 	),
 	array(
 		'title' 	  => _("Client Host:"),
 		'help'  	  => sprintf(_('IP Address or host name of the %1$s client. This setting is used when accessing the %1$s client via the links in this GUI and for client links in password emails. If not set the ip or host name from the current URL will be utilized. Normally this should remain blank unless you have a remote %1$s Server install.'), $brandName),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_client_host",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($serverInformation['client_host']),
+		'placeholder' => $cxpanel->defaultVal['client']['host'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	 => _("Client Port:"),
 		'help'  	 => sprintf(_('Web port of the %s client.'), $brandName),
 		'input_type' => 'number',
 		'input_name' => "cxpanel_client_port",
-		'input_size' => "20",
+		'input_size' => "5",
 		'input_limit'=> array(
 			"min" => "1",
 			"max" => "65535",
 		),
 		'input_value' => htmlspecialchars($serverInformation['client_port']),
+		'placeholder' => $cxpanel->defaultVal['client']['port'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 		=> _("Use SSL:"),
@@ -715,365 +555,213 @@ $table_lines = array(
 		'input_value' 	=> "1",
 		'input_checked' => ($serverInformation['client_use_ssl'] == '1'),
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('Voicemail Agent Settings'),
+		'name'  => 'settings_voicemail',
+		'title' => _('Voicemail Agent Settings'),
 	),
 	array(
 		'title' 	  => _("Identifier:"),
 		'help'  	  => _('Identifier of the voicemail agent to bind and configure.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_voicemail_agent_identifier",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($voicemailAgentInformation['identifier']),
+		'placeholder' => $cxpanel->defaultVal['voicemail']['identifier'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Directory:"),
 		'help'  	  => _('Path to the root voicemail directory.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_voicemail_agent_directory",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($voicemailAgentInformation['directory']),
+		'placeholder' => $cxpanel->defaultVal['voicemail']['directory'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Resource Host:"),
 		'help'  	  => _('Hostname or IP used to build voicemail playback URLs.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_voicemail_agent_resource_host",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($voicemailAgentInformation['resource_host']),
+		'placeholder' => $cxpanel->defaultVal['voicemail']['resource_host'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Resource Extension:"),
 		'help'  	  => _('File extension used to build voicemail playback URLs.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_voicemail_agent_resource_extension",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($voicemailAgentInformation['resource_extension']),
+		'placeholder' => $cxpanel->defaultVal['voicemail']['resource_extension'],
+		'btn_reset'	  => true,
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('Recording Agent Settings'),
+		'name'  => 'settings_recording',
+		'title' => _('Recording Agent Settings'),
 	),
 	array(
 		'title' 	  => _("Identifier:"),
 		'help'  	  => _('Identifier of the recording agent to bind and configure.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_recording_agent_identifier",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($recordingAgentInformation['identifier']),
+		'placeholder' => $cxpanel->defaultVal['recording']['identifier'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Directory:"),
 		'help'  	  => _('Path to the root recording directory.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_recording_agent_directory",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($recordingAgentInformation['directory']),
+		'placeholder' => $cxpanel->defaultVal['recording']['directory'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Resource Host:"),
 		'help'  	  => _('Hostname or IP used to build recording playback URLs.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_recording_agent_resource_host",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($recordingAgentInformation['resource_host']),
+		'placeholder' => $cxpanel->defaultVal['recording']['resource_host'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Resource Extension:"),
 		'help'  	  => _('File extension used to build recording playback URLs. Also used as the file type when on demand recordings are made in the panel.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_recording_agent_resource_extension",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($recordingAgentInformation['resource_extension']),
+		'placeholder' => $cxpanel->defaultVal['recording']['resource_extension'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("File Mask:"),
 		'help'  	  => _('File name mask used to parse recording file names and create recording files when on demand recordings are made in the panel.'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_recording_agent_filename_mask",
-		'input_size'  => "20",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($recordingAgentInformation['file_name_mask']),
+		'placeholder' => $cxpanel->defaultVal['recording']['file_name_mask'],
+		'btn_reset'	  => true,
 	),
-	array('type' => 'br'),
+	array('type' => 'endsec'),
+
 
 	array (
-		'colspan' => true,
-		'title'   => _('Password Email Settings'),
+		'name'  => 'settings_mail',
+		'title' => _('Password Email Settings'),
+	),
+	array(
+		'title' 	  => _("From:"),
+		'help'  	  => _('email of the sender of the emails.'),
+		'input_type'  => 'email',
+		'input_name'  => "cxpanel_email_from",
+		'input_size'  => "100",
+		'input_value' => $emailSettings['from'],
+		'placeholder' => $cxpanel->defaultVal['email']['from'],
+		'default' 	  => "",
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	  => _("Subject:"),
-		'help'  	  => _('The subject text of the email. You can specify the following variables in the email:<br/><br/>%%userId%% = The the username that the password belongs to.<br/>%%password%% = The password value.<br/>%%clientURL%% = The URL used to log into the client. Built using the Client Host and Client Port fields above.'),
+		'help'  	  => _('The subject text of the email. You can specify the following variables in the email:<br/>
+							<br/>
+							%%userId%%    = The the username that the password belongs to.<br/>
+							%%password%%  = The password value.<br/>
+							%%clientURL%% = The URL used to log into the client. Built using the Client Host and Client Port fields above.
+						'),
 		'input_type'  => 'text',
 		'input_name'  => "cxpanel_email_subject",
-		'input_size'  => "50",
+		'input_size'  => "1000",
 		'input_value' => htmlspecialchars($emailSettings['subject']),
+		'placeholder' => $cxpanel->defaultVal['email']['subject'],
+		'btn_reset'	  => true,
 	),
 	array(
 		'title' 	 => _("Body:"),
-		'help'  	 => sprintf(_('The body text of the email. If HTML is selected as the type you can include HTML tags. You can specify the following variables in the email:<br/><br/>%%userId%% = The the username that the password belongs to.<br/>%%password%% = The password value.<br/>%%clientURL%% = The URL used to log into the client. Built using the Client Host and Client Port fields above.<br/>%%logo%% = The %s logo image.'), $brandName),
+		'help'  	 => _('The body text of the email. If HTML is selected as the type you can include HTML tags.'),
 		'input_type' => 'textarea',
-		'input_name' => "cxpanel_email_body",
+		'input_name' => "cxpanel_email_body_editor",
+		'input_class'=> 'cxpanel_email_body_editor',
 		'input_size' => array(
-			'cols' => "49",
-			'rows' => "10",
+			'cols' 		=> "49",
+			'rows' 		=> "10",
+			'maxlength' => "4096"
 		),
 		'input_value' => htmlspecialchars($emailSettings['body']),
+		'label_down'  => '<div class="box_legend_keys">
+							<ul class="list-group">
+								<li class="list-group-item active">'. _('You can specify the following variables in the email:').'</li>
+								<li class="list-group-item">'. sprintf(_("The username that the password belongs to. %s"), '<code class="legend_tag">%%userId%%</code>').'</li>
+								<li class="list-group-item">'. sprintf(_("The display name that the password belongs to. %s"), '<code class="legend_tag">%%display%%</code>').'</li>
+								<li class="list-group-item">'. sprintf(_("The password value. %s"), '<code class="legend_tag">%%password%%</code>').'</li>
+								<li class="list-group-item">'. sprintf(_("The URL used to log into the client. %s <br> Built using the Client Host and Client Port fields above."), '<code class="legend_tag">%%clientURL%%</code>').'</li>
+								<li class="list-group-item">'. sprintf(_("The %s logo image. %s"), $brandName, '<code class="legend_tag">%%logo%%</code>').'</li>
+							</ul>
+						</div>',
 	),
-	array('type' => 'br'),
+	array(
+		'input_type'  => 'hidden',
+		'input_name'  => 'cxpanel_email_body',
+		'input_value' => htmlspecialchars($emailSettings['body']),
+	),
+	array('type' => 'endsec'),
 	
+
 	array(
 		'colspan' 	  => true,
-		'colspan_raw' => sprintf('<h5><hr></h5><input type="Submit" name="cxpanel_settings" class="btn btn-block" value="%s">', _('Submit Changes')),
+		'colspan_raw' => sprintf('<h5><hr></h5><button type="button" class="btn btn-lg btn-block btn-settings-save"><i class="fa fa-floppy-o" aria-hidden="true"></i> %s</button>', _('Save Changes')),
 	),
 	array(
 		'raw' => "</form>",
 	),
-
 );
-
-function lineParse($line)
-{
-	if (! is_array($line)) { return; }
-
-	$data_return = "";
-	if (! empty($line))
-	{
-		if (isset($line['raw']))
-		{
-			$data_return = $line['raw'];
-		}
-		else if (! empty($line['type']) && $line['type'] == "br")
-		{
-			$data_return  = '<tr><td colspan="2">&nbsp;</td></tr>';
-		}
-		else if (! empty($line['type']) && $line['type'] == "debug")
-		{
-			$data_return  = sprintf('<tr><td colspan="2"><b>%s</b></td></tr>', $line['title']);
-			$data_return .= sprintf('<tr><td colspan="2">%s</td></tr>', $line['value']);
-		}
-		else if (isset($line['colspan']) && $line['colspan'] == true)
-		{
-			if (isset($line['colspan_raw']))
-			{
-				$data_return = sprintf('<tr><td colspan="2">%s</td></tr>', $line['colspan_raw']);
-			}
-			else
-			{
-				$data_return = sprintf('<tr><td colspan="2"><h5>%s<hr></h5></td></tr>', $line['title']);
-			}
-		}
-		else
-		{
-			$val = "";
-			if (! empty($line['input_type']))
-			{
-				switch ($line['input_type'])
-				{
-					case 'checkbox':
-						$val = sprintf('<input type="checkbox" name="%s" value="%s" %s />', $line['input_name'], $line['input_value'], ($line['input_checked'] == true ? 'checked' : ''));
-						break;
-					
-					case 'text':
-					case 'password':
-						$val = sprintf('<input type="%s" id="%s" name="%s" value="%s" size="%s">', $line['input_type'], $line['input_name'], $line['input_name'], $line['input_value'], $line['input_size']);
-						break;
-
-					case 'number':
-						$val = sprintf('<input type="number" name="%s" value="%s" size="%s" min="%s" max="%s">', $line['input_name'], $line['input_value'], $line['input_size'], $line['input_limit']['min'], $line['input_limit']['max']);
-						break;
-
-					case 'textarea':
-						$val = sprintf('<textarea name="%s" cols="%s" rows="%s">%s</textarea>', $line['input_name'], $line['input_size']['cols'], $line['input_size']['rows'],  $line['input_value']);
-						break;
-
-					case 'raw':
-						$val = $line['input_value'];
-						break;
-
-					default:
-						dbug("Type not supported: Type > ". isset($line['input_type']) ? $line['input_type'] : "Is not definde!!");
-				}
-			}
-			elseif (isset($line['value']))
-			{
-				$val = $line['value'];
-			}
-			$data_return = sprintf('<tr><td class="col_title"><a href="#" class="info">%s<span>%s</span></a></td><td>%s</td></tr>', $line['title'], $line['help'], $val);
-		}
-	}
-	return $data_return;
-}
-
 ?>
 
-<script language="javascript">
-	function export_passwords()
-	{
-		$url = window.FreePBX.ajaxurl + "?module=cxpanel&command=download_password_csv";
-		window.location.assign($url);
-	}
-	$(document).ready(function()
-	{
-		$('.btn-export-password').on("click", function(e) { e.preventDefault(); export_passwords(); });
-	});
-	<!--
-	function checkForm() {
-		
-		var settingsForm = document.getElementById('cxpanel_settings_form');				
-
-		if(settingsForm.elements['cxpanel_name'].value.length == 0) {
-			alert('Name cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_client_port'].value.length == 0) {
-			alert('Client port cannot be blank.');
-			return false;
-		}
-		
-		if(settingsForm.elements['cxpanel_api_host'].value.length == 0) {
-			alert('Server API host cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_api_port'].value.length == 0) {
-			alert('Server API port cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_api_username'].value.length == 0) {
-			alert('Server API username cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_api_password'].value.length == 0) {
-			alert('Server API password cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_asterisk_host'].value.length == 0) {
-			alert('Asterisk host cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_voicemail_agent_identifier'].value.length == 0) {
-			alert('Voicemail agent identifier cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_voicemail_agent_directory'].value.length == 0) {
-			alert('Voicemail agent directory cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_voicemail_agent_resource_host'].value.length == 0) {
-			alert('Voicemail agent resource host cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_voicemail_agent_resource_extension'].value.length == 0) {
-			alert('Voicemail agent resource extension cannot be blank.');
-			return false;
-		}
-		
-		if(settingsForm.elements['cxpanel_recording_agent_identifier'].value.length == 0) {
-			alert('Recording agent identifier cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_recording_agent_directory'].value.length == 0) {
-			alert('Recording agent directory cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_recording_agent_resource_host'].value.length == 0) {
-			alert('Recording agent resource host cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_recording_agent_resource_extension'].value.length == 0) {
-			alert('Recording agent resource extension cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_recording_agent_filename_mask'].value.length == 0) {
-			alert('Recording agent filename mask cannot be blank.');
-			return false;
-		}
-
-		if(settingsForm.elements['cxpanel_api_port'].value != parseInt(settingsForm.elements['cxpanel_api_port'].value)) {
-			alert('Server port must be numeric.');
-			return false;
-		}
-
-		return true;
-	}
-
-	function checkActivationForm() {
-		var activateForm = document.getElementById('cxpanel_activate_license_form');				
-
-		if(activateForm.elements['cxpanel_activate_serial_key'].value.length == 0) {
-			alert('Please specify a serial key.');
-			return false;
-		}
-	}
-
-	function checkBindForm() {
-		var activateForm = document.getElementById('cxpanel_bind_license_form');				
-
-		if(activateForm.elements['cxpanel_bind_license_to'].value.length == 0) {
-			alert('Please specify the licensed to value.');
-			return false;
-		}
-
-		if(activateForm.elements['cxpanel_bind_license_email'].value.length == 0) {
-			alert('Please specify an email for the license.');
-			return false;
-		}
-	}
-
-	function emailPasswords() {
-		if(confirm('Email passwords to users?')) {
-			document.getElementById('cxpanel_send_password_form').submit();
-		}
-	}
-	
-	//-->
-</script>
-
-<div class="content">
-	<?php 
-		echo $licenseActivationError; 
-	?>
-	<table id="cxpanel_table">
+<div class="container-fluid">
+	<div class = "display full-border">
+        <div class="row">
+            <div class="col-sm-12">
+			<?php
+				echo load_view(__DIR__."/view.cxpanel.toolbar.php", array('brandName' => $brandName, 'sync_with_userman' => $serverInformation['sync_with_userman']));
+			?>
+            </div>
+        </div>
 		<?php
-		foreach ($table_lines as $line)
+		if (! empty($licenseActivationError))
 		{
-			if (! empty($line['type']) && $line['type'] == 'list' && isset($line['list']) && is_array($line['list']))
-			{
-				foreach ($line['list'] as $subLine)
-				{
-					$new_subLine = lineParse($subLine);
-					if (! empty($new_subLine))
-					{
-						echo $new_subLine;
-					}
-				}
-			}
-			else
-			{
-				$new_line = lineParse($line);
-				if (! empty($new_line))
-				{
-					echo $new_line;
-				}
-			}
+			echo load_view(__DIR__."/view.cxpanel.license.error.php", array('licenseActivationError' => $licenseActivationError));
 		}
 		?>
-	</table>
+		<div class="row">
+			<div class='col-md-12'>
+				<div class='fpbx-container'>
+					<div class="display no-border">
+						<div class="container-fluid">
+							<div id="cxpanel_forms">
+								<?php 
+									echo load_view(__DIR__."/view.cxpanel.list.php", array('table_lines' => $table_lines));
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

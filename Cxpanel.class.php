@@ -27,6 +27,9 @@
  */
 namespace FreePBX\modules;
 
+use BMO;
+use DB_Helper;
+
 require_once(dirname(__FILE__)."/vendor/autoload.php");
 require_once(dirname(__FILE__)."/lib/dialplan.class.php");
 require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
@@ -36,13 +39,10 @@ require_once(dirname(__FILE__)."/lib/ui/cxpanel_radio.class.php");
 require_once(dirname(__FILE__)."/lib/ui/cxpanel_multi_selectbox.class.php");
 require_once(dirname(__FILE__)."/lib/ui/gui_checkbox.class.php");
 
-class Cxpanel implements \BMO
+class Cxpanel extends DB_Helper implements BMO
 {
-	
-	private $defaultEmailBody;
 	public $brandName;
 	public $log = null;
-	public $UserPasswordMask = "********";
 	private $tables = array(
 		'server' 	=> 'cxpanel_server',
 		'users'  	=> "cxpanel_users",
@@ -52,12 +52,47 @@ class Cxpanel implements \BMO
 		'voicemail' => "cxpanel_voicemail_agent",
 		'recording' => "cxpanel_recording_agent",
 		'email' 	=> "cxpanel_email",
-		'phone' 	=> "cxpanel_phone_number",		
+		'phone' 	=> "cxpanel_phone_number",
 	);
 
-	//"read" and "write" permission for the AMI manager entry.
-	//This list should be kept up to date, for supported versions of Asterisk.
-	public $amiPermissions = 'system,call,log,verbose,command,agent,user,config,dtmf,reporting,cdr,dialplan,originate';
+	public $defaultVal = array(
+		//"read" and "write" permission for the AMI manager entry.
+		//This list should be kept up to date, for supported versions of Asterisk.
+		'amiPermissions' 	=> 'system,call,log,verbose,command,agent,user,config,dtmf,reporting,cdr,dialplan,originate',
+		'UserPasswordMask' 	=> "********",
+		'api' => array(
+			'name' 		=> 'default',
+			'host' 		=> 'localhost',
+			'port' 		=> '58080',
+			'username'  => 'manager',
+			'password'  => 'manag3rpa55word',
+		),
+		'asterisk' => array(
+			'host' => 'localhost',
+		),
+		'client' => array(
+			'host' => '',
+			'port' => '58080',
+		),
+		'voicemail' => array(
+			'identifier' 		 => 'local-vm',
+			'directory' 		 => '',		// << Set in __construct
+			'resource_host' 	 => '',		// << Set in __construct
+			'resource_extension' => 'wav',
+		),
+		'recording' => array(
+			'identifier' 		 => 'local-rec',
+			'directory' 		 => '/var/spool/asterisk/monitor',
+			'resource_host' 	 => '',		// << Set in __construct
+			'resource_extension' => 'wav',
+			'file_name_mask' 	 => '\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}',
+		),
+		'email' => array(
+			'from' 	  => '',				// << Set in __construct
+			'subject' => '',				// << Set in __construct
+			'body' 	  => '',				// << Set in __construct
+		),
+	);
 
 	public function __construct($freepbx = null) {
 		if ($freepbx == null) {
@@ -69,18 +104,27 @@ class Cxpanel implements \BMO
 		$this->Userman 	= &$freepbx->Userman;
 
 		$this->brandName = $this->getBrandName();
-		$this->defaultEmailBody = "<img src=\"%%logo%%\"><br/>\n".
-					"<br/>\n".
-					_("Hello,") . "<br/>\n".
-					"<br/>\n".
-					_("This email is to inform you of your %%brandName%% login credentials:") . "<br/>\n".
-					"<br/>\n".
-					"<b>"._("Username:")."</b> %%userId%% <br/>\n".
-					"<br/>\n".
-					"<b>"._("Password:")."</b> %%password%% <br/>\n".
-					"<br/>\n".
-					"<a href=\"%%clientURL%%\">"._("Click Here To Login")."</a>\n";
 
+		$this->defaultVal['voicemail']['directory'] 	= $this->getPath("voicemail");
+		$this->defaultVal['voicemail']['resource_host'] = php_uname('n');
+
+		$this->defaultVal['recording']['directory'] 	= $this->getPath("monitor");
+		$this->defaultVal['recording']['resource_host'] = php_uname('n');
+		
+		$this->defaultVal['email']['from'] 		= sprintf("%s@%s", get_current_user(), gethostname());
+		$this->defaultVal['email']['subject'] 	= _("%%brandName%% user login password");
+		$this->defaultVal['email']['body'] 		= implode("<br/>", array(
+													"%%logo%%",
+													"",
+													_("Hello,"),
+													"",
+													_("This email is to inform you of your %%brandName%% login credentials:"),
+													"",
+													sprintf("<b>&nbsp;&nbsp;&nbsp;%s</b> %%userId%%", _("Username:")),
+													sprintf("<b>&nbsp;&nbsp;&nbsp;%s</b> %%password%%", _("Password:")),
+													"",
+													sprintf('<a href="%%clientURL%%">%s</a>', _("Click Here To Login"))
+												));
 		$this->log = $this->logInit();
 	}
 
@@ -212,11 +256,14 @@ class Cxpanel implements \BMO
 		//Turn on voicemail polling if not already on
 		if($this->FreePBX->Modules->checkStatus("voicemail"))
 		{
-			if(function_exists("voicemail_get_settings")) {
+			if(function_exists("voicemail_get_settings"))
+			{
 				$vmSettings = voicemail_get_settings(voicemail_getVoicemail(), "settings");
-				if($vmSettings["pollmailboxes"] != "yes" || empty($vmSettings["pollfreq"])) {
+				if($vmSettings["pollmailboxes"] != "yes" || empty($vmSettings["pollfreq"]))
+				{
 					outn(_("Enabling voicemail box polling..."));
-					if(function_exists("voicemail_update_settings")) {
+					if(function_exists("voicemail_update_settings"))
+					{
 						voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));
 					}
 					out(_("Done"));
@@ -224,84 +271,66 @@ class Cxpanel implements \BMO
 			}
 		}
 
-		$sql = sprintf("SELECT COUNT(*) FROM `%s`", $this->tables['server']);
-		$results = (int) $this->db->query($sql)->fetchColumn();
-		if($results < 1)
-		{
-			outn(_("New installed detected, adding default server..."));
-			$sql = sprintf("INSERT INTO `%s` (`name`, `asterisk_host`, `client_host`, `client_port`, `client_use_ssl`, `api_host`, `api_port`, `api_username`, `api_password`, `api_use_ssl`, `sync_with_userman`, `clean_unknown_items`) values (?,?,?,?,?,?,?,?,?,0,1,1)", $this->tables['server']);
-			$sth = $this->db->prepare($sql);
-			$sth->execute(array(
-				'default',
-				'localhost',
-				'',
-				58080,
-				0,
-				'localhost',
-				58080,
-				'manager',
-				'manag3rpa55word',
-			));
-			out(_("Done"));
-		}
-		else
-		{
-			//If userman is installed and this is not an upgrade default sycn_with_userman to true
-			outn(_("Upgrade detected, checking userman mode..."));
 
-			$sql = sprintf("SELECT * FROM `%s`", $this->tables['users']);
-			$sth = $this->db->prepare($sql);
-			$sth->execute();
-			$results = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-			$sql = sprintf("SELECT * FROM `%s` WHERE `sync_with_userman` = 1", $this->tables['server']);
-			$sth = $this->db->prepare($sql);
-			$sth->execute();
-			$results2 = $sth->fetchAll(\PDO::FETCH_ASSOC);
-
-			if(empty($results) && !empty($results2))
-			{
-				outn(_("Needs to sync with userman..."));
-				$sql = sprintf("UPDATE `%s` SET `sync_with_userman` = ?", $this->tables['server']);
-				$sth = $this->db->prepare($sql);
-				$sth->execute(array(1));
-			}
-			else
-			{
-				outn(_("Leaving userman mode unchanged..."));
-			}
-			out(_("Done"));
-		}
-		
-		$set_default = array(
-			$this->tables['voicemail'] => array(
-				'text' 	 => _('voicemail agent'),
-				'insert' => '(`identifier`, `directory`, `resource_host`, `resource_extension`) values (?,?,?,?)',
-				'values' => array(
-					'local-vm',
-					$this->getPath("voicemail"),
-					php_uname('n'),
-					'wav',
+		// Start - All Global Settings
+		$all_settings = array(
+			'server' 	=> array(
+				'text'  	 => _('Server'),
+				'table' 	 => $this->tables['server'],
+				'default' 	 => array(
+					'name' 					=> $this->defaultVal['api']['name'],
+					'asterisk_host' 		=> $this->defaultVal['asterisk']['host'],
+					'client_host' 			=> $this->defaultVal['client']['host'],
+					'client_port' 			=> $this->defaultVal['client']['port'],
+					'client_use_ssl' 		=> 0,
+					'api_host' 				=> $this->defaultVal['api']['host'],
+					'api_port' 				=> $this->defaultVal['api']['port'],
+					'api_username' 			=> $this->defaultVal['api']['username'],
+					'api_password' 			=> $this->defaultVal['api']['password'],
+					'api_use_ssl' 			=> 0,
+					'sync_with_userman'		=> 1,
+					'clean_unknown_items'	=> 1,
 				),
+				'isNull' 	 => is_null($this->voicemail_agent_get()),
+				'callUpdate' => 'server_update_key',
+				'callNull' 	 => function() {
+					outn(_("Upgrade detected, checking userman mode..."));
+					if(empty($this->user_list()) && !empty($this->server_get("sync_with_userman")))
+					{
+						outn(_("Needs to sync with userman..."));
+						$this->server_update_key('sync_with_userman', 1);
+					}
+					else
+					{
+						outn(_("Leaving userman mode unchanged..."));
+					}
+					out(_("Done"));
+				},
 			),
-			$this->tables['recording'] => array(
-				'text' 	 => _('recording agent'),
-				'insert' => '(`identifier`, `directory`, `resource_host`, `resource_extension`, `file_name_mask`) values (?,?,?,?,?)',
-				'values' => array(
-					'local-rec',
-					$this->getPath("monitor"),
-					php_uname('n'),
-					'wav',
-					'\${Tag(exten)}-\${DstExtension}-\${SrcExtension}-\${Date(yyyyMMdd)}-\${Time(HHmmss)}-\${CDRUniqueId}',
-				),
+			'voicemail' => array(
+				'text'  	 => _('Voicemail Agent'),
+				'table' 	 => $this->tables['voicemail'],
+				'default' 	 => $this->defaultVal['voicemail'],
+				'isNull' 	 => is_null($this->voicemail_agent_get()),
+				'callUpdate' => 'voicemail_agent_update_key',
 			),
-			$this->tables['email'] => array(
-				'text' 	 => _('email'),
-				'insert' => '(`subject`, `body`) values (?,?)',
-				'values' => array(
-					sprintf(_("%s user login password"), $this->brandName),
-					$this->defaultEmailBody,
+			'recording' => array(
+				'text'  	 => _('Recording Agent'),
+				'table' 	 => $this->tables['recording'],
+				'default' 	 => $this->defaultVal['recording'],
+				'isNull' 	 => is_null($this->recording_agent_get()),
+				'callUpdate' => 'recording_agent_update_key',
+			),
+			'email' 	=> array(
+				'text'  	 => _('Email'),
+				'table' 	 => $this->tables['email'],
+				'default' 	 => array(
+					"from" 	  => "",
+					"subject" => $this->defaultVal['email']['subject'],
+					"body" 	  => $this->defaultVal['email']['body'],
 				),
+				'isNull' 	 => is_null($this->email_get()),
+				'callUpdate' => 'email_update_key',
 			),
 			// TODO: Disabled cxpanel_phone_number - error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'subject' in 'field list'
 			// $this->tables['phone'] => array(
@@ -313,127 +342,190 @@ class Cxpanel implements \BMO
 			// 	),
 			// ),
 		);
-
-		foreach ($set_default as $key => $val)
+		foreach ($all_settings as $key => $val)
 		{
-			outn( sprintf(_('Build %s table...'), $val['text']));
-			$sql = sprintf("SELECT COUNT(*) FROM `%s`", $key);
-			$results = (int) $this->db->query($sql)->fetchColumn();
-			if($results < 1)
+			if ($val['isNull'])
 			{
-				$sql = sprintf("INSERT INTO `%s` %s", $key, $val['insert']);
-				$sth = $this->db->prepare($sql);
-				$sth->execute($val['values']);
+				$table 		 = $val['table'];
+				$source_data = array();
+				$table_drop  = false;
+				
+				$sql 		 = sprintf("SHOW TABLES LIKE '%s'", $table);
+				$result 	 = $this->db->query($sql);
+				$tableExists = (! empty($result) && $result->rowCount() > 0);
+
+				if ($tableExists)
+				{
+					outn( sprintf(_("Migrating %s settings... "), $val['text']));
+					
+					$sql = sprintf("SELECT * FROM `%s`", $table);
+					$sth = $this->db->prepare($sql);
+					$sth->execute();
+
+					$source_data = $sth->fetch(\PDO::FETCH_ASSOC);
+					$table_drop  = true;
+				}
+				else
+				{
+					$source_data = $val['default'];
+					outn( sprintf(_("Creating %s settings... "), $val['text']));
+				}
+
+				if (method_exists($this, $val['callUpdate']))
+				{
+					foreach ($source_data as $key_opt => $val_opt)
+					{
+						call_user_func(array($this, $val['callUpdate']), $key_opt, $val_opt);
+					}
+					out(_("Done"));
+				}
+				else
+				{
+					out(_("Skip!"));
+					out(sprinft(_("Filed to create %s settings, %s method not found!"), $val['text'], $val['callUpdate']));
+					$table_drop = false;
+				}
+
+				if ($tableExists && $table_drop)
+				{
+					outn( sprintf(_("Remove old %s settings table... "), $val['text']));
+					$sql = sprintf("DROP TABLE `%s`", $table);
+					$this->db->prepare($sql)->execute();
+					out(_("Done"));
+				}
 			}
-			out(_("Done"));
+			else
+			{
+				if (isset($val['callNull']) && is_callable($val['callNull']) && $val['callNull'] instanceof \Closure)
+				{
+					$val['callNull']();
+				}
+			}
 		}
+		// End - All Global Settings
 
 
 		outn(_("Build users items table..."));
 		//Gather user info
-		$entries = array();
 		if($this->FreePBX->Modules->checkStatus("core"))
 		{
+			$entries  = array();
 			$mod_core = $this->FreePBX->Core();
 			if (($freePBXUsers = $mod_core->listUsers()) !== null)
 			{
 				foreach($freePBXUsers as $freePBXUser)
 				{
 					//Determine user info
-					$userId = $freePBXUser[0];
-					$userDevice = $mod_core->getDevice($userId);
-					$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
-					$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
+					$userId 	 = $freePBXUser[0];
+					$userDevice  = $mod_core->getDevice($userId);
+					$peer 		 = ($userDevice['dial'] != "") 	? $userDevice['dial'] : "SIP/$userId";
+					$displayName = $freePBXUser[1] == "" 		? $freePBXUser[0] : $freePBXUser[1];
 
 					//Generate a password for the user
-					$password = cxpanel_generate_password(10);
+					$password 	  = $this->generate_password(10);
 					$passwordSHA1 = sha1($password);
 
 					//Add user
 					array_push($entries, array(
-						"user_id" => $userId,
-						"display_name" => $displayName,
-						"peer" => $peer,
-						"hashed_password" => $passwordSHA1,
-						"initial_password" => $password,
-						"parent_user_id" => $userId
+						"user_id"			=> $userId,
+						"display_name"		=> $displayName,
+						"peer" 				=> $peer,
+						"hashed_password"	=> $passwordSHA1,
+						"initial_password" 	=> $password,
+						"parent_user_id" 	=> $userId
 					));
 				}
 			}
+			foreach($entries as $entry)
+			{
+				$sql = sprintf("REPLACE INTO `%s` (`user_id`, `display_name`, `peer`, `hashed_password`, `initial_password`, `parent_user_id`, `add_extension`, `add_user`, `full`) VALUES (?,?,?,?,?,?,1,1,1)", $this->tables['users']); 
+				$sth = $this->db->prepare($sql);
+				$sth->execute(array(
+					$entry['user_id'],
+					$entry['display_name'],
+					$entry['peer'],
+					$entry['hashed_password'],
+					$entry['initial_password'],
+					$entry['parent_user_id'],
+				));
+			}
+			out(_("Done"));
 		}
-		foreach($entries as $entry)
+		else
 		{
-			$sql = sprintf("REPLACE INTO `%s` (`user_id`, `display_name`, `peer`, `hashed_password`, `initial_password`, `parent_user_id`, `add_extension`, `add_user`, `full`) VALUES (?,?,?,?,?,?,1,1,1)", $this->tables['users']); 
-			$sth = $this->db->prepare($sql);
-			$sth->execute(array(
-				$entry['user_id'],
-				$entry['display_name'],
-				$entry['peer'],
-				$entry['hashed_password'],
-				$entry['initial_password'],
-				$entry['parent_user_id'],
-			));
+			out(_("Skip, module status check failed!"));
 		}
-		out(_("Done"));
 
 
 		outn(_("Build queues table..."));
 		//Gather queue info
-		$entries = array();
 		if($this->FreePBX->Modules->checkStatus("queues"))
 		{
-			if((function_exists("queues_list")) && (($freePBXQueues = queues_list()) !== null)) {
-				foreach($freePBXQueues as $freePBXQueue) {
-					$queueId = $freePBXQueue[0];
+			$entries = array();
+			if((function_exists("queues_list")) && (($freePBXQueues = queues_list()) !== null))
+			{
+				foreach($freePBXQueues as $freePBXQueue)
+				{
+					$queueId 	 = $freePBXQueue[0];
 					$displayName = $freePBXQueue[1] == "" ? $freePBXQueue[0] : $freePBXQueue[1];
 					array_push($entries, array(
-						"queue_id" => $queueId,
-						"display_name" => $displayName,
+						"queue_id" 		=> $queueId,
+						"display_name" 	=> $displayName,
 					));
 				}
 			}
+			foreach($entries as $entry)
+			{
+				$sql = sprintf("REPLACE INTO `%s` (`queue_id`, `display_name`, `add_queue`) VALUES (?,?, 1)", $this->tables['queues']);
+				$sth = $this->db->prepare($sql);
+				$sth->execute(array(
+					$entry['queue_id'],
+					$entry['display_name'],
+				));
+			}
+			out(_("Done"));
 		}
-		foreach($entries as $entry)
+		else 
 		{
-			$sql = sprintf("REPLACE INTO `%s` (`queue_id`, `display_name`, `add_queue`) VALUES (?,?, 1)", $this->tables['queues']);
-			$sth = $this->db->prepare($sql);
-			$sth->execute(array(
-				$entry['queue_id'],
-				$entry['display_name'],
-			));
+			out(_("Skip, module status check failed!"));
 		}
-		out(_("Done"));
 		
 
 		outn(_("Build conference rooms table..."));
 		//Gather conference room info
-		$entries = array();
 		if($this->FreePBX->Modules->checkStatus("conferences"))
 		{
+			$entries 		 = array();
 			$mod_conferences = $this->FreePBX->Conferences();
 			if (($freePBXConferenceRooms = $mod_conferences->listConferences()) !== null)
 			{
 				foreach($freePBXConferenceRooms as $freePBXConferenceRoom)
 				{
 					$conferenceRoomId = $freePBXConferenceRoom[0];
-					$displayName = $freePBXConferenceRoom[1] == "" ? $freePBXConferenceRoom[0] : $freePBXConferenceRoom[1];
+					$displayName 	  = $freePBXConferenceRoom[1] == "" ? $freePBXConferenceRoom[0] : $freePBXConferenceRoom[1];
 					array_push($entries, array(
 						"conference_room_id" => $conferenceRoomId,
-						"display_name" => $displayName,
+						"display_name" 		 => $displayName,
 					));
 				}
 			}
+			foreach($entries as $entry)
+			{
+				$sql = sprintf("REPLACE INTO `%s` (`conference_room_id`, `display_name`, `add_conference_room`) VALUES (?,?,1)", $this->tables['rooms']);
+				$sth = $this->db->prepare($sql);
+				$sth->execute(array(
+					$entry['conference_room_id'],
+					$entry['display_name'],
+				));
+			}
+			out(_("Done"));
 		}
-		foreach($entries as $entry) {
-			$sql = sprintf("REPLACE INTO `%s` (`conference_room_id`, `display_name`, `add_conference_room`) VALUES (?,?,1)", $this->tables['rooms']);
-			$sth = $this->db->prepare($sql);
-			$sth->execute(array(
-				$entry['conference_room_id'],
-				$entry['display_name'],
-			));
+		else 
+		{
+			out(_("Skip, module status check failed!"));
 		}
-		out(_("Done"));
 	}
+	
 
 	public function uninstall()
 	{
@@ -504,6 +596,12 @@ class Cxpanel implements \BMO
 
 	public function ajaxRequest($req, &$setting)
 	{
+		// ** Allow remote consultation with Postman **
+		// ********************************************
+		// $setting['authenticate'] = false;
+		// $setting['allowremote'] = true;
+		// return true;
+		// ********************************************
 		switch ($req)
 		{
 			case 'getUser':
@@ -522,7 +620,10 @@ class Cxpanel implements \BMO
 					return false;
 				}
 			break;
+			case 'sendPassword':
+			case 'initialUserPassword':
 			case 'download_password_csv':
+			case 'debug':
 				return true;
 		}
 		return false;
@@ -530,7 +631,8 @@ class Cxpanel implements \BMO
 
 	public function ajaxHandler()
 	{
-		switch ($_REQUEST['command'])
+		$command = $_REQUEST['command'];
+		switch ($command)
 		{
 			case 'getUser':
 				// GET admin/ajax.php?module=cxpanel&command=getUser&username=username
@@ -620,7 +722,7 @@ class Cxpanel implements \BMO
 				fputcsv($output, array('user_id', 'initial_password'));
 				foreach($this->user_list() as $user)
 				{
-					if($user['initial_password'] != "")
+					if(! empty($user['initial_password']))
 					{
 						if(sha1($user['initial_password']) == $user['hashed_password'])
 						{
@@ -634,6 +736,122 @@ class Cxpanel implements \BMO
 				download_file($filepath, "password.csv", "text/csv", true);
 				unlink($filepath);
 				exit();
+			break;
+			case 'sendPassword':
+				$status_send = array(
+					'error'   => 0,
+					'success' => 0,
+					'data'    => array(),
+				);
+				foreach($this->user_list() as $user)
+				{
+					$userId 	  = $user['user_id'];
+					$valId 		  = (sha1($user['initial_password']) == $user['hashed_password']);
+					$voiceMailBox = $this->hook_voicemail_getMailBox($userId);
+					
+					$s_status  = false;
+					$s_message = _("Unknown");
+					
+					if(	$voiceMailBox == null || empty($voiceMailBox['email']))
+					{
+						$s_status  = false;
+						$s_message = _("No email set on extension page.");
+					}
+					else if(! $valId)
+					{
+						$s_status  = false;
+						$s_message = _("Initial password no longer valid.");
+					}
+					else if($user['add_user'] != "1")
+					{
+						$s_status  = false;
+						$s_message = _("Extension not set to add user.");
+					}
+					else
+					{
+						if (! $this->send_password_email($userId))
+						{
+							$s_status  = false;
+							$s_message = _("Error sending email.");
+						}
+						else
+						{
+							$s_status  = true;
+							$s_message = _("Mail Sent Successfully.");
+						}
+					}
+					$status_send['data'][] = array(
+						'user_id' => $userId,
+						'status'  => $s_status,
+						'message' => $s_message,
+					);
+					$status_send[$s_status ? 'success' : 'error'] ++;
+				}
+
+				$data = array(
+					"cxpanel" => $this,
+					'request' => $_REQUEST,
+					'data' => $status_send,
+				);
+				$html_code = load_view(__DIR__."/views/view.dialog.passwords.mailing.php", $data);
+				return array("status" => true, "message" => _("Completed Process"), "data" => $status_send, "html" => $html_code);
+			break;
+			case "initialUserPassword":
+
+				//Generate password list array
+				$passwordList = array();
+				foreach($this->user_list() as $user)
+				{
+					if(! empty($user['initial_password']))
+					{
+						if(sha1($user['initial_password']) == $user['hashed_password'])
+						{
+							$passwordList[] = array(
+								"user_id" 		   => $user['user_id'],
+								"initial_password" => $user['initial_password']
+							);
+						}
+					}
+				}
+				
+				$data = array(
+					"cxpanel" 	=> $this,
+					'request' 	=> $_REQUEST,
+					'list' 	 	=> $passwordList,
+					'brandName' => $this->brandName,
+				);
+				$html_code = load_view(__DIR__."/views/view.dialog.passwords.list.php", $data);
+
+				return array("status" => true, "list" => $passwordList, "html" => $html_code);
+			break;
+			case "debug":
+				$debug = array(
+					'main_log' 		  => array(
+						'file' => $this->getPath("log"),
+						'read' => htmlspecialchars(cxpanel_read_file($this->getPath("log"))),
+					),
+					'modify_log' 	  => array(
+						'file' => $this->getPath("log_modify"),
+						'read' => htmlspecialchars(cxpanel_read_file($this->getPath("log_modify"))),
+					),
+					'server' 		  => $this->server_get(),
+					'queues' 		  => $this->queue_list(),
+					'rooms' 		  => $this->conference_room_list(),
+					'managed_items'   => $this->managed_item_get_all(),
+					'voicemail_agent' => $this->voicemail_agent_get(),
+					'recording_agent' => $this->recording_agent_get(),
+					'users' 		  => $this->user_list(),
+					'email' 		  => $this->email_get(),
+					'phone_numbers'   => $this->phone_number_list_all(),
+				);
+
+				$data = array(
+					"cxpanel" => $this,
+					'request' => $_REQUEST,
+					'debug'   => $debug,
+				);
+				$html_code = load_view(__DIR__."/views/view.dialog.debug.php", $data);
+				return array("status" => true, "debug" => $debug, "html" => $html_code);
 			break;
 		}
 		return false;
@@ -680,9 +898,10 @@ class Cxpanel implements \BMO
 			$rec_mask = trim($_REQUEST["cxpanel_recording_agent_filename_mask"]);
 			$this->recording_agent_update($rec_id, $rec_dir, $rec_host, $rec_ext, $rec_mask);
 			
+			$email_from 	= trim($_REQUEST["cxpanel_email_from"]);
 			$email_subject 	= $_REQUEST["cxpanel_email_subject"];
 			$email_body 	= $_REQUEST["cxpanel_email_body"];
-			$this->email_update($email_subject, $email_body);
+			$this->email_update($email_from, $email_subject, $email_body);
 			
 			//Flag FreePBX for reload
 			needreload();
@@ -705,9 +924,14 @@ class Cxpanel implements \BMO
 
 			break;
 
-			case "cxpanel.debug":
-				$data_return = load_view(__DIR__."/views/view.cxpanel.debug.php", $data);
-			break;
+			case "cxpanel.menu":
+				$data['redirectUrl'] = str_replace($this->cfg->get('AMPWEBROOT'), '', $this->cfg->get('FOPWEBROOT'));
+				$data['url_check'] 	 = $this->getClientURL();
+				$data['infoStatus']	 = $this->checkOnline($data['url_check'], true);
+				$data['checkStatus'] = $data['infoStatus']['status'];
+
+				$data_return = load_view(__DIR__."/views/page.cxpanel.menu.php", $data);
+				break;
 
 			default:
 				$data_return = sprintf(_("Page Not Found (%s)!!!!"), $page);
@@ -881,10 +1105,7 @@ class Cxpanel implements \BMO
 				try {
 
 					//Set up the REST connection
-					$webProtocol = ($serverInformation['api_use_ssl'] == '1') ? 'https' : 'http';
-					$baseApiUrl = $webProtocol . '://' . $serverInformation['api_host'] . ':' . $serverInformation['api_port'] . '/communication_manager/api/resource/';
-					$pest = new \FreePBX\modules\Cxpanel\CXPestJSON($baseApiUrl);
-					$pest->setupAuth($serverInformation['api_username'], $serverInformation['api_password']);
+					$pest = $cxpanel->getApiREST();
 
 					//Lookup the core server id based on the slug specified in the database
 					$coreServer = $pest->get("server/coreServers/getBySlug/" . $serverInformation['name']);
@@ -1221,7 +1442,7 @@ class Cxpanel implements \BMO
 			$full 			= $cxpanelUser["full"];
 			$addUser 		= $cxpanelUser["add_user"];
 			$autoAnswer 	= $cxpanelUser["auto_answer"];
-			$password 		= $this->UserPasswordMask;
+			$password 		= $this->defaultVal['UserPasswordMask'];
 
 			//Build list of bound extensions
 			$extensionListValues = $this->user_extension_list($extension);
@@ -1434,6 +1655,8 @@ class Cxpanel implements \BMO
 		$name 		= isset($_REQUEST["name"]) 		 ? $_REQUEST["name"] : null;
 		$extension 	= ($ext == "") 					 ? $extn : $ext;
 
+		$UserPasswordMask_Default = $this->defaultVal['UserPasswordMask'];
+
 		//Determine peer
 		if(isset($_REQUEST["devinfo_dial"]) && ($_REQUEST["devinfo_dial"] != ""))
 		{
@@ -1453,7 +1676,7 @@ class Cxpanel implements \BMO
 		$addUser 		 = $_REQUEST["cxpanel_add_user"] == "1";
 		$full 			 = $_REQUEST["cxpanel_full_user"] == "1";
 		$emailPassword 	 = $_REQUEST["cxpanel_email_new_pass"] == "1";
-		$password 		 = isset($_REQUEST['cxpanel_password']) 			? trim($_REQUEST["cxpanel_password"]) : $this->UserPasswordMask;
+		$password 		 = isset($_REQUEST['cxpanel_password']) 			? trim($_REQUEST["cxpanel_password"]) : $UserPasswordMask_Default;
 		$extensionList 	 = isset($_REQUEST['cxpanel_extensions']) 			? $_REQUEST['cxpanel_extensions'] : array();
 		$phoneNumberList = isset($_REQUEST['cxpanel_phone_numbers-values']) ? $_REQUEST['cxpanel_phone_numbers-values'] : array();
 
@@ -1486,7 +1709,7 @@ class Cxpanel implements \BMO
 					if($addition)
 					{
 						//Check if a user is being created for this extension. If so get the password set for the extension's user else create an initial password.
-						$password = cxpanel_generate_password(10);
+						$password = $this->generate_password(10);
 						if($_REQUEST['userman|assign'] == 'add' && !empty($_REQUEST['userman|password']))
 						{
 							$password = $_REQUEST['userman|password'];
@@ -1528,13 +1751,13 @@ class Cxpanel implements \BMO
 					}
 
 					//Check if the password needs to be sent
-					if(	$password != $this->UserPasswordMask && $emailPassword && isset($_REQUEST['email']) && $_REQUEST['email'] != "")
+					if(	$password != $UserPasswordMask_Default && $emailPassword && isset($_REQUEST['email']) && $_REQUEST['email'] != "")
 					{
 						$this->send_password_email($extension, $password, $_REQUEST['email']);
 					}
 
 					//Check if the password needs to be marked as dirty
-					if($password != $this->UserPasswordMask)
+					if($password != $UserPasswordMask_Default)
 					{
 						$this->mark_user_password_dirty($extension, true);
 					}
@@ -1706,27 +1929,53 @@ class Cxpanel implements \BMO
 	 */
 	public function server_update($name, $asteriskHost, $clientHost, $clientPort, $clientUseSSL, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems)
 	{
-		$values = array($name, $asteriskHost, $clientHost, $clientPort, $clientUseSSL, $apiHost, $apiPort, $apiUserName, $apiPassword, $apiUseSSL, $syncWithUserman, $cleanUnknownItems);
-		$sql = sprintf("UPDATE %s SET name = ?, asterisk_host = ?, client_host = ?, client_port = ?, client_use_ssl = ?, api_host = ?, api_port = ?, api_username = ?, api_password = ?, api_use_ssl = ?, sync_with_userman = ?, clean_unknown_items = ?", $this->tables['server']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute($values);
+		$new_config  = array(
+			"name"					=> $name,
+			"asterisk_host"			=> $asteriskHost,
+			"client_host"			=> $clientHost,
+			"client_port"			=> $clientPort,
+			"client_use_ssl"		=> $clientUseSSL,
+			"api_host"				=> $apiHost,
+			"api_port"				=> $apiPort,
+			"api_username"			=> $apiUserName,
+			"api_password"			=> $apiPassword,
+			"api_use_ssl"			=> $apiUseSSL,
+			"sync_with_userman"		=> $syncWithUserman,
+			"clean_unknown_items"	=> $cleanUnknownItems,
+		);
+		foreach($new_config as $key => $value)
+		{
+			$this->server_update_key($key, $value);
+		}
+	}
+
+	public function server_update_key($key, $val)
+	{
+		$id_settings = "settings_server";
+		$old_config  = $this->server_get();
+
+		if ($val != $old_config[$key])
+		{
+			$this->setConfig($key, $val, $id_settings);
+		}
 	}
 
 	/**
 	 * API fucntion to get the server information
 	 * @return array|null
 	 */
-	public function server_get()
+	public function server_get($option = null)
 	{
-		$sql = sprintf("SELECT * FROM %s", $this->tables['server']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute();
-		$results = $sth->fetch(\PDO::FETCH_ASSOC);
-		if (empty($results))
+		$id_settings = "settings_server";
+		if (is_null($option))
 		{
-			return null;
+			$data = $this->getAll($id_settings);
 		}
-		return $results;
+		else
+		{
+			$data = $this->getConfig($option, $id_settings);
+		}
+		return empty($data) ? null : $data;
 	}
 
 	/**
@@ -1738,27 +1987,45 @@ class Cxpanel implements \BMO
 	 */
 	public function voicemail_agent_update($identifier, $directory, $resourceHost, $resourceExtension)
 	{
-		$values = array($identifier, $directory, $resourceHost, $resourceExtension);
-		$sql = sprintf("UPDATE %s SET identifier = ?, directory = ?, resource_host = ?, resource_extension = ?", $this->tables['voicemail']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute($values);
+		$new_config  = array(
+			"identifier"		 => $identifier,
+			"directory"			 => $directory,
+			"resource_host"		 => $resourceHost,
+			"resource_extension" => $resourceExtension,
+		);
+		foreach($new_config as $key => $value)
+		{
+			$this->voicemail_agent_update_key($key, $value);
+		}
+	}
+
+	public function voicemail_agent_update_key($key, $val)
+	{
+		$id_settings = "settings_voicemail_agent";
+		$old_config  = $this->voicemail_agent_get();
+
+		if ($val != $old_config[$key])
+		{
+			$this->setConfig($key, $val, $id_settings);
+		}
 	}
 
 	/**
 	 * API fucntion to get the voicemail agent information
 	 * @return array|null
 	 */
-	public function voicemail_agent_get()
+	public function voicemail_agent_get($option = null)
 	{
-		$sql = sprintf("SELECT * FROM %s", $this->tables['voicemail']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute();
-		$results = $sth->fetch(\PDO::FETCH_ASSOC);
-		if (empty($results))
+		$id_settings = "settings_voicemail_agent";
+		if (is_null($option))
 		{
-			return null;
+			$data = $this->getAll($id_settings);
 		}
-		return $results;
+		else
+		{
+			$data = $this->getConfig($option, $id_settings);
+		}
+		return empty($data) ? null : $data;
 	}
 		
 	/**
@@ -1771,59 +2038,96 @@ class Cxpanel implements \BMO
 	 */
 	public function recording_agent_update($identifier, $directory, $resourceHost, $resourceExtension, $fileNameMask)
 	{
-		$values = array($identifier, $directory, $resourceHost, $resourceExtension, $fileNameMask);
+		$new_config  = array(
+			"identifier"		 => $identifier,
+			"directory"			 => $directory,
+			"resource_host"		 => $resourceHost,
+			"resource_extension" => $resourceExtension,
+			"file_name_mask" 	 => $fileNameMask,
+		);
+		foreach($new_config as $key => $value)
+		{
+			$this->recording_agent_update_key($key, $value);
+		}
+	}
 
-		$sql = sprintf("UPDATE %s SET identifier = ?, directory = ?, resource_host = ?, resource_extension = ?, file_name_mask = ?", $this->tables['recording']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute($values);
+	public function recording_agent_update_key($key, $val)
+	{
+		$id_settings = "settings_recording_agent";
+		$old_config  = $this->recording_agent_get();
+
+		if ($val != $old_config[$key])
+		{
+			$this->setConfig($key, $val, $id_settings);
+		}
 	}
 
 	/**
 	 * API fucntion to get the recording agent information
 	 * @return array|null
 	 */
-	public function recording_agent_get()
+	public function recording_agent_get($option = null)
 	{
-		$sql = sprintf("SELECT * FROM %s", $this->tables['recording']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute();
-		$results = $sth->fetch(\PDO::FETCH_ASSOC);
-		if (empty($results))
+		$id_settings = "settings_recording_agent";
+		if (is_null($option))
 		{
-			return null;
+			$data = $this->getAll($id_settings);
 		}
-		return $results;
+		else
+		{
+			$data = $this->getConfig($option, $id_settings);
+		}
+		return empty($data) ? null : $data;
 	}
 
 	/**
 	 * API fucntion to get the email information
-	 * @return array|null
+	 * 
+	 * @param string $option 	Option that we want to obtain the data, if it is left blank or null is passed, all the options will be returned.
+	 * @return array|null|string
 	 */
-	public function email_get()
+	public function email_get($option = null)
 	{
-		$sql = sprintf("SELECT * FROM %s", $this->tables['email']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute();
-		$results = $sth->fetch(\PDO::FETCH_ASSOC);
-		if (empty($results))
+		$id_settings = "settings_mail";
+		if (is_null($option))
 		{
-			return null;
+			$data = $this->getAll($id_settings);
 		}
-		return $results;
+		else
+		{
+			$data = $this->getConfig($id_settings);
+		}
+		return empty($data) ? null : $data;
+	}
+
+	public function email_update_key($key, $val)
+	{
+		$id_settings = "settings_mail";
+		$old_config  = $this->email_get();
+
+		if ($val != $old_config[$key])
+		{
+			$this->setConfig($key, $val, $id_settings);
+		}
 	}
 
 	/**
 	 * API function to update the email information
+	 * @param String $from the from of the email address
 	 * @param String $subject the subject of the email
 	 * @param String $body the body of the email
 	 */
-	public function email_update($subject, $body)
+	public function email_update($from, $subject, $body)
 	{
-		$values = array($subject, $body);
-
-		$sql = sprintf("UPDATE %s SET subject = ?, body = ?", $this->tables['email']);
-		$sth = $this->db->prepare($sql);
-		$sth->execute($values);
+		$new_config  = array(
+			"from" 	  => $from,
+			"subject" => $subject,
+			"body" 	  => $body,
+		);
+		foreach($new_config as $key => $value)
+		{
+			$this->email_update_key($key, $value);
+		}
 	}
 
 	/**
@@ -1888,7 +2192,7 @@ class Cxpanel implements \BMO
 	 * @param String $userId the user id of the FreePBX user
 	 * @param Boolean $addExtension true if an extension should be created for the user
 	 * @param Boolean $addUser true if a user login should be created for the user
-	 * @param String $password the user login password for the user if this is equal to the global $cxpanelUserPasswordMask the password will not be updated
+	 * @param String $password the user login password for the user if this is equal to the global $this->defaultVal['UserPasswordMask'] the password will not be updated
 	 * @param Boolean $autoAnswer true if the user's extension should autoanswer origination callbacks in the panel
 	 * @param String $peer the peer value for the extension
 	 * @param String $displayName the user and extension display name
@@ -1908,7 +2212,7 @@ class Cxpanel implements \BMO
 		 */
 		$passModify = "";
 		$hashedPassword = "";
-		if($password != $this->UserPasswordMask) {
+		if($password != $this->defaultVal['UserPasswordMask']) {
 			$passModify = ", hashed_password = ?";
 			$hashedPassword = sha1($password);
 		}
@@ -2466,8 +2770,9 @@ class Cxpanel implements \BMO
 		//If not found create a manager profile for cxpanel
 		if((function_exists("manager_add")) && (!$managerFound))
 		{
+			$amiPermissions = $this->defaultVal['amiPermissions'];
 			$this->debug(_("Creating manager connection"));
-			manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", $this->amiPermissions, $this->amiPermissions);
+			manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", $amiPermissions, $amiPermissions);
 
 			if(function_exists("manager_gen_conf"))
 			{
@@ -2671,7 +2976,7 @@ class Cxpanel implements \BMO
 				$this->user_update($checkUser['user_id'],
 									true, 
 									false,
-									$this->UserPasswordMask,
+									$this->defaultVal['UserPasswordMask'],
 									$checkUser['auto_answer'] == "1",
 									$checkUser['peer'],
 									$checkUser['display_name'],
@@ -2723,17 +3028,20 @@ class Cxpanel implements \BMO
 		$password = $pass != "" ? $pass : $cxpanelUser['initial_password'];
 
 		//Determine the email
-		$email = $email != "" ? $email : $voiceMailBox['email'];
+		$email 		 = !empty($email) ? $email : $voiceMailBox['email'];
+		$email_array = explode(",", $email);
 
 		//Prepare the values for the remplace in templace
 		$var_remplace = array (
 			'userId' 	=> $cxpanelUser['user_id'],
+			'display' 	=> $cxpanelUser['display_name'],
 			'password' 	=> $password,
 			'clientURL' => $this->getClientURL(),
 			'brandName' => $this->brandName,
 		);
 
 		//Prepare the subject and body contents
+		$from 		  = empty($emailSettings['from']) ? $this->defaultVal['email']['from'] : $emailSettings['from'];
 		$subject 	  = $emailSettings['subject'];
 		$bodyContents = $emailSettings['body'];
 
@@ -2743,32 +3051,45 @@ class Cxpanel implements \BMO
 			$bodyContents = str_ireplace("%%" . $key . "%%", $value, $bodyContents);
 		}
 
+		//Prepare the logo
+		//TODO: Create Config logo file
+		$logo = $this->cfg->get('BRAND_IMAGE_FREEPBX_FOOT');
+		$bodyContents = str_ireplace("%%logo%%", '<img src="cid:logo">', $bodyContents);
+
+		//Format AltBody in text plane
+		$bodyContentsText = $bodyContents;
+		$bodyContentsText = preg_replace('/<br(\s+)?\/?>/i', "\n\r", $bodyContentsText);
+		$bodyContentsText = strip_tags($bodyContents);
+
 		//Create new mailer
 		$phpMailer = new \PHPMailer\PHPMailer\PHPMailer(true);
 		try
 		{
 			$phpMailer->isMail();
 
-			//TODO: Create Config From
-			$from = get_current_user() . '@' . gethostname();
-
-			//TODO: Create Config logo file
-			$logo = $this->cfg->get('BRAND_IMAGE_FREEPBX_FOOT');
-			
 			//Create the email
+			$phpMailer->CharSet = 'UTF-8';
 			$phpMailer->isHTML(true);
 			$phpMailer->setFrom($from, $this->brandName);
-			$phpMailer->addAddress($email);
+			foreach ($email_array as $mail)
+			{
+				$phpMailer->addAddress($mail);
+			}
+			$phpMailer->AddEmbeddedImage($logo, 'logo');
 			$phpMailer->Subject = $subject;
 			$phpMailer->Body    = $bodyContents;
-			$phpMailer->AltBody = $bodyContents;
-			$phpMailer->AddEmbeddedImage($logo, 'logo');
+			$phpMailer->AltBody = $bodyContentsText;
 
 			//Send the email
 			$phpMailer->send();
 			return true;
 		}
 		catch (\PHPMailer\PHPMailer\Exception $e)
+		{
+			dbug(sprintf(_("ERROR: Message could not be sent. Mailer Error -> %s"), $phpMailer->ErrorInfo));
+			return false;
+		}
+		catch (\Exception $e)
 		{
 			dbug(sprintf(_("ERROR: Message could not be sent. Mailer Error -> %s"), $phpMailer->ErrorInfo));
 			return false;
@@ -2902,4 +3223,81 @@ class Cxpanel implements \BMO
 			$this->log->close();
 		}
 	}
+
+	public function getApiREST($logger = null, $serverInformation = null)
+	{
+		if (is_null($serverInformation))
+		{
+			$serverInformation = $this->server_get();
+		}
+		$webProtocol = ($serverInformation['api_use_ssl'] == '1') ? 'https' : 'http';
+		$baseApiUrl  = sprintf("%s://%s:%s/communication_manager/api/resource/", $webProtocol, $serverInformation['api_host'], $serverInformation['api_port']);
+		if (! is_null($logger))
+		{
+			$logger->debug(sprintf(_("Starting REST connection to %s"), $baseApiUrl));
+		}
+		$pest = new \FreePBX\modules\Cxpanel\CXPestJSON($baseApiUrl);
+		$pest->setupAuth($serverInformation['api_username'], $serverInformation['api_password']);
+		return $pest;
+	}
+
+	/**
+	 * 
+	 * Generates a random password of the given length
+	 * @author http://www.laughing-buddha.net/php/password
+	 *
+	 */
+	public function generate_password ($length = 8)
+	{
+		$password = "";
+		$possible = "2346789bcdfghjkmnpqrtvwxyzBCDFGHJKLMNPQRTVWXYZ";
+		$maxlength = strlen($possible);
+		
+		if ($length > $maxlength)
+		{
+			$length = $maxlength;
+		}
+
+		for ($i = 0; $i < $length; $i++)
+		{
+			$char = substr($possible, mt_rand(0, $maxlength-1), 1);
+			if (!strstr($password, $char))
+			{
+				$password .= $char;
+			}
+		}
+		return $password;
+	}
+	
+	public function checkOnline($url, $returnInfo = false, $debug = false)
+	{
+		$agent = "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)";
+		$ch=curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_VERBOSE, false);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_SSLVERSION, 3);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+
+		if(curl_exec($ch) === false)
+		{
+			$error = curl_error($ch);
+			if ($debug)
+			{
+				dbug($error);
+			}
+		}
+		$info = curl_getinfo($ch);
+		if ($debug)
+		{
+			dbug($info);
+		}
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$status = ($httpcode >= 200 && $httpcode < 300 && $httpcode != 0) ? true : false;
+		curl_close($ch);
+		return !$returnInfo ? $status : array('status' => $status, 'info' => $info, 'error' => (empty($error) ? '' : $error));
+   }
 }
