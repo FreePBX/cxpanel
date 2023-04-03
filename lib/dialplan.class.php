@@ -8,6 +8,9 @@
  *Purpose      : Provides classes for missing dialplan application that are required by the module
  */
 
+namespace FreePBX\modules\Cxpanel\dialplan;
+if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed'); }
+
 /**
  *
  * ParkAndAnnounce application class

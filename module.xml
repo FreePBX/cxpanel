@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>16.0.2</version>
+	<version>16.0.3</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -28,6 +28,54 @@
 	<supported>
 		<version>16.0</version>
 	</supported>
+	<database>
+		<table name="cxpanel_phone_number">
+    		<field name="cxpanel_phone_number_id" type="integer" primarykey="true" autoincrement="true"/>
+    		<field name="user_id" type="string" length="1000"/>
+    		<field name="phone_number" type="string" length="1000"/>
+    		<field name="type" type="string" length="1000"/>
+  		</table>
+		<table name="cxpanel_users">
+			<field name="cxpanel_user_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="user_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="peer" type="string" length="1000"/>
+			<field name="add_extension" type="integer"/>
+			<field name="full" type="integer"/>
+			<field name="add_user" type="integer"/>
+			<field name="hashed_password" type="string" length="1000"/>
+			<field name="initial_password" type="string" length="1000"/>
+			<field name="auto_answer" type="integer" default="1"/>
+			<field name="parent_user_id" type="string" length="1000"/>
+			<field name="password_dirty" type="integer" default="0"/>
+    		<key name="user_id" type="unique">
+      			<column name="user_id"/>
+    		</key>
+		</table>
+		<table name="cxpanel_queues">
+			<field name="cxpanel_queue_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="queue_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="add_queue" type="integer"/>
+			<key name="queue_id" type="unique">
+				<column name="queue_id"/>
+			</key>
+		</table>
+		<table name="cxpanel_conference_rooms">
+			<field name="cxpanel_conference_room_id" type="integer" primarykey="true" autoincrement="true"/>
+			<field name="conference_room_id" type="string" length="190"/>
+			<field name="display_name" type="string" length="1000"/>
+			<field name="add_conference_room" type="integer"/>
+			<key name="conference_room_id" type="unique">
+				<column name="conference_room_id"/>
+			</key>
+		</table>
+		<table name="cxpanel_managed_items">
+			<field name="cxpanel_id" type="string" length="1000"/>
+			<field name="fpbx_id" type="string" length="1000"/>
+			<field name="type" type="string" length="1000"/>
+		</table>
+	</database>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">
 			<method namespace="FreePBX\Modules" class="Cxpanel" callingMethod="addUser">usermanAddUser</method>

@@ -25,7 +25,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<span id="cxpanel_add_user-help" class="help-block fpbx-help-block"><?php echo _("Makes this user available in $cxpanelBrandName.")?></span>
+			<span id="cxpanel_add_user-help" class="help-block fpbx-help-block"><?php echo sprintf(_("Makes this user available in %s"),$cxpanelBrandName) ?></span>
 		</div>
 	</div>
 </div>
