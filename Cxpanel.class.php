@@ -1105,7 +1105,7 @@ class Cxpanel extends DB_Helper implements BMO
 				try {
 
 					//Set up the REST connection
-					$pest = $cxpanel->getApiREST();
+					$pest = $this->getApiREST();
 
 					//Lookup the core server id based on the slug specified in the database
 					$coreServer = $pest->get("server/coreServers/getBySlug/" . $serverInformation['name']);
