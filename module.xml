@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>16.0.2</version>
+	<version>17.0.1</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -26,7 +26,7 @@
 	<license>GPLv3</license>
 	<licenselink>http://www.gnu.org/licenses/gpl-3.0.txt</licenselink>
 	<supported>
-		<version>16.0</version>
+		<version>17.0</version>
 	</supported>
 	<hooks>
 		<userman namespace="FreePBX\modules" class="Userman">
