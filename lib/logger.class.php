@@ -8,6 +8,9 @@
  *Purpose      : Provides a class used to log into a specified file.
  */
 
+namespace FreePBX\modules\Cxpanel\Log;
+if (!defined('FREEPBX_IS_AUTH')) { die('No direct script access allowed'); }
+
 /**
  *
  * Logs messages to a file
@@ -42,6 +45,19 @@ class cxpanel_logger {
 		if(!isset($this->fd)) {
 			$this->fd = fopen($this->file, 'w');
 		}
+	}
+
+
+	/**
+	 *
+	 * Check if file is open.
+	 *
+	 */
+	function isOpen() {
+		if(isset($this->fd) && !is_null($this->fd)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
