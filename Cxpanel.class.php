@@ -14,16 +14,12 @@
  *	The following files in this module are subject to the above copyright:
  *	./functions.inc.php
  *	./index.php
- *	./install.php
  *	./modify.php
  *	./page.cxpanel_menu.php
  *	./page.cxpanel.php
- *	./uninstall.php
  *	./lib/cxpanel.class.php
  *	./lib/dialplan.class.php
  *	./lib/logger.class.php
- *	./lib/table.class.php
- *	./lib/util.php
  */
 namespace FreePBX\modules;
 
@@ -34,7 +30,6 @@ require_once(dirname(__FILE__)."/vendor/autoload.php");
 require_once(dirname(__FILE__)."/lib/dialplan.class.php");
 require_once(dirname(__FILE__)."/lib/CXPestJSON.php");
 require_once(dirname(__FILE__)."/lib/cxpanel.class.php");
-require_once(dirname(__FILE__)."/lib/util.php");
 require_once(dirname(__FILE__)."/lib/ui/cxpanel_radio.class.php");
 require_once(dirname(__FILE__)."/lib/ui/cxpanel_multi_selectbox.class.php");
 require_once(dirname(__FILE__)."/lib/ui/gui_checkbox.class.php");
@@ -113,17 +108,17 @@ class Cxpanel extends DB_Helper implements BMO
 		
 		$this->defaultVal['email']['from'] 		= sprintf("%s@%s", get_current_user(), gethostname());
 		$this->defaultVal['email']['subject'] 	= _("%%brandName%% user login password");
-		$this->defaultVal['email']['body'] 		= implode("<br/>", array(
+		$this->defaultVal['email']['body'] 		= implode("<br/>\r\n", array(
 													"%%logo%%",
 													"",
 													_("Hello,"),
 													"",
 													_("This email is to inform you of your %%brandName%% login credentials:"),
 													"",
-													sprintf("<b>&nbsp;&nbsp;&nbsp;%s</b> %%userId%%", _("Username:")),
-													sprintf("<b>&nbsp;&nbsp;&nbsp;%s</b> %%password%%", _("Password:")),
+													sprintf('<b>&nbsp;&nbsp;&nbsp;%s</b> %%%%userId%%%%', _("Username:")),
+													sprintf('<b>&nbsp;&nbsp;&nbsp;%s</b> %%%%password%%%%', _("Password:")),
 													"",
-													sprintf('<a href="%%clientURL%%">%s</a>', _("Click Here To Login"))
+													sprintf('<a href="%%%%clientURL%%%%">%s</a>', _("Click Here To Login"))
 												));
 		$this->log = $this->logInit();
 	}
@@ -225,10 +220,11 @@ class Cxpanel extends DB_Helper implements BMO
 		//Set callevents = yes for hold events
 		if($this->FreePBX->Modules->checkStatus("sipsettings"))
 		{
-			if(function_exists("sipsettings_edit") && function_exists("sipsettings_get"))
+			if(function_exists("sipsettings_edit"))
 			{
+				$mod_sipsettings = $this->FreePBX->Sipsettings;
 				outn(_("Setting callevents = yes...."));
-				$sip_settings = sipsettings_get();
+				$sip_settings = $mod_sipsettings->getChanSipSettings();
 				$sip_settings['callevents'] = 'yes';
 				sipsettings_edit($sip_settings);
 				out(_("Done"));
@@ -256,16 +252,14 @@ class Cxpanel extends DB_Helper implements BMO
 		//Turn on voicemail polling if not already on
 		if($this->FreePBX->Modules->checkStatus("voicemail"))
 		{
-			if(function_exists("voicemail_get_settings"))
+			if(function_exists("voicemail_get_settings") && function_exists("voicemail_update_settings"))
 			{
-				$vmSettings = voicemail_get_settings(voicemail_getVoicemail(), "settings");
+				$mod_voicemail  = $this->FreePBX->Voicemail;
+				$vmSettings = voicemail_get_settings($mod_voicemail->getVoicemail(), "settings");
 				if($vmSettings["pollmailboxes"] != "yes" || empty($vmSettings["pollfreq"]))
 				{
 					outn(_("Enabling voicemail box polling..."));
-					if(function_exists("voicemail_update_settings"))
-					{
-						voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));
-					}
+					voicemail_update_settings("settings", "", "", array("gen__pollfreq" => "15", "gen__pollmailboxes" => "yes"));
 					out(_("Done"));
 				}
 			}
@@ -539,12 +533,33 @@ class Cxpanel extends DB_Helper implements BMO
 			out(_("ERROR: could not remove manager entry."));
 		}
 
+		outn(_("Removing client symlink..."));
+		$link_client = $this->getPath("cxpanel");
+		if(file_exists($link_client))
+		{
+			if(is_link($link_client))
+			{
+				unlink($link_client);
+				if( ! file_exists($link_client))
+				{
+					out(_("Done"));
+				}
+				else
+				{
+					out(_("Error: the path still exists!"));
+				}
+			}
+			else
+			{
+				out(_("Skip: the path is not a symbolic link!"));
+			}
+		}
+
 		outn(_("Remove Setting operator panel web root and enabling dev state...."));
 		$set["FOPWEBROOT"] = "";
 		$set["USEDEVSTATE"] = false;
 		$this->cfg->set_conf_values($set, true, true);
 		out(_("Done"));
-
 	}
 
 	public function backup() {}
@@ -828,11 +843,11 @@ class Cxpanel extends DB_Helper implements BMO
 				$debug = array(
 					'main_log' 		  => array(
 						'file' => $this->getPath("log"),
-						'read' => htmlspecialchars(cxpanel_read_file($this->getPath("log"))),
+						'read' => htmlspecialchars($this->read_file($this->getPath("log"))),
 					),
 					'modify_log' 	  => array(
 						'file' => $this->getPath("log_modify"),
-						'read' => htmlspecialchars(cxpanel_read_file($this->getPath("log_modify"))),
+						'read' => htmlspecialchars($this->read_file($this->getPath("log_modify"))),
 					),
 					'server' 		  => $this->server_get(),
 					'queues' 		  => $this->queue_list(),
@@ -1622,7 +1637,7 @@ class Cxpanel extends DB_Helper implements BMO
 					//If the password is still valid create a link that allows the password to be emailed
 					if($validPass && $hasEmail)
 					{
-						$linkUrl = cxpanel_get_current_url() . "&cxpanel_email_pass=1";
+						$linkUrl = $this->get_current_url() . "&cxpanel_email_pass=1";
 						$currentcomponent->addguielem($section, new \gui_link("cxpanel_email_pass_link", _("Email Inital Password"), $linkUrl));
 					}
 				}
@@ -1954,7 +1969,7 @@ class Cxpanel extends DB_Helper implements BMO
 		$id_settings = "settings_server";
 		$old_config  = $this->server_get();
 
-		if ($val != $old_config[$key])
+		if ($val != $old_config[$key] || ! isset($old_config[$key]))
 		{
 			$this->setConfig($key, $val, $id_settings);
 		}
@@ -2004,7 +2019,7 @@ class Cxpanel extends DB_Helper implements BMO
 		$id_settings = "settings_voicemail_agent";
 		$old_config  = $this->voicemail_agent_get();
 
-		if ($val != $old_config[$key])
+		if ($val != $old_config[$key] || ! isset($old_config[$key]))
 		{
 			$this->setConfig($key, $val, $id_settings);
 		}
@@ -2056,7 +2071,7 @@ class Cxpanel extends DB_Helper implements BMO
 		$id_settings = "settings_recording_agent";
 		$old_config  = $this->recording_agent_get();
 
-		if ($val != $old_config[$key])
+		if ($val != $old_config[$key] || ! isset($old_config[$key]))
 		{
 			$this->setConfig($key, $val, $id_settings);
 		}
@@ -2105,7 +2120,7 @@ class Cxpanel extends DB_Helper implements BMO
 		$id_settings = "settings_mail";
 		$old_config  = $this->email_get();
 
-		if ($val != $old_config[$key])
+		if ($val != $old_config[$key] || ! isset($old_config[$key]))
 		{
 			$this->setConfig($key, $val, $id_settings);
 		}
@@ -2709,7 +2724,7 @@ class Cxpanel extends DB_Helper implements BMO
 		*/
 		if (empty($results[0]['cxpanel_id']))
 		{
-			$uuid = cxpanel_gen_uuid();
+			$uuid = $this->gen_uuid();
 			//Create an entry into cxpanel_managed_items
 			$this->managed_item_add($type, $fpbxId, $uuid);
 			return $uuid;
@@ -2774,6 +2789,7 @@ class Cxpanel extends DB_Helper implements BMO
 			$this->debug(_("Creating manager connection"));
 			manager_add("cxpanel", "cxmanager*con", "0.0.0.0/0.0.0.0", "127.0.0.1/255.255.255.0", $amiPermissions, $amiPermissions);
 
+			//TODO: manager_gen_conf really exists?
 			if(function_exists("manager_gen_conf"))
 			{
 				manager_gen_conf();
@@ -3103,12 +3119,13 @@ class Cxpanel extends DB_Helper implements BMO
 	public function getClientURL()
 	{
 		$serverInformation = $this->server_get();
+		dbug($serverInformation);
 
 		/*
 		* If set utilize the client_host stored in the database else utilize the host
 		* from the current URL.
 		*/
-		$clientHost = $serverInformation['client_host'];
+		$clientHost = isset($serverInformation['client_host']) ? $serverInformation['client_host'] : '';
 		if($clientHost == "")
 		{
 			$httpHost = explode(':', $_SERVER['HTTP_HOST']);
@@ -3116,7 +3133,7 @@ class Cxpanel extends DB_Helper implements BMO
 		}
 
 		//Check if the we need to use https
-		$protocol = $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
+		$protocol = isset($serverInformation['client_use_ssl']) && $serverInformation['client_use_ssl'] == '1' ? 'https' : 'http';
 
 		$url = sprintf("%s://%s:%s/client/client", $protocol, $clientHost, $serverInformation['client_port']);
 
@@ -3267,6 +3284,76 @@ class Cxpanel extends DB_Helper implements BMO
 			}
 		}
 		return $password;
+	}
+
+	/**
+	 * 
+	 * Generates a pseudo-random v4 UUID
+	 * 
+	 */
+	private function gen_uuid() {
+		return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+
+				// 32 bits for "time_low"
+				mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+				// 16 bits for "time_mid"
+				mt_rand(0, 0xffff),
+
+				// 16 bits for "time_hi_and_version",
+				// four most significant bits holds version number 4
+				mt_rand(0, 0x0fff) | 0x4000,
+
+				// 16 bits, 8 bits for "clk_seq_hi_res",
+				// 8 bits for "clk_seq_low",
+				// two most significant bits holds zero and one for variant DCE1.1
+				mt_rand(0, 0x3fff) | 0x8000,
+
+				// 48 bits for "node"
+				mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+		);
+	}
+
+	/**
+	 *
+	 * Gets the current full url
+	 *
+	 */
+	private function get_current_url() {
+		$pageURL = 'http';
+		if ($_SERVER["HTTPS"] == "on") {
+			$pageURL .= "s";
+		}
+		$pageURL .= "://";
+		if ($_SERVER["SERVER_PORT"] != "80") {
+			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		} else {
+			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		}
+		return $pageURL;
+	}
+	
+	/**
+	 * 
+	 * Reads the contents of a file and returns it as a string
+	 * @param String $file path to file that needs to be read
+	 * 
+	 */
+	private function read_file($file)
+	{
+		$contents = "";
+		if (file_exists($file))
+		{
+			if(($contentFile = fopen($file, 'r')) !== false)
+			{
+				while (!feof($contentFile))
+				{
+					$contents .= fgets($contentFile, 4096);
+				}
+				fclose($contentFile);
+			}
+		}
+		return $contents;
 	}
 	
 	public function checkOnline($url, $returnInfo = false, $debug = false)

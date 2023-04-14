@@ -11,16 +11,12 @@
  *	The following files in this module are subject to the above copyright:
  *	./functions.inc.php
  *	./index.php
- *	./install.php
- *	./modify.php
+  *	./modify.php
  *	./page.cxpanel_menu.php
  *	./page.cxpanel.php
- *	./uninstall.php
- *	./lib/cxpanel.class.php
+  *	./lib/cxpanel.class.php
  *	./lib/dialplan.class.php
  *	./lib/logger.class.php
- *	./lib/table.class.php
- *	./lib/util.php
  */
 
 
