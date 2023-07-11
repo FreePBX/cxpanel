@@ -1,3 +1,9 @@
+<?php
+	Sage::$theme 			 = Sage::THEME_LIGHT;
+	Sage::$returnOutput      = true;
+	Sage::$displayCalledFrom = false;
+	Sage::$expandedByDefault = true;
+?>
 <div class="row">
 	<div class="col-md-12">
 		<div class="row">
@@ -18,12 +24,11 @@
 		<div class="row">
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Server")); ?><br>
-				<?php var_dump($debug['server']); ?>
+				<?php echo sage($debug['server']); ?>
 			</div>
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Email")); ?><br>
-				<?php var_dump($debug['email']); ?>
-				<!-- //TODO: Get value in textaread -->
+				<?php echo sage($debug['email']); ?>
 			</div>
 		</div>
 	</div>
@@ -34,11 +39,11 @@
 		<div class="row">
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Voicemail Agent")); ?><br>
-				<?php var_dump($debug['voicemail_agent']); ?>
+				<?php echo sage($debug['voicemail_agent']); ?>
 			</div>
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Recording Agent")); ?><br>
-				<?php var_dump($debug['recording_agent']); ?>
+				<?php echo sage($debug['recording_agent']); ?>
 			</div>
 		</div>
 	</div>
@@ -49,11 +54,11 @@
 		<div class="row">
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Conference Rooms")); ?><br>
-				<?php var_dump($debug['rooms']); ?>
+				<?php echo sage($debug['rooms']); ?>
 			</div>
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Queues")); ?><br>
-				<?php var_dump($debug['queues']); ?>
+				<?php echo sage($debug['queues']); ?>
 			</div>
 		</div>
 	</div>
@@ -64,11 +69,11 @@
 		<div class="row">
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Users")); ?><br>
-				<?php var_dump($debug['users']); ?>
+				<?php echo sage($debug['users']); ?>
 			</div>
 			<div class="col-md-6">
 				<?php echo sprintf('<b>%s</b>', _("Managed Items")); ?><br>
-				<?php var_dump($debug['managed_items']); ?>
+				<?php echo sage($debug['managed_items']); ?>
 			</div>
 		</div>
 	</div>
@@ -77,6 +82,6 @@
 <div class="row">
 	<div class="col-md-12">
 		<?php echo sprintf('<b>%s</b>', _("Phone Numbers")); ?><br>
-		<?php var_dump($debug['phone_numbers']); ?>
+		<?php echo sage($debug['phone_numbers']); ?>
 	</div>
 </div>
