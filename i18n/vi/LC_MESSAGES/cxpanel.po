@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 12:48+0000\n"
+"POT-Creation-Date: 2023-08-02 11:06+0000\n"
 "PO-Revision-Date: 2017-07-20 10:57+0200\n"
 "Last-Translator: PETER <ftek@ymail.com>\n"
 "Language-Team: Vietnamese <http://weblate.freepbx.org/projects/freepbx/"
@@ -21,17 +21,17 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 2.4\n"
 
-#: Cxpanel.class.php:115
+#: Cxpanel.class.php:110
 #, php-format
 msgid "%%brandName%% user login password"
 msgstr ""
 
-#: Cxpanel.class.php:1172
+#: Cxpanel.class.php:1187
 #, php-format
 msgid "%s Login: %s"
 msgstr "%s Đăng nhập: %s"
 
-#: Cxpanel.class.php:1332 Cxpanel.class.php:1499
+#: Cxpanel.class.php:1347 Cxpanel.class.php:1514
 #, php-format
 msgid "%s Settings"
 msgstr "Các cài đặt %s"
@@ -61,8 +61,8 @@ msgstr ""
 msgid "Add To %s"
 msgstr "Thêm vào %s"
 
-#: Cxpanel.class.php:1349 Cxpanel.class.php:1528 Cxpanel.class.php:1796
-#: Cxpanel.class.php:1871
+#: Cxpanel.class.php:1364 Cxpanel.class.php:1543 Cxpanel.class.php:1811
+#: Cxpanel.class.php:1886
 #, php-format
 msgid "Add to %s"
 msgstr "Thêm vào %s"
@@ -126,12 +126,12 @@ msgstr ""
 msgid "Adding voicemail agent identifier: %s"
 msgstr ""
 
-#: Cxpanel.class.php:1274 modify.php:61
+#: Cxpanel.class.php:1289 modify.php:61
 #, php-format
 msgid "Agent interface type: %s"
 msgstr ""
 
-#: Cxpanel.class.php:1270 modify.php:65
+#: Cxpanel.class.php:1285 modify.php:65
 #, php-format
 msgid "Agent login context: %s"
 msgstr ""
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Asterisk Server Host:"
 msgstr ""
 
-#: Cxpanel.class.php:1535
+#: Cxpanel.class.php:1550
 msgid "Auto Answer"
 msgstr "Tự động trả lời"
 
@@ -162,15 +162,15 @@ msgstr "Tự động trả lời"
 msgid "Body:"
 msgstr ""
 
-#: Cxpanel.class.php:494
+#: Cxpanel.class.php:488
 msgid "Build conference rooms table..."
 msgstr ""
 
-#: Cxpanel.class.php:460
+#: Cxpanel.class.php:454
 msgid "Build queues table..."
 msgstr ""
 
-#: Cxpanel.class.php:408
+#: Cxpanel.class.php:402
 msgid "Build users items table..."
 msgstr ""
 
@@ -207,7 +207,7 @@ msgstr ""
 msgid "Checking core server %s"
 msgstr ""
 
-#: Cxpanel.class.php:2753
+#: Cxpanel.class.php:2768
 msgid "Checking manager connection"
 msgstr ""
 
@@ -215,7 +215,7 @@ msgstr ""
 msgid "Clean Unknown Items:"
 msgstr ""
 
-#: Cxpanel.class.php:126
+#: Cxpanel.class.php:121
 msgid "Click Here To Login"
 msgstr ""
 
@@ -243,11 +243,11 @@ msgstr ""
 msgid "Collapse All"
 msgstr ""
 
-#: Cxpanel.class.php:797
+#: Cxpanel.class.php:812
 msgid "Completed Process"
 msgstr ""
 
-#: views/view.dialog.debug.php:51
+#: views/view.dialog.debug.php:56
 msgid "Conference Rooms"
 msgstr ""
 
@@ -264,30 +264,25 @@ msgstr ""
 msgid "Core server not found. Creating"
 msgstr ""
 
-#: Cxpanel.class.php:1548
+#: Cxpanel.class.php:1563
 msgid "Create User"
 msgstr "Tạo người dùng"
 
-#: Cxpanel.class.php:1549
+#: Cxpanel.class.php:1564
 #, php-format
 msgid "Creates an %s user login which is associated with this extension."
 msgstr "Tạo một đăng nhập %s người dùng được liên kết với máy nhánh này."
 
-#: lib/table.class.php:75
-#, php-format
-msgid "Creating \"%s\" Table..."
-msgstr ""
-
-#: Cxpanel.class.php:371
+#: Cxpanel.class.php:365
 #, php-format
 msgid "Creating %s settings... "
 msgstr ""
 
-#: Cxpanel.class.php:240
+#: Cxpanel.class.php:236
 msgid "Creating client symlink...."
 msgstr ""
 
-#: Cxpanel.class.php:2774
+#: Cxpanel.class.php:2789
 msgid "Creating manager connection"
 msgstr ""
 
@@ -330,27 +325,27 @@ msgstr ""
 msgid "Displays the version of the server."
 msgstr ""
 
-#: Cxpanel.class.php:222 Cxpanel.class.php:234 Cxpanel.class.php:253
-#: Cxpanel.class.php:269 Cxpanel.class.php:307 Cxpanel.class.php:380
-#: Cxpanel.class.php:394 Cxpanel.class.php:452 Cxpanel.class.php:486
-#: Cxpanel.class.php:521 Cxpanel.class.php:546 lib/table.class.php:94
+#: Cxpanel.class.php:217 Cxpanel.class.php:230 Cxpanel.class.php:249
+#: Cxpanel.class.php:263 Cxpanel.class.php:301 Cxpanel.class.php:374
+#: Cxpanel.class.php:388 Cxpanel.class.php:446 Cxpanel.class.php:480
+#: Cxpanel.class.php:515 Cxpanel.class.php:545 Cxpanel.class.php:562
 msgid "Done"
 msgstr ""
 
-#: Cxpanel.class.php:3089 Cxpanel.class.php:3094
+#: Cxpanel.class.php:3105 Cxpanel.class.php:3110
 #, php-format
 msgid "ERROR: Message could not be sent. Mailer Error -> %s"
 msgstr ""
 
-#: Cxpanel.class.php:539
+#: Cxpanel.class.php:533
 msgid "ERROR: could not remove manager entry."
 msgstr ""
 
-#: Cxpanel.class.php:325 views/view.dialog.debug.php:24
+#: Cxpanel.class.php:319 views/view.dialog.debug.php:30
 msgid "Email"
 msgstr ""
 
-#: Cxpanel.class.php:1626
+#: Cxpanel.class.php:1641
 msgid "Email Inital Password"
 msgstr "Mật khẩu ban đầu của Email"
 
@@ -358,7 +353,7 @@ msgstr "Mật khẩu ban đầu của Email"
 msgid "Email Initial Passwords"
 msgstr ""
 
-#: Cxpanel.class.php:1562
+#: Cxpanel.class.php:1577
 msgid "Email Password"
 msgstr "Mật khẩu Email"
 
@@ -370,7 +365,7 @@ msgstr ""
 msgid "Email:"
 msgstr ""
 
-#: Cxpanel.class.php:264
+#: Cxpanel.class.php:261
 msgid "Enabling voicemail box polling..."
 msgstr ""
 
@@ -383,7 +378,7 @@ msgstr ""
 msgid "Enter the name of the person or company this server is licensed to."
 msgstr ""
 
-#: Cxpanel.class.php:775
+#: Cxpanel.class.php:790
 msgid "Error sending email."
 msgstr ""
 
@@ -467,12 +462,16 @@ msgstr ""
 msgid "Error: Voicemail agent resource host cannot be blank."
 msgstr ""
 
-#: Cxpanel.class.php:1228
+#: Cxpanel.class.php:549
+msgid "Error: the path still exists!"
+msgstr ""
+
+#: Cxpanel.class.php:1243
 #, php-format
 msgid "Exception Create Log: %s"
 msgstr ""
 
-#: Cxpanel.class.php:1284
+#: Cxpanel.class.php:1299
 msgid "Executing modify.php"
 msgstr ""
 
@@ -484,7 +483,7 @@ msgstr ""
 msgid "Expiration Date"
 msgstr ""
 
-#: Cxpanel.class.php:768
+#: Cxpanel.class.php:783
 msgid "Extension not set to add user."
 msgstr ""
 
@@ -730,7 +729,7 @@ msgid ""
 "when on demand recordings are made in the panel."
 msgstr ""
 
-#: Cxpanel.class.php:385
+#: Cxpanel.class.php:379
 #, php-format
 msgid "Filed to create %s settings, %s method not found!"
 msgstr ""
@@ -744,7 +743,7 @@ msgstr ""
 msgid "From:"
 msgstr ""
 
-#: Cxpanel.class.php:1555
+#: Cxpanel.class.php:1570
 msgid "Full User"
 msgstr "Người dùng toàn quyền"
 
@@ -752,7 +751,7 @@ msgstr "Người dùng toàn quyền"
 msgid "General Settings"
 msgstr ""
 
-#: Cxpanel.class.php:119
+#: Cxpanel.class.php:114
 msgid "Hello,"
 msgstr ""
 
@@ -817,7 +816,7 @@ msgid ""
 "module on the other PBXs."
 msgstr ""
 
-#: Cxpanel.class.php:1480
+#: Cxpanel.class.php:1495
 msgid ""
 "If you do not know the password for this user you can change it in the User "
 "Password field above"
@@ -829,11 +828,11 @@ msgstr ""
 msgid "Inherit"
 msgstr "Kế thừa"
 
-#: Cxpanel.class.php:763
+#: Cxpanel.class.php:778
 msgid "Initial password no longer valid."
 msgstr ""
 
-#: Cxpanel.class.php:305
+#: Cxpanel.class.php:299
 msgid "Leaving userman mode unchanged..."
 msgstr ""
 
@@ -854,7 +853,7 @@ msgstr ""
 msgid "Looking up core server id for slug %s"
 msgstr ""
 
-#: Cxpanel.class.php:780
+#: Cxpanel.class.php:795
 msgid "Mail Sent Successfully."
 msgstr ""
 
@@ -862,7 +861,7 @@ msgstr ""
 msgid "Mailing Passwords"
 msgstr ""
 
-#: views/view.dialog.debug.php:5
+#: views/view.dialog.debug.php:11
 msgid "Main Log"
 msgstr ""
 
@@ -881,12 +880,12 @@ msgid ""
 "span>."
 msgstr ""
 
-#: Cxpanel.class.php:1871
+#: Cxpanel.class.php:1886
 #, php-format
 msgid "Makes this conference room available in %s"
 msgstr ""
 
-#: Cxpanel.class.php:1556
+#: Cxpanel.class.php:1571
 #, php-format
 msgid ""
 "Makes this extension a full user in %s. Full users have access to all the "
@@ -902,7 +901,7 @@ msgstr ""
 "quyền nhưng không có các giấy phép thì người dùng này được duy trì như một "
 "người dùng không toàn quyền ( lite user)."
 
-#: Cxpanel.class.php:1536
+#: Cxpanel.class.php:1551
 #, php-format
 msgid ""
 "Makes this extension automatically answer the initial call received from the "
@@ -913,31 +912,31 @@ msgstr ""
 "khi thực hiện một tạo nguồn trong vòng %s. Chỉ làm việc với các điện thoại "
 "Aastra, Grandstream, Linksys, Polycom, and Snom."
 
-#: Cxpanel.class.php:1529
+#: Cxpanel.class.php:1544
 #, php-format
 msgid "Makes this extension available in %s"
 msgstr "Làm cho máy nhánh này khả dụng trong %s"
 
-#: Cxpanel.class.php:1796
+#: Cxpanel.class.php:1811
 #, php-format
 msgid "Makes this queue available in %s"
 msgstr ""
 
-#: Cxpanel.class.php:1350 views/userman_hook.php:28
+#: Cxpanel.class.php:1365 views/userman_hook.php:28
 #, php-format
 msgid "Makes this user available in %s"
 msgstr "Làm cho người dùng này khả dụng trong %s"
 
-#: views/view.dialog.debug.php:70
+#: views/view.dialog.debug.php:75
 msgid "Managed Items"
 msgstr ""
 
-#: Cxpanel.class.php:359
+#: Cxpanel.class.php:353
 #, php-format
 msgid "Migrating %s settings... "
 msgstr ""
 
-#: views/view.dialog.debug.php:9
+#: views/view.dialog.debug.php:15
 msgid "Modify Log"
 msgstr ""
 
@@ -949,7 +948,7 @@ msgstr ""
 msgid "NO"
 msgstr ""
 
-#: Cxpanel.class.php:300
+#: Cxpanel.class.php:294
 msgid "Needs to sync with userman..."
 msgstr ""
 
@@ -958,7 +957,7 @@ msgstr ""
 msgid "No"
 msgstr "Không"
 
-#: Cxpanel.class.php:758
+#: Cxpanel.class.php:773
 msgid "No email set on extension page."
 msgstr ""
 
@@ -978,12 +977,12 @@ msgstr ""
 msgid "PBX server info does not match. Updating"
 msgstr ""
 
-#: Cxpanel.class.php:937
+#: Cxpanel.class.php:952
 #, php-format
 msgid "Page Not Found (%s)!!!!"
 msgstr ""
 
-#: Cxpanel.class.php:1278
+#: Cxpanel.class.php:1293
 #, php-format
 msgid "Parking lot timeout: %s"
 msgstr ""
@@ -1004,7 +1003,7 @@ msgid ""
 "directory under the communication_manager servlet security settings."
 msgstr ""
 
-#: Cxpanel.class.php:124 views/page.cxpanel.php:484
+#: Cxpanel.class.php:119 views/page.cxpanel.php:484
 msgid "Password:"
 msgstr ""
 
@@ -1016,11 +1015,11 @@ msgstr ""
 msgid "Path to the root voicemail directory."
 msgstr ""
 
-#: views/view.dialog.debug.php:79
+#: views/view.dialog.debug.php:84
 msgid "Phone Numbers"
 msgstr ""
 
-#: Cxpanel.class.php:1633
+#: Cxpanel.class.php:1648
 #, php-format
 msgid ""
 "Please specify a password for the %s user or uncheck \"Create User\" under "
@@ -1028,16 +1027,6 @@ msgid ""
 msgstr ""
 "Vui lòng xác định một mật khẩu cho người dùng %s này hoặc không đánh dấu "
 "check tại \"Create User\" ( Tạo người dùng) tại \" %s User Settings\""
-
-#: lib/table.class.php:78
-#, php-format
-msgid "Populating(New) \"%s\"..."
-msgstr ""
-
-#: lib/table.class.php:90
-#, php-format
-msgid "Populating(Upgrade) \"%s\"..."
-msgstr ""
 
 #: views/page.cxpanel.php:460
 #, php-format
@@ -1051,7 +1040,7 @@ msgstr ""
 msgid "Port:"
 msgstr ""
 
-#: views/view.dialog.debug.php:55
+#: views/view.dialog.debug.php:60
 msgid "Queues"
 msgstr ""
 
@@ -1059,7 +1048,7 @@ msgstr ""
 msgid "Reason"
 msgstr ""
 
-#: Cxpanel.class.php:318 views/view.dialog.debug.php:40
+#: Cxpanel.class.php:312 views/view.dialog.debug.php:45
 msgid "Recording Agent"
 msgstr ""
 
@@ -1067,11 +1056,11 @@ msgstr ""
 msgid "Recording Agent Settings"
 msgstr ""
 
-#: Cxpanel.class.php:542
+#: Cxpanel.class.php:558
 msgid "Remove Setting operator panel web root and enabling dev state...."
 msgstr ""
 
-#: Cxpanel.class.php:391
+#: Cxpanel.class.php:385
 #, php-format
 msgid "Remove old %s settings table... "
 msgstr ""
@@ -1086,6 +1075,10 @@ msgstr ""
 msgid "Removing administrator: %s"
 msgstr ""
 
+#: Cxpanel.class.php:536
+msgid "Removing client symlink..."
+msgstr ""
+
 #: modify.php:1894
 #, php-format
 msgid "Removing conference room: %s"
@@ -1096,7 +1089,7 @@ msgstr ""
 msgid "Removing extension: %s"
 msgstr ""
 
-#: Cxpanel.class.php:535
+#: Cxpanel.class.php:529
 msgid "Removing manager entry...."
 msgstr ""
 
@@ -1167,8 +1160,8 @@ msgstr ""
 msgid "Serial Key:"
 msgstr ""
 
-#: Cxpanel.class.php:278 views/page.cxpanel.php:360
-#: views/view.dialog.debug.php:20
+#: Cxpanel.class.php:272 views/page.cxpanel.php:360
+#: views/view.dialog.debug.php:26
 msgid "Server"
 msgstr ""
 
@@ -1184,7 +1177,7 @@ msgstr ""
 msgid "Server port must be numeric."
 msgstr ""
 
-#: Cxpanel.class.php:230
+#: Cxpanel.class.php:226
 msgid "Setting callevents = yes...."
 msgstr ""
 
@@ -1193,24 +1186,28 @@ msgstr ""
 msgid "Setting extension user on extension: %s to user: %s"
 msgstr ""
 
-#: Cxpanel.class.php:218
+#: Cxpanel.class.php:213
 msgid "Setting operator panel web root and enabling dev state...."
 msgstr ""
 
-#: Cxpanel.class.php:384
+#: Cxpanel.class.php:378
 msgid "Skip!"
 msgstr ""
 
-#: Cxpanel.class.php:456 Cxpanel.class.php:490 Cxpanel.class.php:525
+#: Cxpanel.class.php:450 Cxpanel.class.php:484 Cxpanel.class.php:519
 msgid "Skip, module status check failed!"
 msgstr ""
 
-#: Cxpanel.class.php:1569
+#: Cxpanel.class.php:554
+msgid "Skip: the path is not a symbolic link!"
+msgstr ""
+
+#: Cxpanel.class.php:1584
 #, php-format
 msgid "Specifies the password to be used for the %s User"
 msgstr "Xác định mật khẩu được sử dụng cho người dùng %s"
 
-#: Cxpanel.class.php:1590
+#: Cxpanel.class.php:1605
 msgid ""
 "Specifies which extensions will be bound to the $cxpanelBrandName user "
 "created for this extension. \"Self\" refers to this extension"
@@ -1218,11 +1215,11 @@ msgstr ""
 "Xác định các máy nhánh sẽ liên kết với người dùng  $cxpanelBrandName đã tạo "
 "đối với máy nhánh này. \"Self\" để chỉ máy nhánh này"
 
-#: Cxpanel.class.php:1263
+#: Cxpanel.class.php:1278
 msgid "Starting CXPanel module"
 msgstr ""
 
-#: Cxpanel.class.php:3237
+#: Cxpanel.class.php:3254
 #, php-format
 msgid "Starting REST connection to %s"
 msgstr ""
@@ -1326,12 +1323,12 @@ msgstr ""
 msgid "The following is a list of users that were not sent password emails"
 msgstr ""
 
-#: Cxpanel.class.php:1476
+#: Cxpanel.class.php:1491
 #, php-format
 msgid "The inital password for this user is set to <b>%s</b>"
 msgstr ""
 
-#: Cxpanel.class.php:1480
+#: Cxpanel.class.php:1495
 msgid "The inital password for this user was never created or has been changed"
 msgstr ""
 "Mật khẩu ban đầu cho người dùng này đã chưa bao giờ được tạo hoặc đã bị thay "
@@ -1385,7 +1382,7 @@ msgstr ""
 msgid "The username that the password belongs to. %s"
 msgstr ""
 
-#: Cxpanel.class.php:121
+#: Cxpanel.class.php:116
 #, php-format
 msgid "This email is to inform you of your %%brandName%% login credentials:"
 msgstr ""
@@ -1406,7 +1403,7 @@ msgid ""
 "will have to restart your %1$s server once the change has been made."
 msgstr ""
 
-#: Cxpanel.class.php:1294
+#: Cxpanel.class.php:1309
 #, php-format
 msgid "Total Running Time: %s."
 msgstr ""
@@ -1424,7 +1421,7 @@ msgstr ""
 msgid "Unique id of the core server instance to manage."
 msgstr ""
 
-#: Cxpanel.class.php:753 views/page.cxpanel.php:375 views/page.cxpanel.php:387
+#: Cxpanel.class.php:768 views/page.cxpanel.php:375 views/page.cxpanel.php:387
 #: views/page.cxpanel.php:392 views/page.cxpanel.php:397
 msgid "Unknown"
 msgstr ""
@@ -1472,13 +1469,8 @@ msgstr ""
 msgid "Updating user: %s"
 msgstr ""
 
-#: Cxpanel.class.php:297
+#: Cxpanel.class.php:291
 msgid "Upgrade detected, checking userman mode..."
-msgstr ""
-
-#: lib/table.class.php:86
-#, php-format
-msgid "Upgrading \"%s\"..."
 msgstr ""
 
 #: views/page.cxpanel.php:494 views/page.cxpanel.php:551
@@ -1489,11 +1481,11 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: Cxpanel.class.php:1596
+#: Cxpanel.class.php:1611
 msgid "User Extensions"
 msgstr "Các máy nhánh người dùng"
 
-#: Cxpanel.class.php:1568
+#: Cxpanel.class.php:1583
 msgid "User Password"
 msgstr "Mật khẩu người dùng"
 
@@ -1509,11 +1501,11 @@ msgid ""
 "directory under the communication_manager servlet security settings."
 msgstr ""
 
-#: Cxpanel.class.php:123 views/page.cxpanel.php:473
+#: Cxpanel.class.php:118 views/page.cxpanel.php:473
 msgid "Username:"
 msgstr ""
 
-#: views/page.cxpanel.php:167 views/view.dialog.debug.php:66
+#: views/page.cxpanel.php:167 views/view.dialog.debug.php:71
 msgid "Users"
 msgstr ""
 
@@ -1529,7 +1521,7 @@ msgstr ""
 msgid "View Initial User Passwords"
 msgstr ""
 
-#: Cxpanel.class.php:311 views/view.dialog.debug.php:36
+#: Cxpanel.class.php:305 views/view.dialog.debug.php:41
 msgid "Voicemail Agent"
 msgstr ""
 
@@ -1542,7 +1534,7 @@ msgstr ""
 msgid "Web port of the %s client."
 msgstr ""
 
-#: Cxpanel.class.php:1563
+#: Cxpanel.class.php:1578
 msgid ""
 "When checked the new specified password will be sent to the email cofigured "
 "in the voicemail settings. No email will be sent if no email address is "

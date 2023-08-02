@@ -1,7 +1,7 @@
 <module>
 	<rawname>cxpanel</rawname>
 	<name>iSymphonyV3</name>
-	<version>16.0.5</version>
+	<version>16.0.6</version>
 	<type>setup</type>
 	<category>Admin</category>
 	<description>
@@ -18,6 +18,7 @@
 		<version>13.0.121</version>
 	</depends>
     <changelog>
+		*16.0.6* FEEPBX-24136 
 		*16.0.5* FREEPBX-24132 
 		*16.0.4* FREEPBX-23794 
 		*16.0.2* Packaging of ver 16.0.2
