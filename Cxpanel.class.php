@@ -27,6 +27,7 @@
  *	./lib/util.php
  */
 namespace FreePBX\modules;
+#[\AllowDynamicProperties]
 class Cxpanel implements \BMO {
 	public function __construct($freepbx = null) {
 		if ($freepbx == null) {
@@ -241,7 +242,7 @@ class Cxpanel implements \BMO {
 					array(
 							'title' => $cxpanelBrandName,
 							'rawname' => 'cxpanel',
-							'content' => load_view(dirname(__FILE__).'/views/userman_hook.php',array('cxpanelBrandName' => $cxpanelBrandName, 'addUser' => $addUser, 'mode' => $mode))
+							'content' => load_view(dirname(__FILE__).'/views/userman_hook.php',array('cxpanelBrandName' => $cxpanelBrandName, 'addUser' => $addUser ?? '', 'mode' => $mode ?? ''))
 					)
 			);
 		}

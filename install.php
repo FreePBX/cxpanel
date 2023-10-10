@@ -400,7 +400,7 @@ if((function_exists("core_users_list")) && (($freePBXUsers = core_users_list()) 
 			//Determine user info
 			$userId = $freePBXUser[0];
 			$userDevice = core_devices_get($userId);
-			$peer = ($userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
+			$peer = (isset($userDevice['dial']) && $userDevice['dial'] != "") ? $userDevice['dial'] : "SIP/$userId";
 			$displayName = $freePBXUser[1] == "" ? $freePBXUser[0] : $freePBXUser[1];
 
 			//Generate a password for the user

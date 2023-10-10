@@ -97,7 +97,7 @@ class cxpanel_radio extends guiinput {
 		}
 
 		$parent_class = get_parent_class($this);
-		if (is_callable('parent::$parent_class')) {
+		if (is_callable('parent::class::$parent_class')) {
 			parent::$parent_class($elemname, $currentvalue, $prompttext, $helptext);
 		} else {
 			parent::__construct($elemname, $currentvalue, $prompttext, $helptext);
